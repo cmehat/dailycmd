@@ -1,0 +1,319 @@
+---
+layout: post
+title: "Mon environnement graphique voici donc"
+date: 2003-02-28 05:00:00 +0000
+permalink: /2003/02/mon-environnement-graphique-voici-donc.html
+tags: ["xinit", "xterm", "X", "gkrellm", "xev", "window", "9wm"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;</p><h1>Mon environnement graphique</h1><span style="background-color: white; font-size: small;">Voici donc, dans l'ordre:</span><ul style="font-size: small;"><li>ScreenShots<p></p></li><li>Applications<p></p></li><li>Fichiers de config&nbsp;:<br />.xinitrc<br />.xmodmaprc<br />.blackboxrc<br />.bbkeysrc<br />.bbtools/bbpager.bb<br />.bbtools/style.bb<br /><p></p></li><li>Point particulier sur la config du "Logitech Cordless Desktop"</li></ul><p style="font-size: small;"></p><table><tbody><tr><td colspan="2" style="font-size: small;"><a name="ScreenShots"><h2>ScreenShots:</h2></a></td></tr><tr><td style="font-size: small;" valign="top"><p>Mon ancienne config, avec&nbsp;<cite>9wm</cite>, il y a&nbsp;<cite>oclock</cite>&nbsp;qui tourne en haut à droite, et deux terminaux.<br />Très sobre, à l'image de&nbsp;<a href="http://www.google.com/search?hl=en&amp;ie=UTF-8&amp;oe=UTF-8&amp;q=9wm&amp;btnG=Google+Search" target="_blank">9wm</a>&nbsp;d'ailleur: c'est simple et sans fioritures inutiles.</p></td><td align="center" style="font-size: small;" width="100"><a href="http://kaourintinn.free.fr/config-bb/screenshots/9wm.jpeg" target="_blank"><img border="0" height="80" src="http://kaourintinn.free.fr/config-bb/screenshots/9wm-mini.jpeg" width="100" /></a><br /><span style="font-size: xx-small;">1997-2003</span></td></tr><tr><td style="font-size: small;" valign="top"><p>Je viens de passer à&nbsp;<cite>blackbox</cite>&nbsp;comme gestionnaire de fenêtres, avoir plusieurs bureaux virtuels me manquait.<br />Il y a&nbsp;<cite>gkrellm</cite>&nbsp;et&nbsp;<cite>bbpager</cite>&nbsp;qui tournent, à par ça pas grand chose.</p></td><td align="center" style="font-size: small;" width="100"><a href="http://kaourintinn.free.fr/config-bb/screenshots/basic.jpeg" target="_blank"><img border="0" height="80" src="http://kaourintinn.free.fr/config-bb/screenshots/basic-mini.jpeg" width="100" /></a><br /><span style="font-size: xx-small;">18 Janvier 2003</span></td></tr><tr><td style="font-size: small;" valign="top"><p>Un essai avec une image en fond d'écran. C'est quand même mieux en uni finalement.</p></td><td align="center" style="font-size: small;" width="100"><a href="http://kaourintinn.free.fr/config-bb/screenshots/tocompare.jpeg" target="_blank"><img border="0" height="80" src="http://kaourintinn.free.fr/config-bb/screenshots/tocompare-mini.jpeg" width="100" /></a><br /><span style="font-size: xx-small;">18 Janvier 2003</span></td></tr><tr><td style="font-size: small;" valign="top"><p>Un exemple d'utilisation, j'étais en train de faire la première version de cette page, en plus des précédents on apperçoit&nbsp;<cite>Emacs</cite>&nbsp;qui tourne derrière,&nbsp;<cite>Gimp</cite>, et&nbsp;<cite>Mozilla</cite>, plus quelques terminaux&nbsp;<cite>xterm</cite>.</p></td><td align="center" style="font-size: small;" width="100"><a href="http://kaourintinn.free.fr/config-bb/screenshots/20030126.jpeg" target="_blank"><img border="0" height="80" src="http://kaourintinn.free.fr/config-bb/screenshots/20030126-mini.jpeg" width="100" /></a><br /><span style="font-size: xx-small;">26 Janvier 2003</span></td></tr></tbody></table><span><!--more--></span><span><!--more--></span><span><!--more--></span><table border="0" cellspacing="10"><tbody><tr><td height="20" style="font-size: small;"></td></tr><tr><td colspan="2" style="font-size: small;"><a name="Applications"><h2>Applications:</h2></a></td></tr><tr><td style="font-size: small;" valign="top" width="100"><h3>Blackbox</h3></td><td style="font-size: small;"><a href="http://blackboxwm.sf.net/" target="_blank">http://blackboxwm.sf.net</a><br />C'est mon gestionaire de fenêtres.</td></tr><tr><td style="font-size: small;" valign="top"><h3>xmodmap</h3></td><td style="font-size: small;">Me permet, en parallèle de&nbsp;<cite>bbkeys</cite>, de gérer les particularités de mon clavier: En particulier c'est ici que je défini les "keycodes" pour les touches qui n'en ont pas. (cf.&nbsp;.xmodmaprc&nbsp;)</td></tr><tr><td style="font-size: small;" valign="top"><h3>bbkeys</h3></td><td style="font-size: small;"><a href="http://bbkeys.sourceforge.net/" target="_blank">http://bbkeys.sourceforge.net/</a><br />Utilitaire (spécifique à&nbsp;<cite>BlackBox</cite>&nbsp;?) permettant de gérer des raccourcis claviers aisément (cf.&nbsp;.bbkeysrc&nbsp;)</td></tr><tr><td style="font-size: small;" valign="top"><h3>bbpager</h3></td><td style="font-size: small;"><a href="http://bbtools.thelinuxcommunity.org/available.phtml#bbpager" target="_blank">http://bbtools.thelinuxcommunity.org/available.phtml#bbpager</a><br />Utilitaire (spécifique à&nbsp;<cite>BlackBox</cite>&nbsp;?) qui affiche une réductions des différents bureaux; je l'ai configuré pour s'afficher en bas à droite (cf.&nbsp;<a href="http://kaourintinn.free.fr/config-bb/screen.php#bbpager">.bbtools/bbpager.bb</a>)</td></tr><tr><td style="font-size: small;" valign="top"><h3>Xtoolwait</h3></td><td style="font-size: small;"><a href="http://www.hacom.nl/~richard/software/xtoolwait.html" target="_blank">http://www.hacom.nl/%7Erichard/software/xtoolwait.html</a><br />Permet de réduire le temps d'initialisation du serveur X (je m'en sers en appelant quelques programmes dans&nbsp;<a href="http://kaourintinn.free.fr/config-bb/screen.php#xinitrc">.xinitrc</a>).</td></tr><tr><td style="font-size: small;" valign="top"><h3>gkrellm</h3></td><td style="font-size: small;"><a href="http://www.gkrellm.net/" target="_blank">http://www.gkrellm.net</a><br />Joli gadget de surveillance principalement ("monitoring"). On peut aussi lui ajouter quantité de plugins.</td></tr><tr><td height="40" style="font-size: small;"></td></tr><tr><td colspan="2" style="font-size: small;"><a name="Fichiers"><h2>Fichiers utilisés:</h2></a></td></tr><tr><td style="font-size: small;" valign="top"><b>~/.xinitrc</b></td><td style="font-size: small;">Script executé par défaut au démarage du serveur X.</td></tr><tr><td style="font-size: small;" valign="top"><b>~/.xmodmap</b></td><td style="font-size: small;">J'utilise un clavier qui n'est pas reconnu par Linux (cf&nbsp;config du "Logitech Cordless Desktop"&nbsp;)<br />Ce fichier contient les "keysym" à associer aux "keycode" de certaines touches avec&nbsp;<cite>xmodmap</cite>, que j'appelle dans&nbsp;.xinitrc.</td></tr><tr><td style="font-size: small;" valign="top"><b>~/.blackboxrc</b></td><td style="font-size: small;">Fichier de configuration du gestionnaire de fenêtre que j'utilise,&nbsp;<cite>BlackBox</cite>.</td></tr><tr><td style="font-size: small;" valign="top"><b>~/.bbkeysrc</b></td><td style="font-size: small;">Définition des raccourcis gérés par&nbsp;<cite>bbkeys</cite>&nbsp;; C'est le fichier par défaut. Facile à éditer, mais encore plus facile à configurer avec le script PERL qui va avec...</td></tr><tr><td style="font-size: small;" valign="top"><b>~/.bbtools/bbpager.bb</b></td><td style="font-size: small;">Ficher de config de&nbsp;<cite>bbpager</cite>&nbsp;...</td></tr><tr><td style="font-size: small;" valign="top"><b>~/.bbtools/blackbox-menu</b>&nbsp;<b>~/.bbtools/style.bb</b></td><td style="font-size: small;">Ce sont deux fichiers, l'un pour le menu (boutton 3 usuellement),<br />l'autre pour le style, appelés dans&nbsp;.blackboxrc</td></tr><tr><td height="30" style="font-size: small;"></td></tr></tbody></table><pre style="font-size: small;"><span style="font-family: fixed;"><a name="xinitrc"><b>~/.xinitrc</b></a> :
+</span><span style="font-family: courier;"># .xinitrc - Fichier d'initialisation pour X11 
+
+# Definition keysym pour certaines touches, dans .xmodmaprc
+xmodmap .xmodmaprc
+
+# Le gestionnaire de fenetres
+blackbox &amp;
+
+# Gestion des racourcis clavier, config dans .bbkeysrc
+xtoolwait bbkeys -i
+
+# Monitoring gadget
+xtoolwait gkrellm -w &amp;
+
+# Gadget pour les bureaux, config dans .bbtools/bbpager.bb
+xtoolwait bbpager &amp;
+
+# on lance un terminal
+xterm &amp;
+
+# Le terminal principal, affiche en bas a gauche, sur le bureau principal
+Eterm --name Login -f white --borderless --scrollbar=no --buttonbar=no --login-shell --geometry 37x4+0+988</span><span style="font-family: fixed;">
+<br /></span></pre><pre style="font-size: small;"><span style="font-family: fixed;"><span><!--more--></span>
+
+<a name="xmodmaprc"><b>~/.xmodmaprc</b></a> :
+</span><span style="font-family: courier;">! .xmodmaprc - expressions d'xmodmap a executer.
+! appele dans .xinitrc
+
+! Avoir des accents et des caractères spéciaux par
+! 'Start+spécial, caractère' et 'Start+caractère, spécial'
+keycode 115 = Multi_key
+keycode 116 = Multi_key
+
+!  Pour gérer le 'Logitech CordLess Keyboard' :
+!  définition de 'keysym' pour certaines touches.
+! Pour trouver les 'keysym' existantes voir les fichiers : 
+! /usr/X11R6/lib/X11/XKeysymDB 
+! /usr/X11R6/include/X11/XF86keysym.h
+!  Raccourcis géres par 'bbkeys': voir ~/.bbkeysrc
+
+keycode 129 = XF86XK_AudioMedia
+keycode 130 = XF86XK_HomePage
+keycode 151 = XF86XK_AudioStop
+keycode 158 = XF86XK_AudioRaiseVolume
+keycode 159 = XF86XK_AudioPlay
+keycode 162 = XF86XK_AudioNext
+keycode 164 = XF86XK_AudioPrev
+keycode 165 = XF86XK_AudioLowerVolume
+keycode 166 = XF86XK_AudioMute
+keycode 223 = XF86XK_Standby
+keycode 229 = XF86XK_Search
+keycode 230 = XF86XK_Favorites
+keycode 233 = XF86XK_RockerEnter
+keycode 234 = XF86XK_RockerDown
+keycode 236 = XF86XK_Mail</span><span style="font-family: fixed;">
+<br /></span></pre><pre><span style="font-family: fixed; font-size: small;"><span><!--more--></span>
+</span><a name="blackboxrc" style="font-family: fixed; font-size: small;"><b>~/.blackboxrc</b></a><span style="font-family: fixed; font-size: small;"> :
+</span><span style="font-family: courier; font-size: small;">session.screen0.slit.placement:	TopRight
+session.screen0.slit.direction:	Vertical
+session.screen0.slit.onTop:	False
+session.screen0.slit.autoHide:	False
+session.screen0.toolbar.onTop:	False
+session.screen0.toolbar.autoHide:	False
+session.screen0.toolbar.placement:	BottomCenter
+session.screen0.toolbar.widthPercent:	67
+session.screen0.focusModel:	ClickToFocus
+session.screen0.focusNewWindows:	True
+session.screen0.workspaces:		4
+session.screen0.focusLastWindow:	True
+session.screen0.colPlacementDirection:	TopToBottom
+session.screen0.edgeSnapThreshold:	0
+session.screen0.fullMaximization:	False
+session.screen0.strftimeFormat:	%I:%M %p
+session.screen0.rowPlacementDirection:	LeftToRight
+session.screen0.windowPlacement:	CascadePlacement
+session.screen0.workspaceNames:	Main, Deuxi\350me, Troisi\350me, Quatri\350me 
+session.opaqueMove:	False
+session.autoRaiseDelay:	400
+session.cacheMax:	200
+session.menuFile:	/etc/X11/blackbox/blackbox-menu
+session.imageDither:	True
+session.doubleClickInterval:	250
+session.cacheLife:	5
+session.colorsPerChannel:	4
+session.styleFile:	/home/cm/.bbtools/style.bb</span><span style="font-family: fixed; font-size: small;">
+<span><!--more--></span>
+</span><a name="bbkeysrc" style="font-family: fixed; font-size: small;"><b>~/.bbkeysrc</b></a><span style="font-family: fixed; font-size: small;"> :
+</span><span style="font-family: courier; font-size: x-small;">#~/.bbkeysrc, automagically configured by bbkeysconf.pl
+
+KeyToGrab(1), WithModifier(Mod1), WithAction(Workspace1)
+KeyToGrab(2), WithModifier(Mod1), WithAction(Workspace2)
+KeyToGrab(3), WithModifier(Mod1), WithAction(Workspace3)
+KeyToGrab(4), WithModifier(Mod1), WithAction(Workspace4)
+KeyToGrab(Right), WithModifier(Control), WithAction(NextWorkspace)
+KeyToGrab(Left), WithModifier(Control), WithAction(PrevWorkspace)
+KeyToGrab(XF86XK_RockerEnter), WithModifier(None), WithAction(Workspace1)
+KeyToGrab(XF86XK_RockerDown), WithModifier(None), WithAction(PrevWorkspace)
+KeyToGrab(XF86XK_RockerDown), WithModifier(Control), WithAction(NextWorkspace)
+KeyToGrab(XF86XK_AudioMedia), WithModifier(None), WithAction(ExecCommand), DoThis(xmms)
+KeyToGrab(XF86XK_AudioMedia), WithModifier(Control), WithAction(ExecCommand), DoThis(xmms-shell -e xmmsexit)
+KeyToGrab(XF86XK_AudioRaiseVolume), WithModifier(None), WithAction(ExecCommand), DoThis(aumix -v +2)
+KeyToGrab(XF86XK_AudioLowerVolume), WithModifier(None), WithAction(ExecCommand), DoThis(aumix -v -2)
+KeyToGrab(XF86XK_AudioMute), WithModifier(None), WithAction(ExecCommand), DoThis(aumix -v m)
+KeyToGrab(XF86XK_AudioMute), WithModifier(Control), WithAction(ExecCommand), DoThis(aumix -v 50)
+KeyToGrab(XF86XK_AudioPlay), WithModifier(None), WithAction(ExecCommand), DoThis(xmms-shell -e play)
+KeyToGrab(XF86XK_AudioPlay), WithModifier(Control), WithAction(ExecCommand), DoThis(xmms-shell -e pause)
+KeyToGrab(XF86XK_AudioNext), WithModifier(None), WithAction(ExecCommand), DoThis(xmms-shell -e next)
+KeyToGrab(XF86XK_AudioPrev), WithModifier(None), WithAction(ExecCommand), DoThis(xmms-shell -e prev)
+KeyToGrab(XF86XK_AudioStop), WithModifier(None), WithAction(ExecCommand), DoThis(xmms-shell -e stop)
+KeyToGrab(XF86XK_Favorites), WithModifier(None), WithAction(ExecCommand), DoThis(xterm)
+KeyToGrab(XF86XK_HomePage), WithModifier(None), WithAction(ExecCommand), DoThis(mozilla $WWW_HOME)
+KeyToGrab(XF86XK_Search), WithModifier(None), WithAction(ExecCommand), DoThis(mozilla http://www.google.org)
+KeyToGrab(Pause), WithModifier(Control+Mod1), WithAction(ExecCommand), DoThis(xlock)
+KeyToGrab(XF86XK_Mail), WithModifier(None), WithAction(ExecCommand), DoThis(mozilla -mail)
+KeyToGrab(Menu), WithModifier(None), WithAction(NudgeDown)</span><span style="font-family: fixed; font-size: small;">
+<br /></span></pre><pre style="font-size: small;"><span style="font-family: fixed;"><span><!--more--></span>
+</span><a name="bbpager" style="font-family: fixed;"><b>~/.bbtools/bbpager.bb</b></a><span style="font-family: fixed;"> :
+</span><span style="font-family: courier;">!************************************************************
+!**  pager.bb: Style file for bbpager when using Blackbox  **
+!************************************************************
+
+! ** auto reconfigure when config-file has changed **
+bbpager.autoConfig: True
+! ** number of seconds between checks **
+bbpager.autoConfig.checkTimeout: 15
+
+!** position of bbpager window **
+bbpager.position: +1171+991
+
+!** width and height of the pagers model of the desktop windows **
+bbpager.desktop.width: 73
+bbpager.desktop.height: 55
+
+!** define the number of columns, the number of row will grow as
+!** desktops are added (vertical orientation)
+!bbpager.columns: 1
+
+!** define the number of rows, the number of columns will grow as
+!** desktops are added (horizontal orientation)
+bbpager.rows: 1
+
+!** bbpager on top of other windows **
+bbpager.raised: False
+
+!** set the window docus style none, border or texture
+bbpager.window.focusStyle: texture
+
+!**define focused desktop style none, border or texture
+!bbpager.desktop.focusStyle: border
+!** focused desktop
+!bbpager.desktop.focus: Raised Gradient Vertical Bevel1
+!bbpager.desktop.focus.color: darkslategrey
+!bbpager.desktop.focus.colorTo: slategrey
+
+!** change mouse button action,
+!** button 1 = left mouse button, 2 middle, 3 right etc.
+!** you can define mutiple functions to a mouse button, like raise &amp; focus
+bbpager.desktopChangeButton: 1
+bbpager.windowMoveButton: 1
+bbpager.windowFocusButton: 1
+bbpager.windowRaiseButton: 1
+</span><span style="font-family: fixed;">
+<span><!--more--></span>
+</span><a name="style" style="font-family: fixed;"><b>~/.bbtools/style.bb</b></a><span style="font-family: fixed;"> :
+</span><span style="font-family: courier;">! Title:	cthulhain-modifié
+! Comment:	cthulain modifié pour le fond d'écran
+
+! ***** toolbar *****
+toolbar:				raised gradient vertical
+     toolbar.color:			#585858
+     toolbar.colorTo:			#0f1319
+
+toolbar.label:				parentrelative
+     toolbar.label.textColor:		#cccccc
+
+toolbar.windowLabel:            	sunken gradient crossdiagonal
+     toolbar.windowLabel.color:		#151a22
+     toolbar.windowLabel.colorTo:	#7a8290
+     toolbar.windowLabel.textColor:	#ffffff
+
+toolbar.clock:				parentrelative
+     toolbar.clock.textColor:		#cccccc
+
+toolbar.button:				parentrelative
+     toolbar.button.picColor:		#cccccc
+
+toolbar.button.pressed:			flat gradient vertical
+     toolbar.button.pressed.color:	#0f1319
+     toolbar.button.pressed.colorTo:	#7a8290
+
+
+! ***** menu *****
+menu.title:				raised gradient crossdiagonal
+     menu.title.color:			#151a22
+     menu.title.colorTo:		#7a8290
+     menu.title.textColor:		#ffffff
+
+menu.frame:				sunken gradient crossdiagonal
+     menu.frame.color:			#0f1319
+     menu.frame.colorTo:		gray40
+     menu.frame.textColor:		#cccccc
+
+menu.hilite:				sunken gradient crossdiagonal
+     menu.hilite.color:			#151a22
+     menu.hilite.colorTo:		#7a8290
+     menu.hilite.textColor:		#ffffff
+
+menu.bullet:				triangle
+     menu.bullet.position:		right
+
+
+! ***** window focused *****
+window.title.focus:			raised gradient diagonal
+     window.title.focus.color:		gray40
+     window.title.focus.colorTo:	#0f1319
+
+window.label.focus:			sunken gradient crossdiagonal
+     window.label.focus.color:		#151a22
+     window.label.focus.colorTo:	#7a8290
+     window.label.focus.textColor:	gray90
+
+window.button.focus:			parentrelative
+     window.button.focus.picColor:	#cccccc
+
+window.button.pressed:			flat gradient vertical
+     window.button.pressed.color:	#0f1319
+     window.button.pressed.colorTo:	#7a8290
+
+window.handle.focus:			raised gradient diagonal
+     window.handle.focus.color:		gray50
+     window.handle.focus.colorTo:	#0f1319
+
+window.grip.focus:			raised gradient diagonal
+     window.grip.focus.color:		#7a8290
+     window.grip.focus.colorTo:		#151a22
+
+window.frame.focusColor:		#858585
+window.frame.focus.color:		#858585
+
+
+! ***** window unfocused *****
+window.title.unfocus:			raised gradient diagonal
+     window.title.unfocus.color:	gray40
+     window.title.unfocus.colorTo:	#0f1319
+
+window.label.unfocus:			parentrelative
+     window.label.unfocus.textColor:	#808080
+
+window.button.unfocus:			parentrelative
+     window.button.unfocus.picColor:	#727272
+
+window.handle.unfocus:			raised gradient diagonal
+     window.handle.unfocus.color:	gray50
+     window.handle.unfocus.colorTo: 	#0f1319
+
+window.grip.unfocus:			raised gradient diagonal
+     window.grip.unfocus.color:		gray50
+     window.grip.unfocus.colorTo:	#0f1319
+
+window.frame.unfocusColor:		#5e6166
+window.frame.unfocus.color:		#5e6166
+
+
+! ***** fonts *****
+*.font:					-*-lucida-medium-r-*-*-*-100-*-*-*-*-*
+    toolbar.justify:			center
+    window.justify:			right
+    menu.title.justify:			center
+    menu.frame.justify:			right
+
+! ***** the rest *****
+borderColor:				#202020
+borderWidth:				1
+bevelWidth:				2
+handleWidth:				4
+frameWidth:				0
+
+! Set my color
+!rootCommand:				bsetbg -solid "#3a404b"
+rootCommand:				xsetroot -solid steelblue4
+
+! ***** bbpager *****
+bbpager.frame:				sunken gradient crossdiagonal
+    bbpager.frame.color:		#151a22
+    bbpager.frame.colorTo:		#7a8290
+
+bbpager.desktop:			parentrelative
+
+bbpager.desktop.focus:		 	flat gradient vertical
+    bbpager.desktop.focus.color: 	#0f1319
+    bbpager.desktop.focus.colorTo: 	gray40
+
+bbpager.window:				raised gradient vertical
+    bbpager.window.color:		gray40
+    bbpager.window.colorTo:		#0f1319
+
+bbpager.window.focus:			raised gradient crossdiagonal
+    bbpager.window.focus.color:		#151a22
+    bbpager.window.focus.colorTo:	#7a8290
+
+bbpager.desktop.focusStyle:		border
+bbpager.active.window.borderColor:	#202020
+bbpager.inactive.window.borderColor:	#202020
+bbpager.active.desktop.borderColor:	#0f1319</span><span style="font-family: fixed;">
+
+
+</span></pre><hr style="font-size: small;" /><a name="keyboard" style="font-size: small;"><h3 style="text-align: left;">Point particulier sur la config Linux du "Logitech Cordless Desktop"</h3></a><span style="background-color: white; font-size: small;"></span><img align="right" src="http://kaourintinn.free.fr/config-bb/kbd2.jpg" style="font-size: small;" /><p style="font-size: small;">Beaucoup des touches "multimédia" de ce clavier n'ayant même pas de keysym définies, mais réagissant dans&nbsp;<code style="font-family: fixed;">xev</code>, voici la manip que j'ai trouvé pour l'utiliser au mieux:</p><p style="font-size: small;"></p><ol style="font-size: small;"><p></p><li>Les KEYSYM existantes pour les touches&nbsp;<i>non usuelles</i>&nbsp;sont déjà définies dans ces deux fichiers:<pre style="font-family: fixed;"> /usr/X11R6/lib/X11/XKeysymDB        
+ /usr/X11R6/include/X11/XF86keysym.h</pre>Ne m'en demandez pas beaucoup plus la dessus, ça semble assez compliqué: en gros, les programmes feraient appel au premier (on peux peut-être utiliser un autre ficher, en définissant&nbsp;<code style="font-family: fixed;">$KEYSYMDB</code>&nbsp;semblerait-il ? ), et le serveur X au second.<br />Attention à faire coincider les noms dans&nbsp;<code style="font-family: fixed;">XKeysymDB</code>&nbsp;avec les définitions de&nbsp;<code style="font-family: fixed;">XF86keysym.h</code>&nbsp;! (ça ne marcherait pas sinon).<p></p></li><li>Les keycodes des touches à définir ont étés préalablement trouvés grâce à&nbsp;<code style="font-family: fixed;">xev</code>. On leurs alloue donc les keysym relevés en (1), avec la commande<br /><code style="font-family: fixed;">xmodmap -e 'keycode XXX = KEYSYM'</code><br />ou bien en regroupant ces définitions dans un fichier que l'on appelle avec xmodmap (dans mon cas, cf&nbsp;.xmodmaprc, appelé par&nbsp;<code style="font-family: fixed;">xmodmap</code>&nbsp;dans&nbsp;<a href="http://kaourintinn.free.fr/config-bb/screen.php#xinitrc">.xinitrc</a>).<p></p></li><li>Finalement on peut configurer&nbsp;<cite>bbkeys</cite>&nbsp;qui utilise les keysym pour la gestion des raccourcis ( cf.&nbsp;.bbkeysrc&nbsp;)</li></ol><span style="background-color: white; font-size: small;">Et voilà, le tour est joué !!</span><p style="font-size: small;"><b>Remarque:</b>&nbsp;Il reste par contre toujours quelques touches ("user", "Verr. F", "Messenger/SMS", "Caméra Web", "iTouch", et "Achats" sur la version française ) pour lesquelles il m'a été impossible de faire quoi que ce soit... si vous trouvez comment les configurer comme on veux, ecrivez moi pour me dire comment vous l'avez fait !<br />De plus, si vous trouvez comment associer à la touche windauz "Menu" le menu du bouton 3, cela m'intéresse aussi...</p><p style="font-size: small;"></p><hr style="font-size: small;" /><a name="TheEnd" style="font-size: small;"><h3>Commentaires</h3></a><span style="background-color: white; font-size: small;"></span><p style="font-size: small;">Après avoir utilisé&nbsp;<cite>9wm</cite>&nbsp;pendant longtemps, pour changer un peu, et comme certaines subtilités me manquaient, je suis passé à&nbsp;<cite>Blackbox</cite>, dont voici donc ma configuration (26 janvier 2003).</p><p style="font-size: small;">Merci à Derek C. (<a href="http://www.nosleep.ca/screenshots.html" target="_blank">www.nosleep.ca</a>) qui m'a vraiment aidé sur quelques points de config, et dont les réponses furent instructives.</p>
+{% endraw %}
