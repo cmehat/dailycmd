@@ -1,0 +1,45 @@
+# --- Site identity (edit these) ---------------------------------------------
+title: dailycmd
+tagline: "Real command-line tips from production infrastructure."
+description: >-
+  One command, one war story at a time — notes from the trenches of
+  Kubernetes, observability and infrastructure automation.
+author:
+  name: Corentin
+  # email: you@oyatrino.com
+
+# --- URLs --------------------------------------------------------------------
+# Canonical host. Subdomain => served at the root, so baseurl stays empty.
+url: "https://blog.oyatrino.com"
+baseurl: ""
+
+# Keep Blogger-style permalinks (/YYYY/MM/slug.html). The converter also writes
+# an explicit `permalink:` per post when it can read the original Blogger URL,
+# which overrides this global pattern for exact fidelity.
+permalink: /:year/:month/:title.html
+
+# --- Theme + plugins (all on the GitHub Pages allow-list) --------------------
+theme: minima
+minima:
+  skin: dark            # classic | dark | solarized — your call
+  social_links: []
+
+plugins:
+  - jekyll-feed         # /feed.xml (RSS)
+  - jekyll-seo-tag      # <meta> + Open Graph
+  - jekyll-sitemap      # /sitemap.xml
+
+# --- Navigation --------------------------------------------------------------
+header_pages:
+  - archive.html
+  - tags.html
+  - about.md
+
+# --- Build hygiene -----------------------------------------------------------
+timezone: America/Toronto
+exclude:
+  - tools/
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/

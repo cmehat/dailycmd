@@ -1,0 +1,26 @@
+{%- comment -%}
+  Labels sorted by frequency (descending). Pure Liquid, no plugins.
+  Params:
+    title  - heading text; pass "" to omit the heading (e.g. inside a <details>)
+    limit  - max number of labels to show (default: all)
+  Sort trick: counts are padded with +100000 so a lexical sort == numeric sort,
+  then reversed. Records use @@ / || separators (safe: no label contains them).
+{%- endcomment -%}
+{%- assign _lim = include.limit | default: 99999 -%}
+{%- assign _title = include.title | default: "Labels by frequency" -%}
+<div class="widget widget-tags-freq">
+  {%- if _title != "" -%}<h3 class="widget-title">{{ _title }}</h3>{%- endif -%}
+  {%- capture _tf -%}{%- for tag in site.tags -%}{{ tag[1].size | plus: 100000 }}@@{{ tag[0] }}@@{{ tag[1].size }}||{%- endfor -%}{%- endcapture -%}
+  {%- assign _recs = _tf | split: "||" | sort | reverse -%}
+  <ul class="tag-list">
+    {%- assign _n = 0 -%}
+    {%- for _r in _recs -%}
+      {%- assign _f = _r | split: "@@" -%}
+      {%- if _f[1] and _n < _lim -%}
+        <li><a href="{{ '/tags/' | relative_url }}#{{ _f[1] | slugify }}">{{ _f[1] }}</a> <span class="count">{{ _f[2] }}</span></li>
+        {%- assign _n = _n | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+  {%- assign _ntags = site.tags | size -%}{%- if _ntags > _lim -%}<p class="widget-more"><a href="{{ '/tags/' | relative_url }}">all {{ _ntags }} labels &rarr;</a></p>{%- endif -%}
+</div>

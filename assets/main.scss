@@ -1,0 +1,65 @@
+---
+# Front matter (these two dashes) is required so Jekyll compiles this SCSS
+# and the @import below pulls in the minima theme styles.
+---
+@import "minima";
+
+/* ===== Home: two-column layout with sidebar ===== */
+.home-with-sidebar {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+.home-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.home-sidebar {
+  flex: 0 0 250px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+@media (max-width: 800px) {
+  .home-with-sidebar { display: block; }
+  .home-sidebar { margin-top: 2.5rem; }
+}
+
+/* ===== Widgets (shared) ===== */
+.widget { margin-bottom: 1.75rem; }
+.widget-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+}
+.widget .count {
+  opacity: 0.55;
+  font-size: 0.8em;
+  font-weight: 400;
+}
+.tag-list { list-style: none; margin: 0; padding: 0; }
+.tag-list li { margin: 0.12rem 0; }
+
+/* native fold triangles */
+summary { cursor: pointer; }
+summary:focus { outline: none; }
+details.widget > summary.widget-title { list-style: revert; } /* keep a marker */
+
+/* ===== Archive tree ===== */
+.widget-archive details > summary { padding: 0.12rem 0; }
+.widget-archive .arc-year > summary { font-weight: 600; }
+.widget-archive .arc-month { margin-left: 0.9rem; }
+.widget-archive .arc-month > summary { font-weight: 500; }
+.widget-archive .arc-posts {
+  list-style: none;
+  margin: 0.15rem 0 0.5rem 1.1rem;
+  padding: 0;
+}
+.widget-archive .arc-posts li { margin: 0.2rem 0; }
+
+/* ===== Tags page ===== */
+.tag-heading {
+  margin-top: 1.75rem;
+  scroll-margin-top: 1rem;
+}

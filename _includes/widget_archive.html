@@ -1,0 +1,30 @@
+{%- comment -%}
+  Foldable archive: year > month > posts, newest first. Pure Liquid + native
+  <details>/<summary> (no JavaScript). site.posts is already reverse-chronological,
+  and group_by_exp preserves that order, so years and months come out descending.
+  Params:
+    title     - heading text; pass "" to omit.
+    open_years- how many of the most recent years to expand by default (default 1)
+{%- endcomment -%}
+{%- assign _title = include.title | default: "Archive" -%}
+{%- assign _open = include.open_years | default: 1 -%}
+<div class="widget widget-archive">
+  {%- if _title != "" -%}<h3 class="widget-title">{{ _title }}</h3>{%- endif -%}
+  {%- assign _years = site.posts | group_by_exp: "p", "p.date | date: '%Y'" -%}
+  {%- for y in _years -%}
+    <details class="arc-year"{% if forloop.index <= _open %} open{% endif %}>
+      <summary>{{ y.name }} <span class="count">{{ y.items.size }}</span></summary>
+      {%- assign _months = y.items | group_by_exp: "p", "p.date | date: '%m'" -%}
+      {%- for m in _months -%}
+        <details class="arc-month">
+          <summary>{{ m.items.first.date | date: '%B' }} <span class="count">{{ m.items.size }}</span></summary>
+          <ul class="arc-posts">
+            {%- for post in m.items -%}
+              <li><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </details>
+      {%- endfor -%}
+    </details>
+  {%- endfor -%}
+</div>

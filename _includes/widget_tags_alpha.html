@@ -1,0 +1,15 @@
+{%- comment -%}
+  Labels sorted alphabetically. Pure Liquid.
+  Params:
+    title - heading text; pass "" to omit the heading.
+{%- endcomment -%}
+{%- assign _title = include.title | default: "Labels A–Z" -%}
+<div class="widget widget-tags-alpha">
+  {%- if _title != "" -%}<h3 class="widget-title">{{ _title }}</h3>{%- endif -%}
+  {%- assign _tags = site.tags | sort -%}
+  <ul class="tag-list">
+    {%- for tag in _tags -%}
+      <li><a href="{{ '/tags/' | relative_url }}#{{ tag[0] | slugify }}">{{ tag[0] }}</a> <span class="count">{{ tag[1].size }}</span></li>
+    {%- endfor -%}
+  </ul>
+</div>
