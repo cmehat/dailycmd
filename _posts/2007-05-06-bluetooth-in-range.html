@@ -1,0 +1,26 @@
+---
+layout: post
+title: "bluetooth in range"
+date: 2007-05-06 10:48:00 +0000
+permalink: /2007/05/bluetooth-in-range.html
+tags: ["cmdline", "bluetooth", "linux"]
+author: "cm"
+---
+{% raw %}
+Pour lister les périphériques bluetooth détectés dans le voisinage, plusieurs solutions  :
+<ul><li><span style="font-weight: bold;">hcitool scan</span> <blockquote># hcitool scan
+Scanning ...
+        00:xx:xx:xx:xx:xx       Phone
+</blockquote></li><li><span style="font-weight: bold;">hcitool inq </span><blockquote># hcitool inq
+Inquiring ...
+        00:xx:xx:xx:xx:XX       clock offset: 0x1yyy    class: 0x5zzzzz</blockquote></li></ul>
+
+
+
+
+<a href="http://wiki.ubuntu-fr.org/tutoriel/bluetooth-edgy">http://wiki.ubuntu-fr.org/tutoriel/bluetooth-edgy</a>
+<a href="http://doc.ubuntu-fr.org/materiel/bluetooth">http://doc.ubuntu-fr.org/materiel/bluetooth</a>
+
+
+<a href="http://multisync.sourceforge.net/">http://multisync.sourceforge.net/</a>
+{% endraw %}
