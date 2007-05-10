@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Phone issue wammu bluetooth synchro"
+date: 2007-05-10 11:25:00 +0000
+permalink: /2007/05/bon.html
+tags: ["wammu", "bluetooth", "phone", "linux", "sync"]
+author: "cm"
+---
+{% raw %}
+Bon...
+je vais maintenant passer à une phase de test "autre", mais j'ai enfin réussi a faire communiquer <span style="font-style: italic;">wammu</span> et mon téléphone mobile en bluetooth.&nbsp;<div>&nbsp;Je pense qu'il est nécessaire de lancer un service que je n'ai pas identifié encore, mais qui est lancé au démérrage, automatiquement.&nbsp;</div><div><br /></div><div>&nbsp;Une hypothèse envisagée sur ce problème de "pairing" est la synchro de plusieurs services, dont le bluetooth.&nbsp;</div><div>Et peut-être <i>dbus</i> (?).&nbsp;</div><div><br /></div><div>En tout cas, le problème se situait du côté de l'échange de clef, et du lancement du <b>passkey-agent</b> et de l'applet
+<span style="font-style: italic;">bluetooth-applet </span>permettant d'indiquer la clef qui doit être échangée entre les deux devices connectés en bluetooth (le laptop et le mobile en l'occurence).</div>
+{% endraw %}
