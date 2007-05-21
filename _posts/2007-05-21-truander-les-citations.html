@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Truander les citations..."
+date: 2007-05-21 13:46:00 +0000
+permalink: /2007/05/truander-les-citations.html
+tags: ["latex"]
+author: "cm"
+---
+{% raw %}
+Truander les citations<div><br /></div><div>c'est a dire faire apparaître toutes les citations presentes dans votre bib file, qu'elles soient utilisées ou non.</div><div><br /><pre>grep -e @[A-Za-z]*{ biblio.bib | awk -F '{' '{print $2}' \
+| awk -F ',' '{print "\\nocite{" $1"}" }'</pre>
+
+Il est possible qu'il faille enlever la première référence.
+
+Un conseil : ne pas utiliser l'option "backpageref" du package hyperref si l'on ne souhaite pas indiquer que certains papiers référencés ne sont en fait pas cités.</div>
+{% endraw %}
