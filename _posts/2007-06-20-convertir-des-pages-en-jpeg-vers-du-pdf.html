@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Convertir des pages en jpeg vers du pdf"
+date: 2007-06-20 11:21:00 +0000
+permalink: /2007/06/convertir-des-pages-en-jpeg-vers-du-pdf.html
+author: "cm"
+---
+{% raw %}
+(Utile en particulier pour les annales)<br /><br /><br />Voici comment passer d'un ensemble de fichiers en JPG a un unique fichier pdf avec convert (l'outil a tout faire de la lib 'imagemagick' )<br /><br /><pre>$ for i in P116080*.JPG ; do convert "$i" `basename $i JPG`pdf; done<br />$ for i in P116080*.pdf ; do convert "$i" `basename $i pdf`ps; done<br /></pre><br /><br />Puis :<br /><ul><br /><li>soit :<br/><pre>gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf -f *.ps</pre></li><br /><br /><li>soit <br/><pre><br />$ psmerge P116080*.ps > test.ps<br />$ ps2pdf test.ps<br /></pre></li><br /></ul><br />Evidement, il faut adapter les noms de fichiers. Par contre il ne faut pas passer directement du JPG au PS, cela ne passe pas (sans msg d'erreur, mais cela ne convertira qu'un morceau de la page).<br /><br /><br />Par exemple : <br /><pre><br />for i in exam_* ; do convert "$i" `basename $i jpeg`pdf; done ; for i in *.pdf ; do convert "$i" `basename $i pdf`ps; done ; gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=output.pdf -f *.ps<br /></pre>
+{% endraw %}
