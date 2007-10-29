@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Supprimer les paquets dont plus rien ne"
+date: 2007-10-29 20:23:00 +0000
+permalink: /2007/10/supprimer-les-paquets-dont-plus-rien-ne.html
+author: "cm"
+---
+{% raw %}
+Supprimer les paquets dont plus rien ne dépend...<br />C'est pratique, en particulier quand il faut faire de la place.<br /><br />Le programme deborphan permet ainsi de détecter (sous les systèmes "debian-like") quels sont les paquets .deb "orphelins", et il ne reste plus qu'a les passer en paramètres de votre gestionnaire de paquets preféré... ;-)<br /><br />Par exemple : <br /><br />aptitude purge `deborphan --guess-all`
+{% endraw %}
