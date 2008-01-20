@@ -1,0 +1,10 @@
+---
+layout: post
+title: "rm or ram (realplayer formats) to audible..."
+date: 2008-01-20 13:26:00 +0000
+permalink: /2008/01/rm-or-ram-realplayer-formats-to-audible.html
+author: "cm"
+---
+{% raw %}
+<pre><br />mplayer -playlist playlist.rm -ao pcm -ao pcm:file=tmp.wav -vc dummy -vo null <br /></pre><br /><br />for example, for Radio-France podcasts, it works very well :<br /><br /><ol><br /><li>save the given <i>.rm</i> file on your computer</li><br /><li>give the file as playlist to mplayer as proposed here</li><br /></ol>
+{% endraw %}
