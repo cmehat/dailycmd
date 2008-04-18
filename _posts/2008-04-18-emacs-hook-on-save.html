@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Emacs \"hook on save\""
+date: 2008-04-18 16:03:00 +0000
+permalink: /2008/04/emacs-hook-on-save.html
+author: "cm"
+---
+{% raw %}
+Pour exécuter automatiquement une commande shell lors d'une sauvegarde dans emacs :<br /><br /><br /><br /><pre><br /><br /> (add-hook 'after-save-hook (lambda () (shell-command "cd /home/web/; make sync -f /home/Makefile")))<br /><br /></pre><br /><br /><br /><ul><br /><b>attention : </b><br /><br /><li> Cela s'exécute à l'emplacement du fichier (d'où le "cd ...")</li><br /><li> Cela s'applique pour TOUT les buffers ouverts </li><br /><br /></ul>
+{% endraw %}
