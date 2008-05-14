@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Ubuntu 8.04 Hardy Heron"
+date: 2008-05-14 13:24:00 +0000
+permalink: /2008/05/ubuntu-804-hardy-heron.html
+author: "cm"
+---
+{% raw %}
+Après avoir fait l'upgrade vers la 8.04, quelques bugs...<br /><br /><ul><br /><li>Le son ne marche plus dans les lecteurs (xine, totem, mplayer, ...), mais marche toujours avec Flash.<br /><br /><b> Solution trouvée : </b><br />System > preferences > sound --> tout mettre en Alsa (aucun paramètre "par défaut"). <br />Puis re-configurer les applis pour leur spécifier d'utiliser ALSA et non "PulseAudio" (qui est maintenant par défaut le système audio sous Ubuntu)<br /></li><br /><br /><li><span style="font-style: italic;">alltray</span> Utiliser Alltray avec thunderbird a pour conséquence de mettre un workload de 70% sur le proc (principalement utilisé par Xgl).<br /><br /><b> Solution temporaire : </b> ne pas utiliser alltray...<br /></li><br /><br /><li>Plus d'ouverture directe des liens entre thunderbird et mozilla.<br /><br /><b> Solution trouvée : </b> Dans <span style="font-style: italic;">System > Preferences > Prefered Applications</span> mettre (ou remettre) "firefox" comme navigateur par défaut, et "thunderbird" comme client e-mail par défaut.<br /></li></ul>
+{% endraw %}
