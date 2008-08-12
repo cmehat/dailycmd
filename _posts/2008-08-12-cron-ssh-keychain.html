@@ -1,0 +1,11 @@
+---
+layout: post
+title: "cron + ssh + keychain"
+date: 2008-08-12 16:46:00 +0000
+permalink: /2008/08/cron-ssh-keychain.html
+tags: ["cron", "ssh", "keychain", "linux"]
+author: "cm"
+---
+{% raw %}
+<h2>Keychain :</h2><br /><br />dans <span style="font-weight:bold;">.bash_profile</span><br /><br /><pre><br />#!/bin/bash<br />#example ~/.bash_profile file<br />/usr/bin/keychain <span style="font-style:italic;">private keys</span><br />#redirect ~/.ssh-agent output to /dev/null to zap the annoying<br />#"Agent PID" message<br />source ~/.ssh-agent > /dev/null<br /></pre><br /><br /><h2>cron :</h2><br />crontab -e :<br /><pre><br />42 4 * * * time /home/cm/usr/bin/script_sauvegarde.sh<br /></pre><br /><br /><br /><h2>script_sauvegarde.sh</h2><br /><br /><pre><br /><br />#!/bin/bash<br /><br />keychain $HOME/<span style="font-style:italic;">SSH_PRIV_KEY</span><br />source /home/cm/.keychain/<span style="font-style:italic;">MACHINE-NAME</span>-sh<br /><br />rsync -e ssh --exclude-from=<span style="font-style:italic;">RSYNC_EXCLUDE_FILE</span>  -Cavz <span style="font-style:italic;">CLIENT</span>/ <span style="font-style:italic;">SERVER</span>:<span style="font-style:italic;">PATH_ON_SERVER</span>/<br /><br /></pre>
+{% endraw %}
