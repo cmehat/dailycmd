@@ -1,0 +1,11 @@
+---
+layout: post
+title: "mount iso Ubuntu and NetBSD"
+date: 2008-08-29 13:05:00 +0000
+permalink: /2008/08/mount-iso-ubuntu-and-netbsd.html
+tags: ["iso", "netbsd", "mount", "ubuntu"]
+author: "cm"
+---
+{% raw %}
+<span style="font-weight:bold;">Ubuntu way</span><br /><br /><pre><br />$ sudo mkdir /media/iso<br />$ sudo mount -t iso9660 netbsd/i386cd-4.0.iso /media/iso -o loop<br />$ ls -la /media/iso/<br /></pre><br /><br /><span style="font-weight:bold;">NetBSD way</span><br /><br /><pre><br />$ su<br /># vnconfig -c vnd0 /home/mark/i386cd-3.0.1.iso<br /># mount_cd9660 /dev/vnd0d /image/<br /></pre><br />(from : http://wiki.netbsd.se/How_to_install_NetBSD_from_an_USB_Memory_Stick )
+{% endraw %}
