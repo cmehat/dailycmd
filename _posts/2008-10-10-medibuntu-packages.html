@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Medibuntu packages"
+date: 2008-10-10 11:49:00 +0000
+permalink: /2008/10/medibuntu-packages.html
+tags: ["deb", "media", "ubuntu"]
+author: "cm"
+---
+{% raw %}
+<span style="font-style:italic;font-weight:bold;">From : <a href="www.medibuntu.org">Medibuntu</a></span><br /><blockquote>  Medibuntu (Multimedia, Entertainment & Distractions In Ubuntu) is a repository of packages that cannot be included into the Ubuntu distribution for legal reasons (copyright, license, patent, etc).<br /><br />Medibuntu is a packaging project dedicated to distributing software that cannot be included in Ubuntu for various reasons, related to geographical variations in legislation regarding intellectual property, security and other issues [...]</blockquote><br /><br /><br /><br /><span style="font-style:italic;font-weight:bold;">From : <a href="/ubuntuforums.org/showthread.php?t=766683">Ubuntu Forums : Comprehensive Multimedia & Video Howto </a></span><br /><pre><br />sudo wget http://www.medibuntu.org/sources.list.d/hardy.list -O /etc/apt/sources.list.d/medibuntu.list<br /><br />wget -q http://packages.medibuntu.org/medibuntu-key.gpg -O- | sudo apt-key add - && sudo apt-get update<br /></pre>
+{% endraw %}
