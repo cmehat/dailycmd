@@ -1,0 +1,11 @@
+---
+layout: post
+title: "non-root mount for external usb ext3 hard drive"
+date: 2008-10-27 10:27:00 +0000
+permalink: /2008/10/non-root-mount-for-external-usb-ext3.html
+tags: ["e2label", "mkfs.ext3", "ubuntu", "usb", "linux", "ext3", "mount", "uuid", "vol_id", "filesystem", "fdisk"]
+author: "cm"
+---
+{% raw %}
+J'ai récemment acquis un disque dur externe USB 2.5", que j'ai formaté en ext3.<br /><br />Mauvaise surprise à l'auto-détection, il est par défaut (contrairement aux clefs usb en FAT32) mis en lecture seule pour les utilisateurs lambdas, et uniquement en lecture-écriture pour root.<br /><br />Lors du formatage utilisation de : <br /><br /><pre><br />sudo fdisk /dev/sdb1<br />sudo mkfs.ext3 /dev/sdb1 <br />sudo e2label /dev/sdb1 {{snip label}}<br /></pre><br /><br /><br /><br />Pour modifier le mode de montage et mettre ça dans fstab, j'ai eu recours à la commande vol_id pour trouver les paramètres.<br /><br /><pre><br /># vol_id /dev/sdb1<br />ID_FS_USAGE=filesystem<br />ID_FS_TYPE=ext3<br />ID_FS_VERSION=1.0<br />ID_FS_UUID={{snip}}<br />ID_FS_UUID_ENC={{snip}}<br />ID_FS_LABEL={{snip label}}<br />ID_FS_LABEL_ENC={{snip}}<br />ID_FS_LABEL_SAFE={{snip}}<br /></pre><br /><br /><br />J'ajoute alors dans /etc/fstab la ligne suivante :<br /><pre><br />LABEL={{snip label}} /media/{{snip mount point}} ext3 user,auto 0 0<br /></pre><br /><br /><br />Ca à l'air de marcher comme il faut !!<br /><br /><br /><hr/><br /><pre><br /><b>VOL_ID(8)                           vol_id                           VOL_ID(8)</b><br /><br /><b>NAME</b><br />       vol_id - probe filesystem type and read label and uuid<br /><br /><b>SYNOPSIS</b><br />       vol_id [--export] [--type] [--label] [--label-raw] [--uuid]<br />              [--skip-raid] [--probe-all] [--help] [device]<br /><br /><b>DESCRIPTION</b><br />       vol_id is usually called from a udev rule, to provide udev with the<br />       filesystem type, the label and the uuid of a volume. It supports most<br />       of the common filesystem formats and detects various raid setups to<br />       prevent the recognition of raid members as a volume with a filesystem.<br /><br /></pre>
+{% endraw %}
