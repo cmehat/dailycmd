@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Ext2 attributes"
+date: 2008-11-03 11:53:00 +0000
+permalink: /2008/11/ext2-attributes.html
+tags: ["chattr", "ext3", "lsattr", "ext2"]
+author: "cm"
+---
+{% raw %}
+<p><br /><b>chattr</b>, <b>lsattr</b> : two commands that allow reading and modifying of <br />file attributes on an <i>ext2</i> filesystem.<br /></p><br /><br /><p><u>Example</u> :<br /><br /><pre><br /># chattr +i /etc/shadow<br /></pre><br /><br />This command will put the "i" attribute (file cannot be modified. This includes deletion or renaming).<br /><br />See 'man chattr' for detailed description on attributes.<br /><br /><hr/><br /><pre><br />CHATTR(1)                                                            CHATTR(1)<br /><br /><b>NAME</b><br />       chattr - change file attributes on a Linux second extended file system<br /><br /><b>SYNOPSIS</b><br />       chattr [ -RV ] [ -v version ] [ mode ] files...<br /><br /><b>DESCRIPTION</b><br />       chattr changes the file attributes on a Linux second extended file sys‐<br />       tem.<br /><br />       The format of a symbolic mode is +-=[ASacDdIijsTtu].<br /><br />       The operator ‘+’ causes the selected attributes  to  be  added  to  the<br />       existing  attributes  of  the files; ‘-’ causes them to be removed; and<br />       ‘=’ causes them to be the only attributes that the files have.<br /><br />       The letters ‘acdijsuADST’ select the  new  attributes  for  the  files:<br />       append only (a), compressed (c), no dump (d), immutable (i), data jour‐<br />       nalling (j), secure deletion (s), no tail-merging (t), undeletable (u),<br />       no  atime  updates  (A), synchronous directory updates (D), synchronous<br />       updates (S), and top of directory hierarchy (T).<br /></pre><br /><hr/><br /><pre><br />LSATTR(1)                                                            LSATTR(1)<br /><br /><b>NAME</b><br />       lsattr - list file attributes on a Linux second extended file system<br /><br /><b>SYNOPSIS</b><br />       lsattr [ -RVadv ] [ files...  ]<br /><br /><b>DESCRIPTION</b><br />       lsattr lists the file attributes on a second extended file system.  See<br />       chattr(1) for a description of the attributes and what they mean.<br /><br /><br /></pre>
+{% endraw %}
