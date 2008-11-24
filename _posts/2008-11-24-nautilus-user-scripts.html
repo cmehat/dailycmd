@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Nautilus user scripts"
+date: 2008-11-24 15:18:00 +0000
+permalink: /2008/11/nautilus-user-scripts.html
+tags: ["nautilus", "script", "gnome"]
+author: "cm"
+---
+{% raw %}
+Possibilité d'ajouter des scripts dans Nautilus (l'explorateur d'arborescence sous Gnome) :<br /><br />Les ajouter dans <br /><pre><br />$HOME/.gnome2/nautilus-scripts/<br /></pre><br /><br /><hr/><br /><br />Pour y acceder, après, c'est un menu <i>Scripts</i> (qui n'apparaît pas s'il n'y a rien dans le directory pré-cité), est présent lors du click droit sur la souris.<br /><br /><hr/><br /><br />Par exemple :<br />$ cat $HOME/.gnome2/nautilus-scripts/Open\ Terminal\ Here <br /><pre><br />#!/bin/bash<br /># From Chris Picton<br /># Replaces a Script by Martin Enlund<br /># Modified to work with spaces in path by Christophe Combelles<br /> <br /># This script either opens in the current directory,<br /># or in the selected directory<br /> <br />base="`echo $NAUTILUS_SCRIPT_CURRENT_URI | cut -d'/' -f3- | sed 's/%20/ /g'`"<br />if [ -z "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]; then<br />     dir="$base"<br />else<br />     while [ ! -z "$1" -a ! -d "$base/$1" ]; do shift; done<br />     dir="$base/$1"<br />fi<br /> <br />gnome-terminal --working-directory="$dir"<br /></pre><br /><br /><hr/><br /><br /><a href="http://g-scripts.sourceforge.net/">Quelques autres exemples ici.</a>
+{% endraw %}
