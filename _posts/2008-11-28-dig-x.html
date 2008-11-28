@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Dig -x ..."
+date: 2008-11-28 13:15:00 +0000
+permalink: /2008/11/dig-x.html
+author: "cm"
+---
+{% raw %}
+<pre><b><i>$</i> dig -x 69.69.69.69</b><br /><br />; <<>> DiG 9.4.2-P2 <<>> -x 69.69.69.69<br />;; global options:  printcmd<br />;; Got answer:<br />;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 17090<br />;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 2<br /><br />;; QUESTION SECTION:<br />;69.69.69.69.in-addr.arpa. IN PTR<br /><br />;; ANSWER SECTION:<br />69.69.69.69.in-addr.arpa. 86400 IN PTR <b>the-coolest-ip-on-the-net.com.</b><br /><br />;; AUTHORITY SECTION:<br />69.69.69.in-addr.arpa. 86400 IN NS dns1.utelfla.com.<br />69.69.69.in-addr.arpa. 86400 IN NS ns10.embarqservices.net.<br /><br />;; ADDITIONAL SECTION:<br />dns1.utelfla.com. 60003 IN A 138.210.81.3<br />ns10.embarqservices.net. 43433 IN A 205.160.188.2<br /><br />;; Query time: 338 msec<br />;; SERVER: 132.227.64.13#53(132.227.64.13)<br />;; WHEN: Fri Nov 28 14:17:51 2008<br />;; MSG SIZE  rcvd: 181<br /><br /></pre><br /><br />Par contre, <i>42.42.42.42</i> est décevante.<br /><br /><hr/><br />$man dig<br /><pre><br />DIG(1)                                                        BIND9                                                        DIG(1)<br /><br /><b>NAME</b><br />       dig - DNS lookup utility<br /><br /><b>SYNOPSIS</b><br />       dig [@server] [-b address] [-c class] [-f filename] [-k filename] [-p port#] [-q name] [-t type] [-x addr]<br />           [-y [hmac:]name:key] [-4] [-6] [name] [type] [class] [queryopt...]<br /><br />       dig [-h]<br /><br />       dig [global-queryopt...] [query...]<br /><br /><b>DESCRIPTION</b><br />       dig (domain information groper) is a flexible tool for interrogating DNS name servers. It performs DNS lookups and<br />       displays the answers that are returned from the name server(s) that were queried. Most DNS administrators use dig to<br />       troubleshoot DNS problems because of its flexibility, ease of use and clarity of output. Other lookup tools tend to have<br />       less functionality than dig.<br />[...]<br /></pre>
+{% endraw %}
