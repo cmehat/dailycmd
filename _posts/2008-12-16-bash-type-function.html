@@ -1,0 +1,11 @@
+---
+layout: post
+title: "bash 'type' function"
+date: 2008-12-16 15:13:00 +0000
+permalink: /2008/12/bash-type-function.html
+tags: ["bash"]
+author: "cm"
+---
+{% raw %}
+$ type echo<br />echo is a shell builtin<br /><br />$ type toto<br />bash: type: toto: not found<br /><br />$ type which<br />which is /usr/bin/which<br /><br /><br /><pre><br /><b>NAME</b><br />       type - write a description of command type<br /><br /><b>SYNOPSIS</b><br />       type name...<br /><br /><b>DESCRIPTION</b><br />       The  type utility shall indicate how each argument would be interpreted<br />       if used as a command name.<br /></pre>
+{% endraw %}
