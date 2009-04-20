@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Aptitude, apt & cie. (Mainly for Debian, but Ubuntu works on the same way)"
+date: 2009-04-20 12:16:00 +0000
+permalink: /2009/04/aptitude-apt-cie-mainly-for-debian-but.html
+tags: ["deb", "package", "apt", "install", "ubuntu", "debian", "aptitude"]
+author: "cm"
+---
+{% raw %}
+Ce post tourne autour des commandes apt, aptitude et dpkg<br /><h2>Installer une selection de paquets :</h2><br />D'un côté :<br /><pre>$ dpkg --get-selections > liste-pkg</pre><br />De l'autre côté :<br /><pre># dpkg --set-selections < liste-pkg<br /># apt-get dselect-upgrade</pre><br /><br /><h2>Ressources non officielles de paquets pour Debian </h2><br /><ul><li><a href="apt-get.org">apt-get.org</a></li><br /><li><a href="mentors.debian.net">mentors.debian.net</a></li><br /><li><a href="backports.org">backports.org</a></li></ul><br /><br /><br /><h2>Paquets installés automatiquement (jeux de dépendance)</h2><br /><pre>$ aptitude why python-notify</pre><br /><br /><h2>Update automatique sans interaction humaine </h2><br /><br /><pre>export DEBIAN_FRONTEND=noninteractive<br />yes '' | apt-get -y -o Dpkg::Options::="--force-confdef" -o<br />X Dpkg::Options::="--force-confold" dist-upgrade</pre><br /><br />(originaire de : http://www.ouaza.com/livre/admin-debian/<br />site web du livre "Cahier de l'admin, sur GNU/Linux «Lenny» " )<br /><br />Utile également :<br />https://help.ubuntu.com/community/Repositories/CommandLine
+{% endraw %}
