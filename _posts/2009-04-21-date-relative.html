@@ -1,0 +1,11 @@
+---
+layout: post
+title: "date relative"
+date: 2009-04-21 08:09:00 +0000
+permalink: /2009/04/date-relative.html
+tags: ["date", "cmdline", "linux"]
+author: "cm"
+---
+{% raw %}
+Utilisation de la commande <i>date</i> pour calculer une date relative en nombre d'heures à partir d'une autre date.<br /><br /><ol><li>1ère étape : entrer la date initiale avec <i>date</i><br /><pre>$ date --date=&#39;2009-03-23 12:00&#39</pre></li><br /><br /><li>2ème étape : utiliser le résultat obtenu comme base pour y ajouter un décalage en nombre d'heures, soit donc :<br /><pre>$ date --date=&quot;$(date --date=&#39;2009-03-23 12:00&#39;) +1001 hours&quot;<br />Mon May  4 06:00:00 CEST 2009</pre><br /></li><br /><br /></ol>
+{% endraw %}
