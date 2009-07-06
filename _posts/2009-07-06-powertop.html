@@ -1,0 +1,11 @@
+---
+layout: post
+title: "PowerTOP"
+date: 2009-07-06 09:40:00 +0000
+permalink: /2009/07/powertop.html
+tags: ["proc", "green", "power", "battery", "laptop", "intel", "energy"]
+author: "cm"
+---
+{% raw %}
+PowerTOP présente une fenêtre ressemblant à ce que rend la commande "top", mais en fonction de l'utilisation des ressources en terme d'énergie. <br />Il tourne pour les processeurs Intel, et propose même des suggestions sur comment diminuer la consommation (dé-activation de certains modules, augmentation du temps de certaines vérification faites trop souvent, etc.)<br /><br /><span style="font-weight:bold;">site web : <br /></span><a href="http://www.linuxpowertop.org">http://www.linuxpowertop.org</a><br /><br /><br /><span style="font-weight:bold;">Message d'erreur</span><br /><br />J'avais un message m'indiquant :<br /><span style="font-style:italic;">"no ACPI power usage estimate available"</span><br /><br />Bien que n'empèchant pas powertop de tourner, il a pour effet de ne pas m'indiquer quelle est la consommation à un instant donné, ce que powertop sait faire (vu tourner lors d'une démo).<br /><br />Trouvé un début de solution ici : <a href="http://www.smop.co.uk/mediawiki/index.php/Power_saving_on_Linux#Powertop">Smop.co.uk:Power Saving on Linux</a>. Il faut débrancher son portable de la source principale d'énergie. Malheureusement le changement n'est pas persistant, donc cette solution n'est pas parfaite.<br /><br /><br /><br /><hr/><br /><pre><br /><b>NAME</b><br />       powertop - program to analyze power consumption on Intel-based laptops<br /><br /><b>SYNOPSIS</b><br />       powertop<br /><br /><b>DESCRIPTION</b><br />       This manual page documents briefly the powertop commands.<br /><br />       powertop  is  a program that shows the power consumption on Intel-based<br />       laptops and makes suggestions on how to extend battery lifetime.<br />       The program is more fully described at http://www.linuxpowertop.org<br /></pre>
+{% endraw %}
