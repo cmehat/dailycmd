@@ -1,0 +1,11 @@
+---
+layout: post
+title: "mount iso image via loopback under NetBSD"
+date: 2009-10-14 15:52:00 +0000
+permalink: /2009/10/mount-iso-image-via-loopback-under.html
+tags: ["iso", "netbsd", "cdrom", "filesystem"]
+author: "cm"
+---
+{% raw %}
+<h2>Mounting</h2><br /><pre><br /># vnconfig vnd0 image.iso                      <br /># mount -t cd9660 /dev/vnd0a /mnt<br /></pre><br /><br /><h2>Unmounting</h2><br /><pre><br /># umount /mnt<br /># vnconfig -u vnd0<br /></pre><br /><br /><br /><a href="http://wiki.netbsd.se/How_to_mount_Iso_Images_via_Loopback">(Found here)</a>
+{% endraw %}
