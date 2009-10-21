@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Bash \"bind\" command for defining keyshortcuts"
+date: 2009-10-21 13:09:00 +0000
+permalink: /2009/10/bash-bind-command-for-defining.html
+tags: ["keyboard", "bash"]
+author: "cm"
+---
+{% raw %}
+<a href="http://www.geocities.com/h2428/petar/bash_bind.htm">http://www.geocities.com/h2428/petar/bash_bind.htm</a><br /><br />On y trouve entre autre :<br /><br /><pre><br /># Now map xterm's alternative keybindings to existing functionality<br /># Some are simple translations to correspontend M- combinations<br /># ctrl+left/right arrows:<br />bind '"\e\x5b\x31\x3b\x35\x44"':backward-word<br />bind '"\e\x5b\x31\x3b\x35\x43"':forward-word<br /># alt+b/f:<br />bind '"\xe2"':'"\M-b"'<br />bind '"\xe6"':'"\M-f"'<br /># atl+backspace:<br />bind '"\xff"':backward-kill-word<br /># alt+'.':<br />bind '"\xae"':yank-last-arg<br /># alt+k:<br />bind '"\xeb"':"\"\M-k\""<br /># alt+w:<br />bind '"\xf7"':'"\M-w"'<br /></pre>
+{% endraw %}
