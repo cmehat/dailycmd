@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Bash tricks \":\", la commande qui ne fait rien"
+date: 2009-12-15 14:43:00 +0000
+permalink: /2009/12/bash-tricks-la-commande-qui-ne-fait.html
+tags: ["shell bash", "bash", "script"]
+author: "cm"
+---
+{% raw %}
+En bash, la commande ":" ("column", ou "deux points") est une commande qui prend autant d'arguments que l'on veut mais qui ne fait rien.<br /><br />C'est en particulier pratique pour commenter dynamiquement du code. <br />Par exemple :<br /><br /><pre><br />#!/bin/bash<br />#DEBUG=echo<br />DEBUG=:<br /><br />if [ -f /tmp/toto ]; then<br /> $DEBUG "/tmp/toto existe"<br /> echo `date` >>/tmp/toto<br />else<br />  $DEBUG "/tmp/toto n'existe pas"<br />  echo "fichier cree a `date`" > /tmp/toto<br />  <br />fi<br /></pre><br /><br />Exem
+{% endraw %}
