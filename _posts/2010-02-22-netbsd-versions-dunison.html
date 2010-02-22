@@ -1,0 +1,10 @@
+---
+layout: post
+title: "NetBSD & versions d'Unison"
+date: 2010-02-22 18:53:00 +0000
+permalink: /2010/02/netbsd-versions-dunison.html
+author: "cm"
+---
+{% raw %}
+La version courante d&#39;Unison sur Ubuntu était la 2.27.57, alors que celle de l&#39;arborescence de <i>pkgsrc</i> pour Netbsd était la 2.32.<br>Les deux version ne sont pas compatibles.<br><br>En explorant les archives du CVS de pkgsrc (ici : <a href="http://cvsweb.se.netbsd.org/cgi-bin/bsdweb.cgi/pkgsrc/net/unison/?only_with_tag=pkgsrc-2009Q3">http://cvsweb.se.netbsd.org/cgi-bin/bsdweb.cgi/pkgsrc/net/unison/?only_with_tag=pkgsrc-2009Q3</a><br> et là : <a href="http://pkgsrc.se/branch=pkgsrc-2009Q3/net/unison">http://pkgsrc.se/branch=pkgsrc-2009Q3/net/unison</a> ) + quelques pointeurs sur freenode:#netbsd<br><br>Voici la suite de commandes que j&#39;ai <br><br><br> <b>pkg_delete unison-2.32.52<br></b><br><b>cd</b> /opt/<b>pkgsrc/net/unison</b> <br><b>cvs up -rpkgsrc-2009Q3 -dP</b><br><br><b>/usr/bin/make reinstall</b><br><b><br>cd directory &amp;&amp; cvs up -rpkgsrc-2009Q3 -dP<br></b><br> <br>Et fantastiquement, cela fonctionne maintenant à merveille :-)<br> 
+{% endraw %}
