@@ -1,0 +1,11 @@
+---
+layout: post
+title: "LaTeX et .bib (fichiers de bibliographie)"
+date: 2010-04-23 16:36:00 +0000
+permalink: /2010/04/latex-et-bib-fichiers-de-bibliographie.html
+tags: ["artocle", "latex", "biblio"]
+author: "cm"
+---
+{% raw %}
+<h2>Le code LaTeX à utiliser</h2><br /><h3>Dans l'entête :</h3><br /><br /><pre><br />% \usepackage{natbib} % pour changer l'affichage des citations<br />% \usepackage[fixlanguage]{babelbib} % biblio FR<br />% \selectbiblanguage{french} % biblio FR<br /></pre><br /><br /><h3>Là où l'on souhaite intégrer la bibliographie</h3><br /><br />Dans le document (note que comme d'hab en LaTeX tu n'as pas besoin de<br />mettre l'exention du fichier, en l'occurence tu auras typiquement<br />"fichier.bib" à la place de "bibtexfile"<br /><br /><pre><br />% \bibliographystyle{unsrt} % biblio style classique<br />% \bibliographystyle{babplain-lf} % Biblio FR<br />% \bibliography{bibtexfile} % Chemin vers la base de citations<br /></pre><br /><br />Un peu de doc (entre autre) :<br /><a href="http://www.ctan.org/tex-archive/macros/latex/contrib/natbib/">http://www.ctan.org/tex-archive/macros/latex/contrib/natbib/</a><br /><br /><br /><br /><h2>Logiciels pour gérer la biblio</h2><br /><br />Il y en a de nombreux dont un en java qui marche pas trop mal mais dont le nom m'échappe.<br /><br />J'utilise <b>pybliographer / pybliographic </b>, qui a le mérite de permettre l'édition native des .bib directement.
+{% endraw %}
