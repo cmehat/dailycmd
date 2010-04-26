@@ -1,0 +1,11 @@
+---
+layout: post
+title: "OpenOffice / oocalc : protect specific cells"
+date: 2010-04-26 15:09:00 +0000
+permalink: /2010/04/openoffice-oocalc-protect-specific.html
+tags: ["oocalc", "openoffice", "tableur"]
+author: "cm"
+---
+{% raw %}
+<span style="font-weight:bold;">The problem :</span><br /><br />I've got a calc sheet for calculating some grades. <br />Hence, after setting all the formulas (you may want to have a look at the SUMPRODUCT(notes*percent) function ;-) ), I want to actually enter the grades I gave.<br /><br />What I want to do is not to mess around with the cell containing formulas while I am entering data.<br /><br /><span style="font-weight:bold;">How to (un)-lock specific cells<br /></span><br /><br /><ol><br /><li>Select the cell you want to still modify.</li><br /><li>right-click: Format-Cells -> "Cell Protection" tab => <span style="font-weight:bold;">un</span>check "protected".</li><br /><li>Tools -> Protect Document -> sheet</li><br /><li><b>Un</b>check "select locked cells" and <b>check</b> "select unlocked cells". </li><br /></ol><br /><br />Now only the cells selected in step <i>1)</i> should be the only ones you can select and modify !
+{% endraw %}
