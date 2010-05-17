@@ -1,0 +1,11 @@
+---
+layout: post
+title: "PDF merge & reduce size"
+date: 2010-05-17 14:32:00 +0000
+permalink: /2010/05/pdf-merge-reduce-size.html
+tags: ["reduce", "pdf", "size", "compress", "dossier", "ater", "email"]
+author: "cm"
+---
+{% raw %}
+<h3>Merge PDF with pdftk</h3><br /><pre><b>pdftk</b> 00-page1.pdf 01-page2.pdf 03-page3.pdf <b>cat output</b> <i>OUT.pdf</i> </pre><br /><br /><h3>Reduce the size of the PDF</h3><br /><pre><b>gs</b> -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=<i>output.pdf</i> <i>input.pdf</i><br /></pre><br />(source : http://www.mnt-tech.fr/blog/gnulinux/comment-reduire-la-taille-dun-fichier-pdf-en-ligne-de-commande-sous-linux/ )
+{% endraw %}
