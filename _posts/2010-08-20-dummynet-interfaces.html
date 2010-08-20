@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Dummynet interfaces"
+date: 2010-08-20 17:07:00 +0000
+permalink: /2010/08/dummynet-interfaces.html
+tags: ["dummynet", "interface", "net", "network"]
+author: "cm"
+---
+{% raw %}
+The dummy modules in Linux allow you to have multiple "fake" network interfaces on your computer.<br /><br />It's useful to test distributed programs locally.<br /><br />Test if <span style="font-style:italic;">dummy</span> is loaded :<br /><pre><br />lsmod | grep dummy<br /></pre><br /><br /><pre><br />insmod dummy<br /></pre><br /><br /><br />Create a first dummy interface :<br /><pre><br />ifconfig dummy0 10.0.0.1<br /></pre><br /><br />Create another one :<br /><pre><br />ifconfig dummy0:1 10.0.0.2<br /></pre><br /><br />Destroy a dummy interface :<br /><pre><br />ifconfig dummyX:Y down<br /></pre>
+{% endraw %}
