@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Nautilus Main Toolbar made compact"
+date: 2010-09-05 13:32:00 +0000
+permalink: /2010/09/nautilus-main-toolbar-made-compact.html
+tags: ["toolbar", "nautilus", "ubuntu", "gnome"]
+author: "cm"
+---
+{% raw %}
+Since I've got my Asus eeepc 1000h, I've been looking from time to time for a way to reduce spare space on the different apps. I hence went for ubuntu-notebook-remix and it's customizations, but not everything was included. Noticeably, Nautilus, the default file browser for gnome has a "main toolbar" very space-greedy, and without simple customization ways proposed.<br /><br /><br />I found this page pointing to some package to customize the toolbar. Look at the screenshots on this page to see the effect. If the link is down, look for the package to install (code is bellow).<br /><br /><a href="http://www.webupd8.org/2010/06/nautilus-elementary-2311-now-with.html">"nautilus elementary"</a><br /><br />Those commands were copy-pasted from the above link for re-usability :<br /><br /><span style="font-weight:bold;">To install "nautilus-elementary" from it's PPA :</span><br /><pre><br />sudo add-apt-repository ppa:am-monkeyd/nautilus-elementary-ppa<br />sudo apt-get update && sudo apt-get upgrade<br />nautilus -q #restarts nautilus<br /></pre><br /><br /><br /><span style="font-weight:bold;">To compile nautilus </span><br /><pre><br />sudo apt-get install bzr<br />sudo apt-get build-dep nautilus<br />bzr branch lp:nautilus-elementary<br />cd nautilus-elementary/<br />./configure --prefix=/usr && make<br />sudo make install<br /></pre><br />And restart nautilus :<br /><pre><br />nautilus -q<br /></pre><br /><br /><br /><br /><blockquote>That's it. Then customize everything to suit your needs via the Tweaks tab you can find via <span style="font-style:italic;">Edit > Preferences</span> menu in Nautilus. To customize the toolbar, simply right click on it.</blockquote>
+{% endraw %}
