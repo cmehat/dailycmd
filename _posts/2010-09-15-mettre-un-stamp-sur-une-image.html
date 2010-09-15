@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Mettre un stamp sur une image"
+date: 2010-09-15 20:45:00 +0000
+permalink: /2010/09/mettre-un-stamp-sur-une-image.html
+author: "cm"
+---
+{% raw %}
+Avec convert (de Imagemagick), fonctionne bien avec la version :<br /><br />$convert --version<br />Version: ImageMagick 6.5.7-8 2009-11-26 Q16 http://www.imagemagick.org<br />Copyright: Copyright (C) 1999-2009 ImageMagick Studio LLC<br />Features: OpenMP <br /><br /><br /><pre><br />#!/bin/bash<br /># stamp timbre A_marquer Img_finale<br /><br /># (c) 2007-2010 by C.M.<br /># under the GPL License<br /><br /># prendre deux fichiers d'images<br /># l'un étant un "sceau" et l'autre une photo<br /># et marquer la photo du sceau, en bas à droite (ou gauche)<br /># Image timbre<br />SCEAU="$1"<br /># Image à marquer<br />PIC="$2"<br /># Fichier de sortie<br />OUT_IMAGE="$3"<br /># Proportion du timbre par rapport à l'image<br />SCALE="/ 20"<br /><br /><br /># dimensions de l'image à marquer<br />width_pic=`identify -format %w "$PIC"`<br />height_pic=`identify -format %h "$PIC"`<br /><br /># dimensions du sceau<br />width_sceau=`identify -format %w "$SCEAU"`<br />height_sceau=`identify -format %h "$SCEAU"`<br /><br /># dimensions auxquelles réduire le sceau<br />stamp_w=$(( $width_pic $SCALE * 2))<br />stamp_h=$(( $height_pic $SCALE))<br /><br /><br /># dimensionner le sceau à la bonne taille<br /># PUIS mettre un bord transparent autour du sceau pour qu'il ne soit pas au bord<br /># PUIS coller le sceau sur l'image avec un dissolve<br />convert  "${SCEAU}" -resize "${stamp_w}"x"${stamp_h}"\> \<br />    -size "${stamp_w}"x"${stamp_h}" miff:- |\<br />convert - -matte -bordercolor none -border 20% miff:- |\<br />convert "$PIC" - -matte -gravity South-East \<br />    -set "option:compose:outside-overlay" "false" \<br />    -compose Over \<br />    -compose dissolve  -set "option:compose:args" 60 \<br />    -composite   "$OUT_IMAGE"<br /></pre><br /><br /><br /><br />TODO :<br /><li>ajouter un texte en option qui serait placé sous le sceau</li><br /><li>changer la proportion en fonction de la taille de l'image ? (mais quel seuil??)</li>
+{% endraw %}
