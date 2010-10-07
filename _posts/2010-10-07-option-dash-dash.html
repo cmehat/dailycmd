@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Option Dash Dash"
+date: 2010-10-07 18:42:00 +0000
+permalink: /2010/10/option-dash-dash.html
+tags: ["shell bash", "bash"]
+author: "cm"
+---
+{% raw %}
+Une propriété intéressante des outils gnu,bsd&cie. est  la possiblité d'indiquer la fin du passage des options avec un "--" (dash dash).<br /><br />Pratique par exemple pour faire un grep sur quelquechose qui pourrait ressembler à une option, sans que la chaine à chercher ne soit interprétée comme otion de grep. Mais ce n'est qu'un exemple.<br /><br /><br />Application, pour chercher toutes les occurences de '<span style="font-weight:bold;">-l</span>' dans le fichier '<span style="font-weight:bold;">toto.txt</span>' :<br /><pre><br />grep -- -l toto.txt<br /></pre>
+{% endraw %}
