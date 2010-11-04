@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Thunderbird : change account order"
+date: 2010-11-04 13:44:00 +0000
+permalink: /2010/11/thunderbird-change-account-order.html
+tags: ["em", "thunderbird"]
+author: "cm"
+---
+{% raw %}
+No point-and-click solution that I know, but I found a solution modifying the file :<br /><br /><pre><br />~/.thunderbird/<profile>/prefs.js<br /></pre><br /><br />look for the line :<br /><pre><br />user_pref("mail.accountmanager.accounts", "account1,account2,account3,account4,account6,account5,account7,account8,account10");<br /></pre><br /><br />And re-order the "accountX" as you wish to see them.<br /><br /><br />Be careful to edit this file while thunderbird is NOT running, it seems that tb writes this file back at the exit.
+{% endraw %}
