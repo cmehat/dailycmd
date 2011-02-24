@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Enlever les dictionnaires inutiles de firefox, ooffice, thunderbird, etc."
+date: 2011-02-24 14:41:00 +0000
+permalink: /2011/02/enlever-les-dictionnaires-inutiles-de.html
+author: "cm"
+---
+{% raw %}
+<span style="font-weight:bold;">Problème :</span><br />Les menus pour changer de langue pour la correction orthographique sont saturés par des dictionnaires installés par défaut par les distributions (exemple : la correction orthographique Français installe également les versions canadiennes, belge, suisse, etc.). On se retrouve ainsi avec des dizaines de langues disponibles dans les menus où choisir la langue, là où 2 ou 3 seraient suffisant.<br /><br /><span style="font-weight:bold;">Solution :</span><br /><ul><br /><li><i>Trouver où sont définis ces dictionnaires :</i><br /><br />Pour firefox par exemple, le repertoire <pre>/usr/lib/firefox-3.6.13/</pre> contient un repertoire nommée <pre>dictionaries</pre> qui est en fait un lien vers <pre>/usr/share/hunspell</pre>.<br /></li><br /><br /><li><i>Enlever les références vers les dictionnaires inutilisés:</i><br />Le répertoire précité contient en fait un certain nombre de liens pointant vers les quelques dictionnaires  (exemple : <pre>es_AR.aff -> es.aff</pre>).<br />Soit vous supprimez tout ceux qui ne vous intéressent pas, soit vous créez un repertoire et les y déplacez, au cas où vous souhaitiez faire la manipulation inverse plus tard.<br /><br />Dans mon cas, cela m'a donc donné :<br /><pre><br />cd /usr/share/hunspell/<br />sudo mkdir removed<br />sudo mv *AU* *CA* *ZA* *DO* *EC* *GT* *HN* *MX* *NI* *BE* *UY* *SV* *LU* *MC* *CH* *CL* *AR* *BO* <br />*VE* *PA* *CO* *CR* *PY* *PE* *CU* *PR*<br />removed/<br /></pre><br /></li><br /></ul><br /><br /><br />Solution adaptée de :<br />http://ubuntuforums.org/showpost.php?p=5293436&postcount=8
+{% endraw %}
