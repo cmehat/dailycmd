@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Eeepc RT2860 Driver Wifi problem"
+date: 2011-04-16 14:29:00 +0000
+permalink: /2011/04/eeepc-rt2860-driver-wifi-problem.html
+tags: ["rt2860", "1000H", "wifi", "driver", "eee", "ubuntu", "asus"]
+author: "cm"
+---
+{% raw %}
+Solution qui fonction pour moi sous Ubuntu pour installer le driver Ralink sur Ubuntu en remplacement du driver par défaut fourni avec le kernel. Le module incriminé est "rt2860sta.ko", utilisé pour le wifi sur un Asus Eee 1000H.<br /><br /><br /><br />Ceci est un mini tuto rédigé pour cette machine:<br /><br />&gt; Linux kilt 2.6.32-30-generic #59-Ubuntu SMP Tue Mar 1 21:30:21 UTC 2011 i686<br />&gt; GNU/Linux<br />&gt;<br />&gt; Ubuntu en distrib 10.04<br />&gt;<br />&gt; module wifi rt2860sta<br /><br /><br />Il faut avoir téléchargé sur les sites appropriés ce paquet :<br /><pre><br />2010_01_29_RT2860_Linux_STA_v2.3.0.0.tar.bz2                                                      <br />2010_07_16_RT2860_Linux_STA_v2.4.0.0.tar.bz2    <br /></pre><br /><br />Voici les commandes à taper :<br /><pre><br />lsmod |grep rt<br /><br />&lt;désactiver le wifi&gt;<br />sudo rmmod rt2860sta <br /><br />&lt;décompresser l&#39;archive&gt;<br />cd &lt;Répertoire créé&gt;<br />make<br />cd os/linux/<br />ls<br />sudo insmod rt2860sta.ko<br /><br />&lt;SI insertion réussie : Réactiver le wifi&gt;<br /> &lt;SINON refaire la même avec l&#39;autre tar.bz2&gt;<br /><br />&lt;tester si ça marche&gt;<br />&lt;Si ok, pour que ce soit le driver par défaut, copier dans les modules du kernel&gt;<br />sudo cp rt2860sta.ko /lib/modules/2.6.XXX-generic/kernel/drivers/staging/rt2860/rt2860sta.ko <br /> <br /></pre>
+{% endraw %}
