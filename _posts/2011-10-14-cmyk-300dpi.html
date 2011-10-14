@@ -1,0 +1,61 @@
+---
+layout: post
+title: "CMYK, 300DPI and Linux (Ubuntu)"
+date: 2011-10-14 17:20:00 +0000
+permalink: /2011/10/cmyk-300dpi.html
+tags: ["image", "cmyk", "phone", "cmnj", "jpeg", "rgb", "dpi"]
+author: "cm"
+---
+{% raw %}
+Wishing to participate in a graphic contest, I had to follow some strict rules:<br />
+<ul><br />
+<li>Less than 5MB </li>
+<br />
+<li>"CMNJ" which I found is the french for "CMYK colors"</li>
+<br />
+<li>JPEG hi-def</li>
+<br /></ul>
+<br />
+<br />
+<br />
+It took me some time to find the appropriate tools for Ubuntu Linux, since Gimp was not much help with all that. CMYK seemed to be planned for the Gimp-v3.0, but all I found were comment on this "future release" (I'm now using "GNU Image Manipulation Program version 2.6.11", standard one with Ubuntu...).<br />
+<br />
+<div>
+<br />
+<h2>
+DPI problem</h2>
+<br />
+<br />
+I used the <a href="http://xnview.com/">XnView</a> tool to reset the DPI to 300.<br />
+<span style="font-weight: bold;">xnview</span> : (<i>sudo apt-get install xnview</i> was enough to install it !)<br />
+<br />
+<br />
+I found this tool following what is explained here : <a href="http://www.rideau-info.com/photos/changedpi.html">http://www.rideau-info.com/photos/changedpi.html</a>.</div>
+<br />
+<br />
+<br />
+<div>
+<h2>
+CMYK problem</h2>
+<br />
+<br />
+First of all, I had never heard about it, so I was gonna assume it was the default format... In French CMYK is called CMJN, and referred as "Quadrichromie" (opposed to "RGB"(en) "RVB"(fr) "trichromie").<br />
+<br />
+Of course, the pictures I had were in RGB, so I had to convert them to CMYK.<br />
+<br />
+I found a tool able to do that easily, coming on the side of the <a href="http://www.littlecms.com/">LittleCMS</a> image library : <span style="font-weight: bold;">jpegicc</span> !<br />
+<br />
+Hoping my quest was over, I read the doc on how to use it, and found that CMYK needed some "profiles definition". Looking around on the net, I found some distributed by Adobe doing a search on their website "research" tool. I then found a .zip, unpacked it and had RGB and CMYK profiles (~10 differents).<br />
+<br />
+<br />
+<br />
+In order to test them, I applied all of them (in the folder "profiles/CMYK_Profiles/" ) to a sample file "test2.jpg" to see the resulting colors :<br />
+<pre>for i in profiles/CMYK_Profiles/* ; do jpegicc -o"$i" test2.jpg test2.cmyk--`basename "$i"`.jpg ; done</pre>
+<br />
+<br />
+To the lazy ones, the command for a single profile (or to copy-past it) :<br />
+<pre>jpegicc -oProfile.icc file-In-RGB.jpeg file-Out-CMYK.jpeg</pre>
+<br />
+<br />
+Those were rendering quite different colors at the end, and I said good bye to my white background.</div>
+{% endraw %}
