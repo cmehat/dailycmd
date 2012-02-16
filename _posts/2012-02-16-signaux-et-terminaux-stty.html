@@ -1,0 +1,44 @@
+---
+layout: post
+title: "signaux et terminaux, stty"
+date: 2012-02-16 14:06:00 +0000
+permalink: /2012/02/signaux-et-terminaux-stty.html
+tags: ["stty", "sig", "shell", "shell bash", "sigquit", "bash", "terminal", "signal", "commandline", "command", "script"]
+author: "cm"
+---
+{% raw %}
+A la base, une simple question de la part d'une collègue : comment envoyer un SIGQUIT dans un terminal sous mac OS. <br />
+Une rapide recherche sur le net donne comme réponse "^\", contrairement à linux où c'est usuellement "^d" qui sert à cela.<br />
+<br />
+Comment configurer cela, comment trouver cela ?<br />
+<br />
+<br />
+<pre>STTY(1)                          User Commands                         STTY(1)
+<b>NAME</b>
+       stty - change and print terminal line settings
+<b>
+SYNOPSIS</b>
+       stty [-F DEVICE | --file=DEVICE] [SETTING]...
+       stty [-F DEVICE | --file=DEVICE] [-a|--all]
+       stty [-F DEVICE | --file=DEVICE] [-g|--save]
+<b>
+DESCRIPTION</b>
+       Print or change terminal characteristics.</pre>
+<br />
+Qui chez moi par exemple (Ubuntu) me donne :
+<br />
+<pre>&nbsp;</pre>
+<pre>$ stty -a
+speed 38400 baud; rows 40; columns 80; line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = M-^?; eol2 = M-^?;
+swtch = M-^?; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R; werase = ^W;
+lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd cs8 hupcl -cstopb cread -clocal -crtscts
+-ignbrk brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon -ixoff
+-iuclc ixany imaxbel iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt&nbsp;</pre>
+
+
+Donc en fait "^d" envoie un "eof", pas un sig_quit...
+{% endraw %}
