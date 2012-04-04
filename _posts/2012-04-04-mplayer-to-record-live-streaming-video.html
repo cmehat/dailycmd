@@ -1,0 +1,19 @@
+---
+layout: post
+title: "MPlayer to record live streaming video / audio"
+date: 2012-04-04 14:52:00 +0000
+permalink: /2012/04/mplayer-to-record-live-streaming-video.html
+tags: ["recording", "streaming", "mplayer", "video"]
+author: "cm"
+---
+{% raw %}
+<blockquote>All you need to record a live stream from the web is MPlayer. Use the -dumpstream argument to capture a MMS, ASF or Live WMV stream to a file called stream.dump. 
+For example:</blockquote>
+
+<pre>mplayer -dumpstream mmsh://streamer3.carnation.hu/mtvonlinem2?MSWMExt=.asf</pre>
+
+<blockquote>will create a stream.dump file that you can later rename to my_recorded_stream.wmv.
+Note: this will not work with Flash-powered streams.</blockquote>
+
+(from : <a href="http://tips4linux.com/use-mplayer-to-record-live-streams-from-the-internet/">http://tips4linux.com/use-mplayer-to-record-live-streams-from-the-internet/</a> )
+{% endraw %}
