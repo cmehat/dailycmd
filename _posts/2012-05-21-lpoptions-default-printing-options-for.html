@@ -1,0 +1,33 @@
+---
+layout: post
+title: "lpoptions, default printing options for *nix (with cups)"
+date: 2012-05-21 08:40:00 +0000
+permalink: /2012/05/lpoptions-default-printing-options-for.html
+tags: ["print", "staple", "printer", "binding", "cups", "lpr"]
+author: "cm"
+---
+{% raw %}
+The default command to send printing jobs under linux is "lpr", and all the commands that comes with it.
+
+To configure some options by default, for example for my office computer, I have to set them in the file : <b>~/.cups/lpoptions</b>. This is what I have :
+
+
+<pre>Default The_Printer_Name Binding=LeftBinding KMDuplex=Double StapleOption=1StapleLeft StapleSet=True</pre>
+
+This will hence configure those option by default.
+<ul>
+<li>Binding :      by default, put the binding ("reliure" (fr) ) on the left</li>
+<li>KMDuplex :     by default, print in duplex mode  ("recto-verso" (fr)).</li>
+<li>StapleOption : by default, staple once, on the left corner</li>
+<li>StapleSet : by default, staple all documents. </li>
+</ul>
+
+
+NB 1 : Of course, I can modify all those options before printing, for example in acrobat-reader (acroread), or okular, or evince, or whatever I'm using.
+
+NB 2 : Those options may (or should I say "will") vary from one brand to another...
+
+
+
+(This is for a "KONICA MINOLTA bizhub C360 - 0" printer)
+{% endraw %}
