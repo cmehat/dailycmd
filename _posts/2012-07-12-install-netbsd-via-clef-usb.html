@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Install NetBSD via clef USB"
+date: 2012-07-12 10:49:00 +0000
+permalink: /2012/07/install-netbsd-via-clef-usb.html
+tags: ["os", "netbsd", "operating system", "filesystem", "fdisk"]
+author: "cm"
+---
+{% raw %}
+<br /><h2>Voici le challenge : </h2>
+<br />créer une clef usb bootable en NetBSD, en n'ayant qu'une seule clef dispo et pas de machine netbsd sous la main.
+
+Le principal problème est de formater la clef USB dans le bon format (et pas de mkfs dispo pour ce systeme de fichier BSD)
+
+<br /><br /><br />
+
+<h2>Solution trouvée : </h2>
+<br />booter netbsd-Live en virtualisé dans Qemu pour transférer vers le disque dur virtuel de Qemu les fichiers à copier sur la clef usb, puis formater la clef usb et y remettre les fichiers de boot.
+{% endraw %}
