@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Mettre un stamp sur une image"
+date: 2012-07-12 10:55:00 +0000
+permalink: /2012/07/mettre-un-stamp-sur-une-image.html
+tags: ["jpeg", "image", "command"]
+author: "cm"
+---
+{% raw %}
+Avec convert (de Imagemagick), fonctionne bien avec la version :<br />
+<br />
+$convert --version<br />
+Version: ImageMagick 6.5.7-8 2009-11-26 Q16 http://www.imagemagick.org<br />
+Copyright: Copyright (C) 1999-2009 ImageMagick Studio LLC<br />
+Features: OpenMP <br />
+<br />
+<br />
+<pre>
+#!/bin/bash
+# stamp timbre A_marquer Img_finale
+
+# (c) 2007-2010 by C.M.
+# under the GPL License
+
+# prendre deux fichiers d'images
+# l'un étant un "sceau" et l'autre une photo
+# et marquer la photo du sceau, en bas à droite (ou gauche)
+# Image timbre
+SCEAU="$1"
+# Image à marquer
+PIC="$2"
+# Fichier de sortie
+OUT_IMAGE="$3"
+# Proportion du timbre par rapport à l'image
+SCALE="/ 20"
+# Texte ajouté sous le timbre
+TEXTE=""
+
+
+# dimensions de l'image à marquer
+width_pic=`identify -format %w "$PIC"`
+height_pic=`identify -format %h "$PIC"`
+
+# dimensions du sceau
+width_sceau=`identify -format %w "$SCEAU"`
+height_sceau=`identify -format %h "$SCEAU"`
+
+# dimensions auxquelles réduire le sceau
+stamp_w=$(( $width_pic $SCALE * 2))
+stamp_h=$(( $height_pic $SCALE))
+
+
+</pre>
+<br />
+{% endraw %}
