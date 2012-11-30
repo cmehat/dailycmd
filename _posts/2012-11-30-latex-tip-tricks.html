@@ -1,0 +1,22 @@
+---
+layout: post
+title: "LaTeX tip & tricks"
+date: 2012-11-30 13:23:00 +0000
+permalink: /2012/11/latex-tip-tricks.html
+tags: ["image", "latex"]
+author: "cm"
+---
+{% raw %}
+I recently discovered the "trim" option of the includegraphics command :
+
+<pre>
+\includegraphics[trim=Wcm Xcm Ycm Zcm]{image-file}
+%left bottom right top
+</pre>
+
+
+Will remove Wcm on the left, Xon the bottom side, Ycm on the right side, and Zcm on the top side. 
+
+
+Be careful when <b>trim</b> AND <b>angle</b> are used at the same time !
+{% endraw %}
