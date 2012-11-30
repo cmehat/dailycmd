@@ -1,0 +1,130 @@
+---
+layout: post
+title: "LaTeX template pour document littéraire"
+date: 2012-11-30 13:18:00 +0000
+permalink: /2012/11/latex-template-pour-document-litteraire.html
+tags: ["MLA", "bibliography", "latex"]
+author: "cm"
+---
+{% raw %}
+Having to edit a document of a friend studying "art history" and "english language", I created this LaTeX template after some research on the bibliography styles needed for those fields.
+
+The bib style needed was : MLA. The default MLA install of LaTeX didn't match what was expected, and I found <b>mla-good.bst</b>. 
+
+You can download it here : <a href="http://www.reed.edu/cis/help/latex/images/mla-good.bst.zip">http://www.reed.edu/cis/help/latex/images/mla-good.bst.zip</a> or here : <a href="http://pastebin.com/bBg7CUkM">http://pastebin.com/bBg7CUkM</a> (and others styles : <a href="http://www.reed.edu/cis/help/latex/bibtexstyles.html">http://www.reed.edu/cis/help/latex/bibtexstyles.html</a>).
+
+
+
+
+
+<pre>
+%% LaTeX Template for littérature student, using article class and mla-good.bst 
+%% by : Corentin Mehat (30 Novembre 2012)
+
+%% compile it using :
+%%    "rubber -d <file.tex>"
+%% or "pdflatex <file.tex>; bibtex <file>; pdflatex <file.tex>"
+
+\documentclass[12pt, a4paper]{article}%  font, a4paper : paper size
+\usepackage{fullpage} % reduce the default margin
+
+\usepackage[utf8]{inputenc} % encoding : UTF8
+\usepackage[T1]{fontenc} % fonts
+\usepackage{lmodern} % to avoid the use of bitmap fonts.
+\usepackage{amsmath} % math for "XV$^{ème}$ siècle"
+\usepackage{amssymb} % math
+
+\usepackage{graphicx} % Deal with external images (cf. template code at the end)
+
+%\usepackage{setspace} % spacing lines
+%\doublespacing
+%\onehalfspacing
+%\setstretch{baselinestretch}
+
+
+
+\usepackage[english]{babel} % English hyphenation
+%\usepackage[french]{babel} % French hyphenation
+
+\usepackage[round, authoryear, sectionbib]{natbib} % Deal with the references & Bibliography
+
+% To generate the bib file on the first compilation of this file. Run BibLaTeX over it after, and recompile
+%code in the next begin/end must be a well formed bibtex file
+\begin{filecontents}{outputed-biblio-file.bib}
+\end{filecontents}
+
+
+% For  "TODO" notes : \todo{...} or \todo[inline]{...}
+\usepackage[disable]{todonotes} %disable
+%\usepackage[french,colorinlistoftodos]{todonotes} %enable
+
+
+%
+\usepackage[a4paper,colorlinks,plainpages=false,pdftex,backref]{hyperref}
+ \hypersetup{
+     unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+     pdftoolbar=true,        % show Acrobat’s toolbar?
+     pdfmenubar=true,        % show Acrobat’s menu?
+     pdffitwindow=true,      % page fit to window when opened
+     colorlinks=true,        % false: boxed links; true: colored links
+     linkcolor=blue,         % color of internal links
+     citecolor=green,        % color of links to bibliography
+     filecolor=magenta,      % color of file links
+     urlcolor=cyan,          % color of external links
+     linktocpage=true,       % make page number, not text, be link in TOC, LOF and LOT
+     breaklinks=true,        % allow links to break over lines
+     pdfkeywords={keywork1, keyword2}, % list of keywords
+     pdftitle={Document Title (not printed, but in the pdf file)},
+     pdfauthor={Author of the document (not printed, but in the pdf file)},
+     pdfsubject={Subject of the document (not printed, but in the pdf file)}
+ }
+
+\title{Title}
+\author{author}
+\date{\today} %
+
+% % % % % % %%% BEGIN DOCUMENT
+\begin{document}
+
+%\newcommand{\test}{THIS IS A TEST} %macro/command example
+
+
+\maketitle
+%\tableofcontents
+\begin{abstract}
+You can write your introduction / Abstract / Résumé of the doc here.
+\end{abstract}
+
+Write your document here
+
+% Organise your document with : (put the section title into the '{}' )
+%\section*{} % will not be numbered
+%\section{} % will be numbered
+%\subsection*{}
+%\subsubsection{}
+
+
+
+\begin{figure}
+\begin{center}
+%\includegraphics*[trim= 0cm 0cm 0cm 0cm, angle=0,scale=0.45]{file-name}
+\caption{cartel of the image}
+\label{fig:a-unique-name} %in the text : \ref{fig:a-unique-name}
+\end{center}
+\end{figure}
+
+% % % % BIBLIOGRAPHY
+\newpage 
+
+\renewcommand\refname{Bibliography} % Change the bibliography heading title
+
+% Use the "mla-good.bst" style file for bibliography (same directory, or installed where it should)
+\bibliographystyle{mla-good} % for MLA bibliography style
+\bibliography{outputed-biblio-file} % Use the outputted file for the ref.
+
+\nocite{*} %include all refs from the file (not only the one \citeX{key}
+
+\end{document}
+
+</pre>
+{% endraw %}
