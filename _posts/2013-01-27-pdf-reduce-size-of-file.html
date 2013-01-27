@@ -1,0 +1,19 @@
+---
+layout: post
+title: "PDF reduce size of file"
+date: 2013-01-27 18:02:00 +0000
+permalink: /2013/01/pdf-reduce-size-of-file.html
+tags: ["pdf", "size", "gs", "latex", "commandline", "command", "ghostscript"]
+author: "cm"
+---
+{% raw %}
+<br />
+Pour réduire<span style="color: #c20cb9;"> <span style="color: #c20cb9;">la tail<span style="color: #c20cb9;">le d'un pdf, en util<span style="color: #c20cb9;">isant ghostscript :</span></span></span></span><br />
+<br />
+<pre class="bash" style="font-family: monospace;"><span style="color: #c20cb9; font-weight: bold;"><pre>gs <span style="color: #660033;">-dBATCH</span> <span style="color: #660033;">-dNOPAUSE</span> <span style="color: #660033;">-q</span> <span style="color: #660033;">-sDEVICE</span>=pdfwrite <span style="color: #660033;">-sOutputFile</span>=OUT.pdf CV.pdf</pre>
+</span></pre>
+<pre class="bash" style="font-family: monospace;">&nbsp;</pre>
+<pre class="bash" style="font-family: monospace;">&nbsp;</pre>
+<pre class="bash" style="font-family: monospace;">Source : <a href="http://www.fiat-tux.fr/fr/2010/12/reduire-la-taille-dun-pdf/" target="_blank">http://www.fiat-tux.fr/fr/2010/12/reduire-la-taille-dun-pdf/</a> </pre>
+
+{% endraw %}
