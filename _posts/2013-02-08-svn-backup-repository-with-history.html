@@ -1,0 +1,55 @@
+---
+layout: post
+title: "SVN backup repository with history"
+date: 2013-02-08 09:41:00 +0000
+permalink: /2013/02/svn-backup-repository-with-history.html
+tags: ["backup", "svn", "version"]
+author: "cm"
+---
+{% raw %}
+<pre class="prettyprint"><span class="pln">Copier toutes l'historique d'un repository SVN auquel vous avez accès (en lecture),&nbsp;</span></pre>
+<pre class="prettyprint"><span class="pln">mais pas les droits d'administration :</span></pre>
+<pre class="prettyprint"><span class="pln">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="pln">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="pln">&nbsp; svnadmin create localrepos
+&nbsp; emacs localrepos</span><span class="pun">/</span><span class="pln">hooks</span><span class="pun">/</span><span class="pln">pre</span><span class="pun">-</span><span class="pln">revprop</span><span class="pun">-</span><span class="pln">change </span><span class="com"># make it 'exit 0'</span><span class="pln"> 
+&nbsp; chmod </span><span class="pun">+</span><span class="pln">x localrepos</span><span class="pun">/</span><span class="pln">hooks</span><span class="pun">/</span><span class="pln">pre</span><span class="pun">-</span><span class="pln">revprop</span><span class="pun">-</span><span class="pln">change
+&nbsp; svnsync init </span><span class="pun">--</span><span class="pln">username USERNAME file</span><span class="pun">:</span><span class="com">///path/to/localrepos https://myproject.googlecode.com/svn</span><span class="pln">
+&nbsp; </span><span class="typ">Copied</span><span class="pln"> properties </span><span class="kwd">for</span><span class="pln"> revision </span><span class="lit">0.</span><span class="pln">
+&nbsp; svnsync sync </span><span class="pun">--</span><span class="pln">username USERNAME file</span><span class="pun">:</span><span class="com">///path/to/localrepos</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">Source : <a href="http://code.google.com/p/support/wiki/SubversionFAQ#How_do_I_download_my_Subversion_history?" rel="nofollow" target="_blank">http://code.google.com/p/support/wiki/SubversionFAQ#How_do_I_download_my_Subversion_history?</a>&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">Donc :</span></pre>
+<pre class="prettyprint"><span class="com">$ svnadmin creat localrepos</span></pre>
+<pre class="prettyprint"><span class="com">$ cat &gt; localrepos/hooks/pre-revprop-change</span></pre>
+<pre class="prettyprint"><span class="com">#! /bin/bash</span></pre>
+<pre class="prettyprint"><span class="com">exit 0</span></pre>
+<pre class="prettyprint"><span class="com">
+</span></pre>
+<pre class="prettyprint"><span class="com">$ chmod a+x </span><span class="com">localrepos/hooks/pre-revprop-change</span></pre>
+<pre class="prettyprint">$ <span class="pln">svnsync init </span><span class="pun">--</span><span class="pln">username USERNAME file:///NEWREPO https://OLDREPO</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span><span class="pln">&nbsp; </span><span class="typ">Copied</span><span class="pln"> properties </span><span class="kwd">for</span><span class="pln"> revision </span><span class="lit">0.</span></pre>
+<pre class="prettyprint"><span class="com">$ svnsync sync --username USERNAME file:///NEWREPO </span></pre>
+<pre class="prettyprint"><span class="com">[...copie de toutes les révisions...] </span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+Sur la machine où j'ai copié l'historique, j'ai du utiliser une feinte :<br />
+<pre class="prettyprint">$ svnadmin setuuid UUID-OLDREPO</pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+<pre class="prettyprint"><span class="com">&nbsp;</span></pre>
+Puis, pour changer les "checkouts" de source, <i>svn switch</i> :<br />
+<pre class="prettyprint"><span class="com">$ svn switch --relocate https://OLDREPO svn+ssh://NEWREPO </span></pre>
+<br />
+Et voilà !<br />
+<br />
+<br />
+PS : si vous avez les accès svnadmin sur les deux machines, il y a plus simple comme solution.<br />
+http://particul.es/blog/index.php?post/Reprendre-un-projet-%3A-svn-tips-pour-changer-l-url-du-d%C3%A9pot<br />
+<br />
+<br />
+<a href="http://code.google.com/p/support/wiki/SubversionFAQ#How_do_I_download_my_Subversion_history?" rel="nofollow" target="_blank"></a>
+{% endraw %}
