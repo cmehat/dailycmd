@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Reusing SSH Connection"
+date: 2013-02-25 08:14:00 +0000
+permalink: /2013/02/reusing-ssh-connection.html
+tags: ["ssh"]
+author: "cm"
+---
+{% raw %}
+SOURCE : http://sshmenu.sourceforge.net/articles/transparent-mulithop.html <br />
+<blockquote class="tr_bq">
+<blockquote class="tr_bq">
+<h2>
+ </h2>
+"The transparent multi-hop connections can be very useful but you may
+      find that it takes a second or two to establish each connection.  This
+      delay can become annoying if it happens a lot (e.g.: every time you save
+      a file from the text editor).<br />
+
+
+      The good news is that if you can configure SSH to reuse an existing
+      connection.  This means that for example if you have an SSH shell session
+      running then a new connection for SCP can skip the connection setup
+      phase.  Two steps are required:<br />
+
+
+      First, you must create a directory (or 'folder') which SSH will use
+      to keep track of established connections:<br />
+
+
+<pre>mkdir ~/.ssh/tmp
+</pre>
+Next, add these two lines <b>at the start</b> of your
+      <tt>~/.ssh/config</tt> (make sure to use your username in place of
+      '<i>YOUR-NAME</i>'):<br />
+
+
+<pre></pre>
+</blockquote>
+</blockquote>
+<br />
+<blockquote class="tr_bq">
+<blockquote class="tr_bq">
+<pre>ControlMaster auto
+ControlPath   /home/<i>YOUR-NAME</i>/.ssh/tmp/%h_%p_%r
+</pre>
+</blockquote>
+</blockquote>
+<br />
+<blockquote class="tr_bq">
+<blockquote class="tr_bq">
+As you can see, a small investment in time setting up your SSH
+      configuration can pay back dividends in convenience."</blockquote>
+</blockquote>
+<br />
+<br />
+<br />
+{% endraw %}
