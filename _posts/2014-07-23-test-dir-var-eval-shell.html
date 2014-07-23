@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Test dir var (eval shell)"
+date: 2014-07-23 14:53:00 +0000
+permalink: /2014/07/test-dir-var-eval-shell.html
+tags: ["ksh", "bash", "shell"]
+author: "cm"
+---
+{% raw %}
+<br />
+<br />
+&nbsp;Test if the given variable contains a valid directory. If not, exit. (This uses the eval function of the shell)<br />
+<span style="font-family: &quot;Courier New&quot;,Courier,monospace;">testdirvar () {<br />&nbsp;&nbsp;&nbsp; tmp=$1<br />&nbsp;&nbsp;&nbsp; if [ -d "${!tmp}" ] ; then <br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; echo "${tmp}=${!tmp} (variable ${tmp}: directory exists)"<br />&nbsp;&nbsp;&nbsp; else <br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; echo "!!! ${tmp}=${!tmp} is not a directory (variable ${tmp}) !!!"<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; exit<br />&nbsp;&nbsp;&nbsp; fi<br />}</span>
+{% endraw %}
