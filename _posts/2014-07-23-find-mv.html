@@ -1,0 +1,20 @@
+---
+layout: post
+title: "find + mv"
+date: 2014-07-23 15:04:00 +0000
+permalink: /2014/07/find-mv.html
+tags: ["shell", "find"]
+author: "cm"
+---
+{% raw %}
+<br />
+<b><code>find ./ -name "*.logfile" | xargs -i mv '{}' /my/really/great/implementation_scripts/log_directory/</code></b><br />
+<br />
+<br />
+<b><code><span style="font-family: Arial,Helvetica,sans-serif;">(cf : http://bturnip.com/weblog/?p=248 )</span> </code></b><br />
+<b><code><br /></code></b>
+<b><code><span style="font-family: Arial,Helvetica,sans-serif;">or :&nbsp;</span></code></b><br />
+find ./ -name "*.logfile" -exec&nbsp; mv '{}' /my/really/great/implementation_scripts/log_directory/ \;<br />
+<br />
+<b><code><span style="font-family: Arial,Helvetica,sans-serif;"> </span></code></b>
+{% endraw %}
