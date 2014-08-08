@@ -1,0 +1,78 @@
+---
+layout: post
+title: "KSH eval / variable subtitution / variable test"
+date: 2014-08-08 08:42:00 +0000
+permalink: /2014/08/ksh-eval-variable-subtitution-variable.html
+tags: ["ksh", "shell", "script"]
+author: "cm"
+---
+{% raw %}
+<h2>
+<span style="font-size: x-small;">from :<a href="http://b62.tripod.com/doc/docksh.htm" target="_blank">http://b62.tripod.com/doc/docksh.htm </a></span></h2>
+<h2>
+OTHER FUNCTIONALITIES </h2>
+<a href="http://b62.tripod.com/doc/docksh.htm" target="_blank"> </a>
+<br />
+<pre>cmd1 || cmd2    exec cmd2 if cmd1 fail
+cmd1 &amp;&amp; cmd2    exec cmd2 if cmd1 is OK
+
+V1=${V2:=V3}    Set V1 with the value of V2 if this is set else set the
+                variable V1 with value of V3 (V3 could be a number).
+                sh replacement:  if [ $V2 ] ; then
+                                                V1=$V2
+                                 else
+                                                V1=$V3
+                Example: DisplaySize=${LINES:24} ; Command=${Command:"cat"}
+
+
+${V1:?word}     if V1 set  &amp; V1!=null   ret $V1 else print word and exit
+                  : ${V1:?"variable V1 not set on null"}
+${V1:=word}     if V1 !set | V1==null   set V1=$word
+${V1:-word}     if V1 set  &amp; V1!=null   ret $V1 else ret word
+${V1:+word}     if V1 set  &amp; V1!=null   ret word else ret nothing
+${V1##patt}
+${V1#patt}      if patt are found at the begin of V1 return V1 whitout the patt
+                else return V1
+                V1="lspwd" ; ${V1#"ls"}  # exec pwd
+${V1%%patt}
+${V1%patt}      if patt are found at the end of V1 return V1 whitout the patt
+                else return V1
+                V1="lspwd" ; ${V1%"pwd"}  # exec ls&nbsp;</pre>
+<pre>&nbsp;</pre>
+<pre>&nbsp;</pre>
+<pre>from : <a href="http://www.well.ox.ac.uk/~johnb/comp/unix/ksh.html" target="_blank">http://www.well.ox.ac.uk/~johnb/comp/unix/ksh.html</a>&nbsp;</pre>
+<center>
+<b><i><span style="color: midnightblue;"><span>Variable Manipulations</span></span></i></b></center>
+<h2>
+Removing something from a variable</h2>
+Variables that contain a path can very easily be stripped of it: <span style="color: red;">${name##*/}</span>
+gives you just the filename.<br />
+Or if one wants the path: <span style="color: red;">${name%/*}</span>. % takes
+it away from the left and # from the right.<br />
+%% and ##&nbsp;take the longest possibility while % and # just take the
+shortest one.<br />
+<br />
+
+
+<h2>
+Replacing a variable if it does not yet exits</h2>
+If we wanted $foo or if not set 4 then: <span style="color: red;">${foo:-4}</span>
+but it still remains unset. To change that we use:<br />
+<span style="color: red;">${foo:=4}</span><br />
+<br />
+
+
+<h2>
+Exiting and stating something if variable is not set</h2>
+This is very important if our program relays on a certain vaiable: <span style="color: red;">${foo:?"foo
+not set!"}</span><br />
+<br />
+
+
+<h2>
+Just check for the variable</h2>
+<span style="color: red;">${foo:+1}</span> gives one if $foo is set, otherwise
+nothing.<br />
+<pre>&nbsp;</pre>
+
+{% endraw %}
