@@ -1,0 +1,238 @@
+---
+layout: post
+title: "KSH : $- and Flags"
+date: 2014-08-08 07:52:00 +0000
+permalink: /2014/08/ksh-and-flags.html
+tags: ["ksh", "shell", "script"]
+author: "cm"
+---
+{% raw %}
+Under Solaris and using the Korn Shell KSH, the $- allows access to the flags setted.<br />
+Example of how it changes when setting the debug mode '-x' :<br />
+<br />
+<pre># echo $-
+ismC
+# set -x
+# echo $-
++ echo isxmC
+isxmC
+# set +x</pre>
+<br />
+<i>man ksh</i> informs us that (cf.&nbsp;<a href="http://www.lehman.cuny.edu/cgi-bin/man-cgi?ksh+1" target="_blank">http://www.lehman.cuny.edu/cgi-bin/man-cgi?ksh+1</a> for example)<br />
+<span style="font-family: inherit;"></span><br />
+<span style="font-family: inherit;">&nbsp; " &nbsp; -&nbsp; " &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Correspond to the "<i>Flags supplied to the s</i><span style="background-color: white;"><i>hell on invocation&nbsp; or&nbsp; by the set command.</i>" and that "<i>The current set of flags can be found in $- </i>":</span></span><br />
+<br />
+<br />
+<br />
+<pre>  Parameters Set by Shell
+<span style="background-color: yellow;">     -          Flags supplied to the shell on invocation  or  by
+                the set command.</span>
+
+   
+     set [ _abCefhkmnopstuvx ] [ _o option ]... [ _A name ] [ arg
+     ... ]
+
+         The flags for this command have meaning as follows:
+
+         -A          Array assignment. Unsets the  variable  name
+                     and  assigns  values  sequentially  from the
+                     list arg. If +A is used, the  variable  name
+                     is not unset first.
+
+         -a          All subsequent variables  that  are  defined
+                     are automatically exported.
+
+         -b          Causes the shell to notify  the  user  asyn-
+                     chronously  of  background  job completions.
+                     The following message is written to standard
+                     error:
+
+                       "[%d]%c %s%s\n", <job-number>, <current>, <status>, \
+                           <job-name>
+
+                     where the fields are as follows:
+
+                     <current>       The character  +  identifies
+                                     the  job  that would be used
+                                     as a default for the  fg  or
+                                     bg  utilities.  This job can
+                                     also be specified using  the
+                                     job_id %+ or %%. The charac-
+                                     ter  -  identifies  the  job
+                                     that    would   become   the
+                                     default   if   the   current
+                                     default  job  were  to exit;
+                                     this job can also be  speci-
+                                     fied  using  the  job_id %-.
+                                     For other jobs,  this  field
+                                     is  a  space  character.  At
+                                     most one job can be  identi-
+                                     fied  with + and at most one
+                                     job can be  identified  with
+                                     -. If there is any suspended
+                                     job, then the current job is
+                                     a  suspended  job.  If there
+                                     are at least  two  suspended
+                                     jobs,  then the previous job
+                                     is also a suspended job.
+
+                     <job-number>    A number that can be used to
+                                     identify  the  process group
+                                     to the  wait,  fg,  bg,  and
+                                     kill  utilities. Using these
+                                     utilities, the  job  can  be
+                                     identified  by prefixing the
+                                     job number with %.
+
+                     <status>        Unspecified.
+
+                     <job-name>      Unspecified.
+
+                     When the shell notifies the user a  job  has
+                     been completed, it can remove the job's pro-
+                     cess ID from the list of those known in  the
+                     current  shell  execution environment. Asyn-
+                     chronous  notification  is  not  enabled  by
+                     default.
+
+         -C          Prevents existing files from being overwrit-
+                     ten  by  the shell's &gt; redirection operator.
+                     The &gt;| redirection operator  overrides  this
+                     noclobber option for an individual file.
+
+         -e          If a command has  a  non-zero  exit  status,
+                     executes  the  ERR  trap,  if set, and exit.
+                     This mode is  disabled  while  reading  pro-
+                     files.
+         -f          Disables file name generation.
+
+         -h          Each command becomes a  tracked  alias  when
+                     first encountered.
+
+         -k          All variable assignment arguments are placed
+                     in  the  environment for a command, not just
+                     those that precede the command name.
+
+         -m          Background jobs runs in a  separate  process
+                     group and a line prints upon completion. The
+                     exit status of background jobs  is  reported
+                     in a completion message. On systems with job
+                     control, this flag is  turned  on  automati-
+                     cally for interactive shells.
+
+         -n          Reads commands and  check  them  for  syntax
+                     errors, but do not execute them. Ignored for
+                     interactive shells.
+
+         -o          Writes the current option settings to  stan-
+                     dard output in a format that is suitable for
+                     reinput  to  the  shell  as  commands   that
+                     achieve the same option settings.
+
+         -o          The following argument can  be  one  of  the
+                     following option names:
+
+                     allexport     Same as -a.
+
+                     errexit       Same as -e.
+
+                     bgnice        All background jobs are run at
+                                   a  lower priority. This is the
+                                   default mode.
+
+                     emacs         Puts you  in  an  emacs  style
+                                   in-line   editor  for  command
+                                   entry.
+
+                     gmacs         Puts you in a gmacs style  in-
+                                   line editor for command entry.                     
+                     ignoreeof     The shell does not exit onEOF.
+                                   The command exit must be used.
+
+                     keyword       Same as -k.
+
+                     markdirs      All directory names  resulting
+                                   from file name generation have
+                                   a trailing / appended.
+
+                     monitor       Same as -m.
+
+                     noclobber     Prevents  redirection  &gt;  from
+                                   truncating   existing   files.
+                                   Require &gt;| to truncate a  file
+                                   when  turned on. Equivalent to
+                                   -C.
+
+                     noexec        Same as -n.
+
+                     noglob        Same as -f.
+
+                     nolog         Do not save  function  defini-
+                                   tions in history file.
+
+                     notify        Equivalent to -b.
+
+                     nounset       Same as -u.
+
+                     privileged    Same as -p.
+
+                     verbose       Same as -v.
+
+                     trackall      Same as -h.
+
+                     vi            Puts you in insert mode  of  a
+                                   vi  style in-line editor until
+                                   you hit escape character  033.
+                                   This puts you in control mode.
+                                   A return sends the line.
+                     viraw         Each character is processed as
+                                   it is typed in vi mode.
+
+                     xtrace        Same as -x.
+
+                     If no option name is supplied,  the  current
+                     option settings are printed.
+
+         -p          Disables processing  of  the  $HOME/.profile
+                     file  and  uses  the  file /etc/suid_profile
+                     instead of the ENV file.  This  mode  is  on
+                     whenever  the  effective uid is not equal to
+                     the real uid, or when the effective  gid  is
+                     not  equal to the real gid. Turning this off
+                     causes the effective uid and gid to  be  set
+                     to the real uid and gid.
+
+         -s          Sorts the positional parameters lexicograph-
+                     ically.
+
+         -t          Exits after reading and executing  one  com-
+                     mand.
+
+         -u          Treats unset parameters  as  an  error  when
+                     substituting.
+
+         -v          Prints shell input lines as they are read.
+
+         -x          Prints commands and their arguments as  they
+                     are executed.
+
+         -           Turns off -x and -v flags and stops  examin-
+                     ing arguments for flags.
+
+         --          Does not change any of the flags. Useful  in
+                     setting  $1  to a value beginning with -. If
+                     no arguments follow this flag then the posi-
+                     tional parameters are unset.
+
+                     Using + rather than - causes these flags  to
+                     be  turned off. These flags can also be used
+                     upon invocation of the  shell.  <span style="background-color: yellow;">The  current
+                     set  of  flags can be found in $-</span>. Unless -A
+                     is specified, the  remaining  arguments  are
+                     positional  parameters  and are assigned, in
+                     order, to $1 $2 ....  If  no  arguments  are
+                     given, the names and values of all variables
+                     are printed on the standard output.                                  
+</job-name></status></job-number></current></job-name></status></current></job-number></pre>
+
+{% endraw %}
