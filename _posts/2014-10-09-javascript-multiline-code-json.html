@@ -1,0 +1,58 @@
+---
+layout: post
+title: "JavaScript multiline code (JSON description)"
+date: 2014-10-09 13:20:00 +0000
+permalink: /2014/10/javascript-multiline-code-json.html
+tags: ["js", "ECMA", "JSON", "javascript", "multiline"]
+author: "cm"
+---
+{% raw %}
+It is currently not possible to store a multiline string in javascript. This is annoying since for example storing some JSON data often leads to long data to concatenate or to push into an array.<br />
+If you want to avoid this, you can use the following trick, since javascript accepts multiline comments, and returns them to the toString call on a function :<br />
+<br />
+<pre>var jsonDescriptionText= function(){<b>/*</b>
+<span style="color: #cccccc;"><span style="font-size: x-small;">[
+    {
+        "cat": "Categ1",
+        "links": [
+            {
+                "txt": "text1",
+                "url": "http://url",
+                "title": "mouseover field"
+            }
+        ]
+    }</span>
+]</span><b>*/</b>}.toString().slice(14,-3);</pre>
+<b>Note 1 :</b>
+
+This avoids using concatenation for each line :
+
+<br />
+<pre>var longString2="string part1" +&nbsp;</pre>
+<pre>"string part2"&nbsp;</pre>
+or even escaping the new lines :
+<br />
+<pre>var longString2="string part1\</pre>
+<pre>string part2"
+</pre>
+<br />
+<b>Note 2 :</b><br />
+<br />
+<b><span class="comment-copy"> </span></b><span class="comment-copy"><a href="http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf" rel="nofollow">ECMA-262 5th Edition</a> section 7.8.4 and called <i>LineContinuation</i> : "A line terminator character cannot appear in a string literal, except as part of a <i>LineContinuation</i>
+ to produce the empty character sequence. The correct way to cause a 
+line terminator character to be part of the String value of a string 
+literal is to use an escape sequence such as \n or \u000A."</span> <br />
+<br />
+<b>Note 3 :</b><br />
+<b><span class="comment-copy"> </span></b><span class="comment-copy"></span>&nbsp;"In EcmaScript 6, you'll be able to use backticks for Template Strings, known in the spec as a <em>NoSubstitutionTemplate</em>:<br />
+
+
+<pre class="default prettyprint prettyprinted"><code><span class="kwd">var</span><span class="pln"> htmlString </span><span class="pun">=</span><span class="pln"> </span><span class="str">`Say hello to 
+multi-line
+strings!`</span><span class="pun">;</span></code></pre>
+&nbsp;"<br />
+<br />
+<br />
+<span style="font-size: xx-small;">(seen on : http://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript)</span> <br />
+
+{% endraw %}
