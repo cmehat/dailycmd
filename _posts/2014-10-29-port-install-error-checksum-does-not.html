@@ -1,0 +1,29 @@
+---
+layout: post
+title: "port install error \"checksum does not exist\" : clean and reinstall"
+date: 2014-10-29 23:16:00 +0000
+permalink: /2014/10/port-install-error-checksum-does-not.html
+tags: ["macosx", "port", "mac", "macos"]
+author: "cm"
+---
+{% raw %}
+<br />
+<br />
+I had an error with the Mac Ports (<a href="https://www.macports.org/">https://www.macports.org/</a>) on the dbus-glib install while trying to install some other packages. It was just saying that it did not exist in /opt/local/var/macports/distfiles/dbus-glib . It's not clear what broke this package for now, but the way to solve the issue was simple as found here :<a href="https://trac.macports.org/ticket/45534"> https://trac.macports.org/ticket/45534</a><br />
+<br />
+<br />
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sudo port clean <i><portname><br /></portname></i></tt><br />
+<br />
+and then, reinstall...<br />
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sudo port install <i><portname><br /></portname></i></tt><br />
+<br />
+And check, I could upgrade all the other packages and install some other new ones :-)<br />
+<br />
+<br />
+<br />
+---<br />
+(For "google" parse purpose, here are the errors I was getting)<br />
+---<br />
+<span style="font-size: xx-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[...]</span></span><br />
+<span style="font-size: xx-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">---&gt;&nbsp; Found 5 broken port(s), determining rebuild order<br />---&gt;&nbsp; Rebuilding in order<br />&nbsp;&nbsp;&nbsp;&nbsp; libgnomeui @2.24.5 +x11<br />&nbsp;&nbsp;&nbsp;&nbsp; net-snmp @5.7.2 <br />&nbsp;&nbsp;&nbsp;&nbsp; webkit-gtk @2.0.4 +video<br />&nbsp;&nbsp;&nbsp;&nbsp; gimp2 @2.8.6 +help_browser+python27<br />&nbsp;&nbsp;&nbsp;&nbsp; xsane @0.998 <br />---&gt;&nbsp; Computing dependencies for dbus-glib<br />---&gt;&nbsp; Verifying checksums for dbus-glib<br /><span style="background-color: yellow;"><b><span style="color: red;">Error: org.macports.checksum for port</span></b> dbus-glib returned: dbus-glib-0.102.tar.gz <span style="color: red;"><b>does not exist in /opt/local/var/macports/distfiles/dbus-glib</b></span></span><br />Please see the log file for port dbus-glib for details:<br />&nbsp;&nbsp;&nbsp; /opt/local/var/macports/logs/_opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_devel_dbus-glib/dbus-glib/main.log<br />Error: Unable to upgrade port: 1<br />Error rebuilding libgnomeui<br />&nbsp;&nbsp;&nbsp; while executing<br />"error "Error rebuilding $portname""<br />&nbsp;&nbsp;&nbsp; (procedure "revupgrade_scanandrebuild" line 395)<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"revupgrade_scanandrebuild broken_port_counts $opts"<br />&nbsp;&nbsp;&nbsp; (procedure "macports::revupgrade" line 5)<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"macports::revupgrade $opts"<br />&nbsp;&nbsp;&nbsp; (procedure "action_revupgrade" line 2)<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"action_revupgrade $action $portlist $opts"<br />&nbsp;&nbsp;&nbsp; (procedure "action_target" line 96)<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"$action_proc $action $portlist [array get global_options]"<br />&nbsp;&nbsp;&nbsp; (procedure "process_cmd" line 93)<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"process_cmd $remaining_args"<br />&nbsp;&nbsp;&nbsp; invoked from within<br />"if { [llength $remaining_args] &gt; 0 } {<br /><br />&nbsp;&nbsp;&nbsp; # If there are remaining arguments, process those as a command<br />&nbsp;&nbsp;&nbsp; set exit_status [process_cmd $remaining..."<br />&nbsp;&nbsp;&nbsp; (file "/opt/local/bin/port" line 5254)</span></span>
+{% endraw %}
