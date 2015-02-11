@@ -1,0 +1,21 @@
+---
+layout: post
+title: "awk 'system()' vs xargs"
+date: 2015-02-11 12:22:00 +0000
+permalink: /2015/02/ant-system-vs-xargs.html
+tags: ["cmdline", "kill", "awk", "xargs"]
+author: "cm"
+---
+{% raw %}
+Two different syntaxes for processing a command over a list of arg.<br />
+<br />
+Let's take for example, the list of PID you want to kill(all the processes matching "toto") :<br />
+<br />
+<span style="font-family: &quot;Courier New&quot;,Courier,monospace;">ps | grep toto | awk -F' ' '{print $2}' | xargs kill -9</span><br />
+<br />
+is equivalent to<br />
+<br />
+<span style="font-family: &quot;Courier New&quot;,Courier,monospace;">ps | grep toto | awk -F' ' '{system("kill -9 "$2}'</span><br />
+<br />
+note that the space at the end of the string <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">"kill -9<span style="background-color: yellow;"> </span>"</span> is important since the $2 will be concatenated. 
+{% endraw %}
