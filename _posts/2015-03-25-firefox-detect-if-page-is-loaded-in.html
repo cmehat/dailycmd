@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Firefox Detect if a page is loaded in the \"sidebar\" (Javascript)"
+date: 2015-03-25 17:24:00 +0000
+permalink: /2015/03/firefox-detect-if-page-is-loaded-in.html
+tags: ["javascript", "sidebar", "firefox"]
+author: "cm"
+---
+{% raw %}
+Firefox has this wonderful option when you create a bookmark : you can load a specific page directly in the sidebar. But it's not very well documented on how you can detect as a web developer that your page is actually shown in such a sidebar.<br />
+This is the javascript trick I used (validated with Firefox version=20.0.1):
+<br />
+<pre>
+{ if (window.content == window) /* not sidebar */ else /* sidebar */ }
+</pre>
+Source :<br />
+<ul>
+<li><a href="http://forums.mozillazine.org/viewtopic.php?p=1309266#p1309266" target="_blank">http://forums.mozillazine.org/viewtopic.php?p=1309266#p1309266</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/sidebar" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Window/sidebar</a></li>
+</ul>
+
+{% endraw %}
