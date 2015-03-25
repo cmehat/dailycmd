@@ -1,0 +1,142 @@
+---
+layout: post
+title: "Outlook VBA : mark a folder/subfolders tree as read"
+date: 2015-03-25 16:32:00 +0000
+permalink: /2015/03/outlook-vba-mark-foldersubfolders-tree.html
+tags: ["macro", "mail", "vba", "outlook", "email"]
+author: "cm"
+---
+{% raw %}
+I have been forced to use Outlook (2010), and one of the main features I've been missing was to be able to mark all a folder and sub-folders trees as read in 1 shot. The solution I found was to activate the VBA macros, and to link one as a task icon in the usual Outlook views.<br />
+Note that the macro given below is prompting a list of your outlook folders. This could be enhanced by choosing the selected folder since outlook doesn't allow to select
+<br />
+<h3>
+How to activate the Developer tab in outlook and authorize the Macro execution</h3>
+<ul>
+<li>Go to the "File"</li>
+<li>Go to "Options" to open the "Outlook Options" window</li>
+<li>In "Customize Ribbon", on the right panel, select "Developer". </li>
+<li>Finish this step with "Ok".</li>
+<li>Go to "Trust Center", then "Trust Center Settings" to open the "Trust Center" window</li>
+<li>Go to "Macro Settings".</li>
+<li>Select "Enable all macros (not recommended; potentially dangerous code can run)".</li>
+<li>Finish by clicking "Ok" to close the "Trust Center" and the "Outlook option" windows.</li>
+<li></li>
+</ul>
+<br />
+<h3>
+How to create a VBA macro in Outlook</h3>
+<blockquote>
+A macro is any public subroutine in a code module. A function or a private subroutine cannot be a macro, and a macro cannot be located in a class or form module.
+
+To create a new macro :
+<br />
+<ol>
+<li>In Outlook, on the Developer tab of the Microsoft Office Fluent ribbon, click Visual Basic.</li>
+<li>In the Project window, double-click the module you want to contain the macro.</li>
+<li>On the Insert menu, click Procedure.</li>
+<li>In the Name box, type a name for the macro. The name cannot contain spaces.</li>
+<li>Click OK. The template for the macro subroutine appears in the code module window.</li>
+<li> Type the code you want to run in the body of the subroutine.</li>
+</ol>
+</blockquote>
+(from ref [2])
+
+
+<br />
+<h3>
+Source Code of the Macro</h3>
+<pre>Sub MarkAllRead()
+
+Dim ResultFolder As Folder
+Dim Folder As Folder
+Dim item As MailItem
+Dim BaseFolder As Outlook.MAPIFolder
+Dim WalkResult As Long
+
+Set BaseFolder = Application.GetNamespace("MAPI").PickFolder
+Set ResultFolder = GetFolder(BaseFolder.FolderPath)
+
+For Each Folder In ResultFolder.Folders
+WalkResult = GetNextLevel(ResultFolder.FolderPath)
+
+For Each item In Folder.Items.Restrict("[unread] = true")
+item.UnRead = False
+Next
+Next
+Set ResultFolder = Nothing
+Set Folder = Nothing
+Set item = Nothing
+End Sub
+
+Function GetNextLevel(strFolderPath As String) As Long
+
+Dim WalkResultFolder As Folder
+Dim Folder As Folder
+Dim item As MailItem
+Dim WalkResult As Long
+Set WalkResultFolder = GetFolder(strFolderPath)
+For Each Folder In WalkResultFolder.Folders
+
+WalkResult = GetNextLevel(Folder.FolderPath)
+
+For Each item In Folder.Items.Restrict("[unread] = true")
+item.UnRead = False
+Next
+Next
+Set ResultFolder = Nothing
+Set Folder = Nothing
+Set item = Nothing
+End Function
+
+Function GetFolder(strFolderPath As String) As MAPIFolder
+
+Dim colFolders As Outlook.Folders
+Dim objFolder As Outlook.MAPIFolder
+Dim arrFolders() As String
+Dim i As Long
+On Error Resume Next
+
+strFolderPath = Replace(strFolderPath, "\\", "")
+
+strFolderPath = Replace(strFolderPath, "/", "\")
+
+arrFolders() = Split(strFolderPath, "\")
+
+Set objFolder = Application.GetNamespace("MAPI").Folders.item(arrFolders(0))
+If Not objFolder Is Nothing Then
+For i = 1 To UBound(arrFolders)
+Set colFolders = objFolder.Folders
+Set objFolder = Nothing
+Set objFolder = colFolders.item(arrFolders(i))
+
+If objFolder Is Nothing Then
+Exit For
+End If
+Next
+End If
+Set GetFolder = objFolder
+Set colFolders = Nothing
+End Function
+</pre>
+(from ref [1] )
+
+<br />
+<h3>
+How to add a quick access link to your macro</h3>
+<br />
+<li>Right click on the arrow at the right end of the Quick Access Toolbar (top right of the outlook window)</li>
+<li>Select "More Commands"</li>
+<li>On the left panel, select "Macros" (by default it's on "Popular Commands")</li>
+<li>Select your Macro on the list, and hit "Add &gt;&gt;". If you have some other icons, you can reorganize them with the up &amp; down arrow on the right.</li>
+<br />
+<h3>
+Sources / references </h3>
+<ul>
+<li>[1]<a href="http://www.mrexcel.com/forum/general-excel-discussion-other-questions/267884-outlook-macro-mark-folder-items-read.html#post2931153">Source code of the macro, User=Stonywall, website(forum)=www.mrexcel.com </a></li>
+<li>[2]<a href="https://msdn.microsoft.com/en-us/library/office/ff865785(v=office.14).aspx">How to set up a VBA Macro in outlook2010</a></li>
+</ul>
+<h3>
+To Do</h3>
+Change the macro so that it directly takes the selected Folder as an input.
+{% endraw %}
