@@ -1,0 +1,60 @@
+---
+layout: post
+title: "get return value ($?) of a tee'd command in ksh"
+date: 2015-04-24 10:21:00 +0000
+permalink: /2015/04/get-output-of-teed-command-in-ksh.html
+tags: ["ksh", "tee", "file descriptors", "pipestatus", "pipe", "$?", "posix"]
+author: "cm"
+---
+{% raw %}
+How to get the return value of "<i>command1</i>" if passed to a " <i>| command2"</i> , for example <i>"| tee OUTFILE" :</i><br />
+<pre>&nbsp;</pre>
+<pre>&nbsp;</pre>
+<pre>    command1 | tee OUTFILE</pre>
+<br />
+<br />
+&nbsp;With recent shells, you can use the array storing this : bash is <i>${PIPESTATUS[x]}</i> , zsh is <i>$pipestatus[x]</i> to get this value :<br />
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="pln">&nbsp;</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="pln">&nbsp;&nbsp;    command1 | tee OUTFILE</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="pln">      </span></code><code><span class="pln">echo $</span><span class="pun">{</span><span class="pln">PIPESTATUS</span><span class="pun">[</span><span class="lit">0</span><span class="pun">]}</span></code></pre>
+<br />
+With older shells, this feature is not available, but you still can use posix features and play around with the file descriptors :<br />
+<pre>&nbsp;</pre>
+<pre>    exec 4&gt;&amp;1; RETVAL=$({ { command1 ; echo $? &gt;&amp;3 ; } | { tee $OUTFILE &gt;&amp;4; } } 3&gt;&amp;1); exec 4&gt;&amp;-
+
+&nbsp;</pre>
+<pre><u><b>Explaination</b><b>s</b></u> </pre>
+<ol>
+<li>Create a file descriptor fd4 and map it to STDOUT</li>
+<li>Fill the RETVAL 
+value with the fork. </li>
+<ol>
+<li>fd4 is transmitted, but STDOUT and STDERR are 
+recreated for the forked process so fd4 still exist and is available.</li>
+<li>create the fd3 and redirect it to STDOUT </li>
+<li>map 'tee' STDOUT to the 
+previously created fd4 so that it gets printed to the terminal;&nbsp;</li>
+<li>tee then
+ forks the piped 'command1' which output value <i>$?</i> is sent to 
+fd3 with '<i>echo $? &gt;&amp;3</i>', and hence outputed in the RETVAL 
+variable;&nbsp;</li>
+</ol>
+<li>Eventually, close the fd4 
+
+
+</li>
+</ol>
+<br />
+<br />
+References :<br />
+<ul>
+<li>file descriptor trick : <a href="http://stackoverflow.com/questions/2413166/bash-redirect-and-append-stdout-and-stderr-to-file-and-terminal-and-get-prope">http://stackoverflow.com/questions/2413166/bash-redirect-and-append-stdout-and-stderr-to-file-and-terminal-and-get-prope</a></li>
+<li>Closing &amp; opening&nbsp; <a href="http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_07">http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_07</a>&nbsp; / <a href="http://pubs.opengroup.org/onlinepubs/9699919799/">http://pubs.opengroup.org/onlinepubs/9699919799/</a></li>
+<li><div style="color: black; direction: ltr;">
+<span style="font-size: small;">C More examp<span style="font-size: small;">les for bash, </span></span></div>
+<div style="color: black; direction: ltr; font-family: MS Shell Dlg 2; font-size: 9pt;">
+<a href="http://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell" title="http://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell">http://unix.stackexchange.com/questions/76162/how-do-i-capture-the-return-status-and-use-tee-at-the-same-time-in-korn-shell</a></div>
+</li>
+</ul>
+
+{% endraw %}
