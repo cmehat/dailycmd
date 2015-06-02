@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Replace all occurences of a string in a bunch of files by another string (in place)"
+date: 2015-06-02 13:23:00 +0000
+permalink: /2015/06/replace-all-occurences-in-file-by.html
+tags: ["replace", "regexp", "perl", "cmdline"]
+author: "cm"
+---
+{% raw %}
+<br />
+<ul>
+<li>Find all files on containing STRING_AAAA and replace it by STRING_BBBB <i>in place</i> (directly in the file).
+
+</li>
+</ul>
+<pre>find . -type f -exec grep -l STRING_AAAA {} \; -exec perl -pi -e 's!STRING_AAAA!STRING_BBBB!g' {} \;
+</pre>
+Pre-tests : 
+<br />
+<ul>
+<li>Find all files on containing STRING_AAAA.
+
+</li>
+</ul>
+<pre>find . -type f -exec grep -l STRING_AAAA {} \;
+</pre>
+
+{% endraw %}
