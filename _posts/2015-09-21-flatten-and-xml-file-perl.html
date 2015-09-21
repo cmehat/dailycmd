@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Flatten and XML file (perl)"
+date: 2015-09-21 10:36:00 +0000
+permalink: /2015/09/flatten-and-xml-file-perl.html
+tags: ["Control-M", "svn", "perl", "XML"]
+author: "cm"
+---
+{% raw %}
+This perl one-liner is useful in case you need to "flatten" and XML file.<br />
+<br /><br />
+<pre>
+</pre>
+<span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">PERL_CONVERT="</span>use XML::Simple; print XMLout(XMLin('-', KeepRoot =&gt; 1), AttrIndent =&gt; 1, KeepRoot =&gt; 1, XMLDecl =&gt; '');"</span><br />
+<br />
+To be used like this :<br />
+<br />
+<pre><span style="font-size: small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">/usr/bin/perl -e "$PERL_CONVERT" &gt; $TMPFILE</span></span></pre>
+<br />
+<br />
+Whatever input you have (in XML), the goal is to have a "comparable" ouptut that will respect the XML structure :<br />
+<u><b>FROM</b></u>:<br />
+<xlm declaration=""></xlm><br />
+<tag1 ...="" attr1="value1" attr2="value2" attr3="value3"></tag1><br />
+<subtag1>...</subtag1><br />
+<br /><tag2>...</tag2><br />
+<br />
+&nbsp;<u><b>TO</b></u>: <br />
+<xlm declaration=""></xlm><br />
+<tag1 br=""></tag1><br />
+attr1="value1"<br />attr2="value2"<br />
+...<br />
+attr3="value3"<br />
+&gt;<br />
+<subtag1></subtag1><br />
+...<br />
+<br />
+<br />
+<br /><tag2></tag2><br />
+...<br />
+ <br /><br />
+Specifically, this is really useful if you need to merge 2 different versions of&nbsp; your XML file, like for example in SVN. 
+{% endraw %}
