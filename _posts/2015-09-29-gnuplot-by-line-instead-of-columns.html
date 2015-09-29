@@ -1,0 +1,94 @@
+---
+layout: post
+title: "Gnuplot by line (instead of columns)"
+date: 2015-09-29 14:49:00 +0000
+permalink: /2015/09/gnuplot-by-line-instead-of-columns.html
+tags: ["plot", "gnuplot"]
+author: "cm"
+---
+{% raw %}
+In case you have some data not sorted by column (the easiet way to deal with gnuplot), and you want to plot it<br />
+<br />
+<br />
+<b>Gnuplot definition</b>: (file <b>myplotrow.gpl</b>)
+<br />
+<pre>set terminal x11 1 noraise
+set autoscale
+set grid
+set xdata time
+set timefmt "%Y-%m-%d_%H:%M:%S"
+set format x "%m/%d\n%H:%M"
+plot "data.dat" \
+        using 1:(stringcolumn(2) eq "valAAA"? $3:1/0) title "A" lc rgb "blue",\
+     "" using 1:(stringcolumn(2) eq "valBBB"? $3:1/0) title "B" lc rgb "red",\
+     "" using 1:(stringcolumn(2) eq "valCCC"? $3:1/0) title "C" lc rgb "green",\
+     "" using 1:(stringcolumn(2) eq "valDDD"? $3:1/0) title "D" lc rgb "orange",\
+     "" using 1:(stringcolumn(2) eq "valEEE"? $3:1/0) title "E" lc rgb "purple",\
+     "" using 1:(stringcolumn(2) eq "valFFF"? $3:1/0) title "F" lc rgb "violet"
+
+pause 100
+reread
+</pre>
+<br />
+<b>That you can launch with </b>:
+<br />
+<pre>gnuplot &lt; myplotrow.gpl
+</pre>
+<br />
+Or, if you change the output in the first line :<br />
+<pre>set terminal postscript color</pre>
+<br />
+<br />
+with :<br />
+<pre>gnuplot &lt; myplotrow.gpl &gt; myoutput.ps
+</pre>
+<br />
+<br />
+<b>Exemple values </b>:<br />
+<pre>2015-09-24_10:00:00 valAAA 37.000
+2015-09-24_10:00:00 valBBB 37.000
+2015-09-24_10:00:00 valCCC 37.000
+2015-09-24_10:00:00 valDDD 37.000
+2015-09-24_10:00:00 valEEE 37.000
+2015-09-24_10:00:00 valFFF 37.000
+2015-09-24_13:30:00 valAAA 40.000
+2015-09-24_13:30:00 valBBB 40.000
+2015-09-24_13:30:00 valCCC 41.000
+2015-09-24_13:30:00 valDDD 42.000
+2015-09-24_13:30:00 valEEE 42.000
+2015-09-24_13:30:00 valFFF 42.000
+2015-09-25_02:00:00 valAAA 5.000
+2015-09-25_02:00:00 valBBB 5.000
+2015-09-25_02:00:00 valCCC 5.000
+2015-09-25_02:00:00 valDDD 5.000
+2015-09-25_02:00:00 valEEE 5.000
+2015-09-25_02:00:00 valFFF 5.000
+2015-09-25_03:30:00 valAAA 15.000
+2015-09-25_03:30:00 valBBB 15.000
+2015-09-25_03:30:00 valCCC 16.000
+2015-09-25_03:30:00 valDDD 16.000
+2015-09-25_03:30:00 valEEE 15.000
+2015-09-25_03:30:00 valFFF 15.000
+2015-09-25_05:30:00 valAAA 19.000
+2015-09-25_05:30:00 valBBB 19.000
+2015-09-25_05:30:00 valCCC 19.000
+2015-09-25_05:30:00 valDDD 20.000
+2015-09-25_05:30:00 valEEE 19.000
+2015-09-25_05:30:00 valFFF 19.000
+2015-09-25_06:00:00 valAAA 19.000
+2015-09-25_06:00:00 valBBB 19.000
+2015-09-25_06:00:00 valCCC 18.000
+2015-09-25_06:00:00 valDDD 19.000
+2015-09-25_06:00:00 valEEE 19.000
+2015-09-25_06:00:00 valFFF 20.000</pre>
+<b>References :</b><br />
+<ul>
+<li>Gnuplot terciary condition:</li>
+</ul>
+<a href="http://stackoverflow.com/questions/6564561/gnuplot-conditional-plotting-plot-col-acol-b-if-col-c-x">http://stackoverflow.com/questions/6564561/gnuplot-conditional-plotting-plot-col-acol-b-if-col-c-x</a><br />
+<ul>
+<li>Colors</li>
+</ul>
+&nbsp;<a href="http://gnuplot.sourceforge.net/demo/rainbow.html" target="_blank">http://gnuplot.sourceforge.net/demo/rainbow.html</a><br />
+&nbsp; 
+{% endraw %}
