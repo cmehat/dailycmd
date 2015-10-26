@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Scripting : set variables depending how the where launched (terminal mode, cron/auto mode, ...)"
+date: 2015-10-26 15:51:00 +0000
+permalink: /2015/10/scripting-set-variables-if-launch-in.html
+tags: ["cron", "ksh", "cmdline", "bash", "terminal", "unix"]
+author: "cm"
+---
+{% raw %}
+You all know the deal : when you launch a command it (obviously) comes with all your environment variables. But when you want to cron it, none of them is present. We hence want to set some variables, but only in some cases. The "tty" command will help us do so.<br />
+<br />
+<br />
+<span style="font-family: &quot;arial&quot; , &quot;helvetica&quot; , sans-serif;">You can use the <span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">tty</span> tool to check if a script is called from the standard output :</span><br />
+<br />
+<br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">if ! tty -s</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">then<br />&nbsp;&nbsp;&nbsp; exec &gt;/dev/null 2&gt;&amp;1<br />else<br />&nbsp;&nbsp;&nbsp; MAIL_DEST="email@server.ext"<br />fi</span><br />
+<br />
+<br />
+<ul>
+<li><span style="font-family: &quot;arial&quot; , &quot;helvetica&quot; , sans-serif;">The command <span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">tty</span> returns :</span></li>
+</ul>
+<span style="font-family: &quot;arial&quot; , &quot;helvetica&quot; , sans-serif;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><span style="font-size: x-small;"><b>User Commands&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tty(1)<br /><br />NAME</b>&nbsp;&nbsp;&nbsp;&nbsp; tty - return user's terminal name<b><br /><br />SYNOPSIS</b>&nbsp;&nbsp;&nbsp;&nbsp; tty [-l] [-s]<b><br /><br />DESCRIPTION</b>&nbsp;&nbsp;&nbsp;&nbsp; The tty utility writes to the standard output&nbsp; the&nbsp; name&nbsp; of<br />&nbsp;&nbsp;&nbsp;&nbsp; the&nbsp; terminal&nbsp; that is open as standard input. The name that<br />&nbsp;&nbsp;&nbsp;&nbsp; is used is equivalent to the string that would&nbsp; be&nbsp; returned<br />&nbsp;&nbsp;&nbsp;&nbsp; by the ttyname(3C) function.<b><br /><br />OPTIONS</b>&nbsp;&nbsp;&nbsp;&nbsp; The following options are supported:<br /><br />&nbsp;&nbsp;&nbsp;&nbsp; -l&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Prints the synchronous line&nbsp; number&nbsp; to&nbsp; which&nbsp; the<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user's terminal is connected, if it is on an active<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; synchronous line.<br /><br />&nbsp;&nbsp;&nbsp;&nbsp; -s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inhibits printing of the terminal path name, allow-<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ing one to test just the exit status.<b><br /></b><br /><b>EXIT STATUS</b><br />&nbsp;&nbsp;&nbsp;&nbsp; The following exit values are returned:<br /><br />&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Standard input is a terminal.<br /><br />&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Standard input is not a terminal.<br /><br />&nbsp;&nbsp;&nbsp;&nbsp; &gt;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An error occurred.</span><br />&nbsp;</span>
+{% endraw %}
