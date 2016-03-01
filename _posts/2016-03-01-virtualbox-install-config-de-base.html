@@ -1,0 +1,11 @@
+---
+layout: post
+title: "VirtualBox install / config de base"
+date: 2016-03-01 00:56:00 +0000
+permalink: /2016/02/virtualbox-install-config-de-base.html
+tags: ["macosx", "virtualbox", "vm", "macos"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;* Config Clavier Mac sous Debian :<br /><a href="https://lokan.fr/2013/12/11/configurer-correctement-son-clavier-mac-sous-debian/" rel="nofollow" target="_blank">https://lokan.fr/2013/12/11/configurer-correctement-son-clavier-mac-sous-debian/</a><br />XKBMODEL="pc105"<br />XKBLAYOUT="fr"<br />XKBVARIANT="mac"<br />XKBOPTIONS="lv3:switch,compose:lwin”<br />* Config redimensionner fenêtre VirtualBox <br />(non testé ) : <a href="https://forums.virtualbox.org/viewtopic.php?f=2&amp;t=68966" rel="nofollow" target="_blank">https://forums.virtualbox.org/viewtopic.php?f=2&amp;t=68966</a><br />* <a href="http://download.virtualbox.org/virtualbox/5.0.14/" rel="nofollow" target="_blank">http://download.virtualbox.org/virtualbox/5.0.14/</a><br />* <a href="http://download.virtualbox.org/virtualbox/5.0.14/UserManual.pdf" rel="nofollow" target="_blank">http://download.virtualbox.org/virtualbox/5.0.14/UserManual.pdf</a><br />* Be sure to have the kernel headers, gcc and other basic build-tools installed <br />apt-cache search/apt-get install  build-essential linux-headers-$(uname -r) dkms<br /><br />* If present, it should be in /media/cdrom (or /media/cdrom0)<br />cd /media/cdrom0<br />sh <a href="http://VBoxLinuxAdditions.run" rel="nofollow" target="_blank">VBoxLinuxAdditions.run</a><br /><br />* NB : you might need to reboot the host.<br />* You can now add some shared folders (for example). They will be owned by root with drwxrwx--- root vboxsf (group)<br />* Add user in group vboxsf :<br />sudo usermod cm -a -G vboxsf<br /><br /><br /></p>
+{% endraw %}
