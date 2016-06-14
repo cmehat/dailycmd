@@ -1,0 +1,33 @@
+---
+layout: post
+title: "MySQL to CSV file"
+date: 2016-06-14 09:24:00 +0000
+permalink: /2016/06/mysql-to-csv-file.html
+author: "cm"
+---
+{% raw %}
+<br />
+<br />
+<pre class="default prettyprint prettyprinted"><code><span class="pln">SELECT order_id</span><span class="pun">,</span><span class="pln">product_name</span><span class="pun">,</span><span class="pln">qty
+FROM orders
+WHERE foo </span><span class="pun">=</span><span class="pln"> </span><span class="str">'bar'</span><span class="pln">
+<b>INTO OUTFILE </b></span><b><span class="str">'/tmp/orders.csv'</span><span class="pln">
+FIELDS TERMINATED BY </span><span class="str">','</span><span class="pln">
+ENCLOSED BY </span><span class="str">'"'</span><span class="pln">
+LINES TERMINATED BY </span><span class="str">'\n'</span><span class="pun">;</span></b></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun"><span style="font-family: &quot;arial&quot; , &quot;helvetica&quot; , sans-serif;"><b>TODO </b>: There is still to find how to print the column titles along with the result...</span></span></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="default prettyprint prettyprinted"><code><span class="pun"><div style="font-family: Times; white-space: normal;">
+Source :&nbsp;<a href="http://stackoverflow.com/questions/356578/how-to-output-mysql-query-results-in-csv-format">http://stackoverflow.com/questions/356578/how-to-output-mysql-query-results-in-csv-format</a></div>
+<div style="font-family: Times; white-space: normal;">
+ref :&nbsp;<a href="http://www.tech-recipes.com/rx/1475/save-mysql-query-results-into-a-text-or-csv-file/">http://www.tech-recipes.com/rx/1475/save-mysql-query-results-into-a-text-or-csv-file/</a></div>
+</span></code></pre>
+
+{% endraw %}
