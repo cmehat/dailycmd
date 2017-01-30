@@ -1,0 +1,100 @@
+---
+layout: post
+title: "JIRA Script Runner / split cascading field in two text fields"
+date: 2017-01-30 12:53:00 +0000
+permalink: /2017/01/jira-script-runner-split-cascading.html
+tags: ["groovy", "JIRA", "script runner"]
+author: "cm"
+---
+{% raw %}
+JIRA 7.1.7<br />
+Script Runner 4.3.16<br />
+<br />
+<div class="container" title="Hint: double-click to select code">
+<div class="line number1 index0 alt2">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.event.api.EventListener</code></div>
+<div class="line number2 index1 alt1">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.component.ComponentAccessor</code></div>
+<div class="line number3 index2 alt2">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.event.issue.AbstractIssueEventListener</code></div>
+<div class="line number4 index3 alt1">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.event.issue.IssueEvent</code></div>
+<div class="line number5 index4 alt2">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.event.type.EventDispatchOption</code></div>
+<div class="line number6 index5 alt1">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.issue.IssueManager</code></div>
+<div class="line number7 index6 alt2">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.issue.CustomFieldManager</code></div>
+<div class="line number8 index7 alt1">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.issue.MutableIssue</code></div>
+<div class="line number9 index8 alt2">
+<code class="groovy keyword">import</code> <code class="groovy plain">com.atlassian.jira.issue.fields.CustomField</code></div>
+<div class="line number10 index9 alt1">
+<code class="groovy keyword">import</code> <code class="groovy plain">org.apache.log4j.Logger</code></div>
+<div class="line number11 index10 alt2">
+&nbsp;</div>
+<div class="line number12 index11 alt1">
+<code class="groovy keyword">def</code> <code class="groovy plain">cfNameCascading = </code><code class="groovy string">"Cascading Field Name"</code><code class="groovy plain">;</code></div>
+<div class="line number13 index12 alt2">
+<code class="groovy keyword">def</code> <code class="groovy plain">cfNameFirst&nbsp;&nbsp;&nbsp;&nbsp; = </code><code class="groovy string">"Cascading Field Name : part 1"</code><code class="groovy plain">;</code></div>
+<div class="line number14 index13 alt1">
+<code class="groovy keyword">def</code> <code class="groovy plain">cfNameSecond&nbsp;&nbsp;&nbsp; = </code><code class="groovy string">"Cascading Field Name : part 2"</code><code class="groovy plain">;</code></div>
+<div class="line number15 index14 alt2">
+&nbsp;</div>
+<div class="line number16 index15 alt1">
+<code class="groovy plain">IssueManager issueManager = ComponentAccessor.getIssueManager()</code></div>
+<div class="line number17 index16 alt2">
+<code class="groovy plain">CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager()</code></div>
+<div class="line number18 index17 alt1">
+&nbsp;</div>
+<div class="line number19 index18 alt2">
+<code class="groovy comments">/** Get the different CF objects**/</code></div>
+<div class="line number20 index19 alt1">
+<code class="groovy plain">CustomField cfCascading = customFieldManager.getCustomFieldObjectByName(cfNameCascading)</code></div>
+<div class="line number21 index20 alt2">
+<code class="groovy plain">CustomField cfFirst = customFieldManager.getCustomFieldObjectByName(cfNameFirst)</code></div>
+<div class="line number22 index21 alt1">
+<code class="groovy plain">CustomField cfSecond = customFieldManager.getCustomFieldObjectByName(cfNameSecond)</code></div>
+<div class="line number23 index22 alt2">
+&nbsp;</div>
+<div class="line number24 index23 alt1">
+<code class="groovy comments">/** Get Cascading Field values (map) **/</code></div>
+<div class="line number25 index24 alt2">
+<code class="groovy plain">Map cfVal = issue.getCustomFieldValue(cfCascading) </code><code class="groovy keyword">as</code> <code class="groovy plain">Map</code></div>
+<div class="line number26 index25 alt1">
+<code class="groovy keyword">if</code> <code class="groovy plain">(cfVal) {</code></div>
+<div class="line number27 index26 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">String valFirst = cfVal.</code><code class="groovy functions">get</code><code class="groovy plain">(</code><code class="groovy constants">null</code><code class="groovy plain">);</code></div>
+<div class="line number28 index27 alt1">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">String valSecond = cfVal.</code><code class="groovy functions">get</code><code class="groovy plain">(</code><code class="groovy string">"1"</code><code class="groovy plain">);</code></div>
+<div class="line number29 index28 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">List allValues = cfVal.values() </code><code class="groovy keyword">as</code> <code class="groovy plain">List;</code></div>
+<div class="line number30 index29 alt1">
+&nbsp;</div>
+<div class="line number31 index30 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">log.info(</code><code class="groovy string">"First - second: $valFirst - $valSecond"</code><code class="groovy plain">);</code></div>
+<div class="line number32 index31 alt1">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">log.info(</code><code class="groovy string">"All: $allValues"</code><code class="groovy plain">);</code></div>
+<div class="line number33 index32 alt2">
+&nbsp;</div>
+<div class="line number34 index33 alt1">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy comments">/** Set each separate CF **/</code></div>
+<div class="line number35 index34 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">issue.setCustomFieldValue(cfFirst,&nbsp; valFirst);</code></div>
+<div class="line number36 index35 alt1">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">issue.setCustomFieldValue(cfSecond, valSecond);</code></div>
+<div class="line number37 index36 alt2">
+&nbsp;</div>
+<div class="line number38 index37 alt1">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy comments">/** update the issue **/</code></div>
+<div class="line number39 index38 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">issueManager.updateIssue(event.getUser(), issue, EventDispatchOption.DO_NOT_DISPATCH, false);</code></div>
+<div class="line number40 index39 alt1">
+<code class="groovy plain">} </code><code class="groovy keyword">else</code> <code class="groovy plain">{</code></div>
+<div class="line number41 index40 alt2">
+<code class="groovy spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="groovy plain">log.info(</code><code class="groovy string">"Custom field not present on this issue"</code><code class="groovy plain">)</code></div>
+<div class="line number42 index41 alt1">
+<code class="groovy plain">}</code></div>
+</div>
+
+{% endraw %}
