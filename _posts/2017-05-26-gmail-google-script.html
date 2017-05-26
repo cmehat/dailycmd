@@ -1,0 +1,64 @@
+---
+layout: post
+title: "GMAIL - Google Script - auto delete old (junk) mail"
+date: 2017-05-26 13:34:00 +0000
+permalink: /2017/05/gmail-google-script.html
+tags: ["gmail", "github", "automation", "google script"]
+author: "cm"
+---
+{% raw %}
+Today I discovered the "google scripts" that allow you to run some sophisticated actions on the various "google apps"/"cloud apps". This includes Gmail, Google drive, etc.<br />
+<br />
+Let's start with gmail since I have some needs I could not fit into the pretty basic filters that can be defined directly from the UI.<br />
+<br />
+<br />
+Context :<br />
+* I am able to identify labels are "search" (defined at the time the mail arrives) on my mailbox, that I want to delete after a certain period of time.<br />
+<br />
+For instance, I might be interested in some promotions sent by some companies I have reductions cards with, but after X days, it's of no use and it's only taking precious space in my inbox.<br />
+<br />
+* I do not wish to delete them directly, the "usual" trash with 30 days retention period is fine enought.<br />
+<br />
+* I want to have this run every night.<br />
+<br />
+<b>1. Go to &nbsp;https://script.google.com</b><br />
+<br />
+<b>2. Enter this script :</b><div><br /></div><div><ul style="text-align: left;"><li>set the variable <b>delayDays</b></li><li>set the variable <b>mySearch</b> accordingly to your needs.</li></ul>
+<div>Version 2017 (old)</div></div><div><br />
+<span style="font-size: xx-small;"><span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><span>function cleanUp() {</span></span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; /**</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; * @var &nbsp; &nbsp;delayDays int &nbsp; : Enter # of days before messages are moved to trash</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; * @var &nbsp; &nbsp;mySearch string : Enter the search as tested in Gmail search bar.</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; */</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var delayDays = 30 ;</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var mySearch = &nbsp;'label:online_store-totoStore OR from:bonsplans@newsletter.travel.com .com OR label:paris-freecycle';</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp;&nbsp;</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; //-- code</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var maxDate = new Date();</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; maxDate.setDate(maxDate.getDate()-delayDays);</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var tmp_threads = GmailApp.search(mySearch);</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var threads = [];</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; var threads = threads.concat(tmp_threads);</span><br />
+<br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; for (var i = 0; i &lt; threads.length; i++) {</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; if (threads[i].getLastMessageDate()<maxdate font=""></maxdate></span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; {</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; threads[i].moveToTrash();</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; }</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; }</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">}</span></span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><br /></span><span><br /><span style="font-family: inherit;">EDIT 2020 :&nbsp;</span><a href="https://github.com/copolycube/GmailPurgeEmailsMatchingQuery">https://github.com/copolycube/GmailPurgeEmailsMatchingQuery</a><div>new version with same features plus :</div><div><ul style="text-align: left;"><li><span>array of simplier queries to find</span></li><li><span>does multiple search instead of 1 massive one</span></li><li>concatenates a "avoid deletion", for example to keep "starred" e-mail (by default)</li></ul></div><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><br /></span>
+<b>3. Set it up to run every night :</b><br />
+&nbsp;3.1 : select the 'clock/trigger'.<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/assets/images/5abbd8cb-Screen-Shot-2017-05-26-at-15.32.47.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="37" data-original-width="41" src="/assets/images/5abbd8cb-Screen-Shot-2017-05-26-at-15.32.47.png" /></a></div>
+&nbsp;3.2 : add the desired triggers on the popup window that will appear.<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/assets/images/644f831d-Screen-Shot-2017-05-26-at-15.27.32.png" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="212" data-original-width="788" height="86" src="/assets/images/ce64312f-Screen-Shot-2017-05-26-at-15.27.32.png" width="320" /></a></div><div class="separator" style="clear: both; text-align: center;"><br /></div><div class="separator" style="clear: both; text-align: center;"><br /></div><div class="separator" style="clear: both; text-align: center;"><br /></div><div class="separator" style="clear: both; text-align: center;"><br /></div><h1 style="clear: both; text-align: left;">Other solution (easier)</h1><div>Use regular Gmail filters triggering deletions, but with search keys like :</div><div><span style="font-family: courier;">older_than:6m</span></div><div><br /></div><div>example :&nbsp; find all promotions older than 1y that haven't been starred</div><div><br /></div><div><span style="font-family: courier;">category:promotions older_than:1y -label:starred&nbsp;</span></div>
+<b><br /></b>
+<br />
+<div>
+<br /></div>
+</div>
+{% endraw %}
