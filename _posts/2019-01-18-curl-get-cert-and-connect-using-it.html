@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Curl : get cert and connect using it"
+date: 2019-01-18 21:07:00 +0000
+permalink: /2019/01/curl-get-cert-and-connect-using-it.html
+tags: ["curl", "security", "cert"]
+author: "cm"
+---
+{% raw %}
+<h3 style="text-align: left;"><span style="font-family: arial;">&nbsp;Obtain cert from self signed site</span></h3><div class="container" title="Hint: double-click to select code"><div class="line number2 index1 alt1"><code class="bash plain">openssl s_client -showcerts -connect 75.74.58.21:443 &lt;</code><code class="bash plain">/dev/null</code> <code class="bash plain">2&gt;</code><code class="bash plain">/dev/null</code> <code class="bash plain">| </code><code class="bash functions">sed</code> <code class="bash plain">-n </code><code class="bash string">'/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'</code> <code class="bash plain">| </code><code class="bash functions">grep</code> <code class="bash plain">-m1 -B-1 -- </code><code class="bash string">'-----END CERTIFICATE-----'</code>&nbsp; <code class="bash plain">&gt; cert.pem</code></div><div class="line number3 index2 alt2"><code class="bash comments"><br /></code></div><div class="line number3 index2 alt2"><code class="bash comments"><br /></code></div><h3 style="text-align: left;"><code class="bash comments"><span style="font-family: arial;">Connect with cert </span></code></h3><div class="line number4 index3 alt1"><code class="bash plain">curl --cacert cert.pem https:</code><code class="bash plain">//hostname</code><code class="bash plain">.com&nbsp;</code></div></div>
+{% endraw %}
