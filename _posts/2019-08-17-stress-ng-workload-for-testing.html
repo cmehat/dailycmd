@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Stress-ng - workload for testing"
+date: 2019-08-17 23:51:00 +0000
+permalink: /2019/08/stress-ng-workload-for-testing.html
+tags: ["load", "performances", "stress-ng"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;(src = <a href="https://www.loggly.com/blog/performance-monitoring-aws-cloudwatch-metrics/" rel="nofollow" target="_blank">https://www.loggly.com/blog/performance-monitoring-aws-cloudwatch-metrics/</a> )<br /><br />Step 1. Installing and Running Stress-ng<br /><br />Stress-ng
+ is a load simulator available for the Ubuntu operating system. The 
+utility has a wide variety of command line switches used for customizing
+ the load. The installation is fairly simple as well:<br /><br /># apt-get install stress-ng<br /><br />More details about stress-ng can be found on the Ubuntu man page.<br /><br />Once the tool is installed, it can be run as a command to simulate a CPU load with the following:<br /><br />    4 worker threads<br />    80% load<br />    Timeout after 25 minutes (1,500 seconds)<br /><br /># stress-ng --timeout 1500 --cpu 4 --cpu-load 80<br /><br />CloudWatch
+ Dashboard EC2 CPUUtilizationAs the CPU becomes more and more loaded, 
+the the CPUUtilization metric in CloudWatch also reflects it:</p>
+{% endraw %}
