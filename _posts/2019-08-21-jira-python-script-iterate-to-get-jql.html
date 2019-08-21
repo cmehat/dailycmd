@@ -1,0 +1,65 @@
+---
+layout: post
+title: "JIRA Python script : iterate to get the JQL result"
+date: 2019-08-21 11:01:00 +0000
+permalink: /2019/08/jira-python-script-iterate-to-get-jql.html
+tags: ["python", "Atlassian", "JIRA"]
+author: "cm"
+---
+{% raw %}
+Python 2.7 script to :<br />
+<br />
+<ul>
+<li>query the result of a JIRA search query in JQL</li>
+<li>iterate so that we do not get all the data at once but only by small batches</li>
+<li>print the result list</li>
+</ul>
+<br />
+Pre-requesites :<br />
+<br />
+<ul>
+<li>python</li>
+<li>https://pypi.org/project/atlassian-python-api/</li>
+<li>https://atlassian-python-api.readthedocs.io/en/latest/index.html</li>
+<li>some JIRA Server or JIRA Cloud + credentials</li>
+<ul>
+<li>Note that the auth for JIRA Cloud might change a bit</li>
+</ul>
+</ul>
+<br />
+<br />
+<br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">from atlassian import Jira</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">import json</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span><span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">#auth for JIRA Server</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">jira = Jira(</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; url='https://support.valiantys.com',</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; username='username',</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; password='password')</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"># Get the SERVER issues that are Running</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">JQL = 'project = DEMO AND resolution = Unresolved AND issuetype = "Story" AND status = "In Progress" ORDER BY cf[16032] DESC, cf[15857] DESC'</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">data_tmp = {}&nbsp; &nbsp;# data we progressively get each interation</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">issues_all = [] # full list of issues</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">issues_tmp = {} # list of issues during this iteration</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">next_start = 0</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">size = 50</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">while size &gt; 0 :</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; print("-------- trying to get issues:%s..%s" % (next_start, next_start+size))</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; data_tmp = jira.jql(JQL, start=next_start, limit=size)</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; next_start += size</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; issues_tmp = data_tmp['issues']</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; size = len(data_tmp['issues'])</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">&nbsp; &nbsp; &nbsp; &nbsp; issues_all.extend(issues_tmp)</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">print ("(final) #issues=%s" % len(issues_all))</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><br /></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"># now we can do things with the data</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;">for x in issues_all:</span><br />
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace;"><span style="white-space: pre;"> </span>print("%s %s %s %s" % (x['key'], x['fields']['customfield_16032'], x['fields']['customfield_15862'], x['fields']['customfield_15857']))</span><br />
+<div>
+<br /></div>
+
+{% endraw %}
