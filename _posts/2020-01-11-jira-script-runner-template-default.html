@@ -1,0 +1,23 @@
+---
+layout: post
+title: "JIRA + Script Runner : template / default Description value"
+date: 2020-01-11 00:19:00 +0000
+permalink: /2020/01/jira-script-runner-template-default.html
+tags: ["groovy", "Atlassian", "script runner", "JIRA"]
+author: "cm"
+---
+{% raw %}
+using Adaptavist Script Runner plugin &gt; Behaviour<br />
+<br />
+<br />
+<span style="font-family: Courier New, Courier, monospace;">def desc = getFieldById ("description")</span><br />
+<span style="font-family: Courier New, Courier, monospace;"><br /></span>
+<span style="font-family: Courier New, Courier, monospace;">def defaultValue = """ *Some text in bold*</span><br />
+<span style="font-family: Courier New, Courier, monospace;">since we have a multiline string, we can put some more</span><br />
+<span style="font-family: Courier New, Courier, monospace;">but keep it short, this is a template...</span><br />
+<span style="font-family: Courier New, Courier, monospace;">What / Why / How ...""".replaceAll(/ .&nbsp; &nbsp;/, '')</span><br />
+<span style="font-family: Courier New, Courier, monospace;"><br /></span>
+<span style="font-family: Courier New, Courier, monospace;">if (! underlyingIssue.descrption) {</span><br />
+<span style="font-family: Courier New, Courier, monospace;">&nbsp; &nbsp; &nbsp; &nbsp; desc.setFormValue(defaultValue)</span><br />
+<span style="font-family: Courier New, Courier, monospace;">}</span>
+{% endraw %}
