@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Rsync and exclusions"
+date: 2020-08-31 21:35:00 +0000
+permalink: /2020/08/rsync-and-exclusions.html
+tags: ["rsync", "backup", "Atlassian", "shell", "bash", "shell bash", "JIRA", "sync", "filesystem"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;</p><p><i>an old post found back on disqr about rsync (original date : circa 2016)</i></p><p>You might want to use the rsync exclude options directly in your 
+script either by specifying a file with all the exclusions to perform, 
+or by specifying them in the command line directly :</p><p><span style="font-family: courier;">--exclude-from &lt;file-name with 1 pattern by line&gt;<br />--exclude &lt;file or="" dir=""&gt;</span></p><p>For example :<br /></p><div style="text-align: left;"><span style="background-color: #eeeeee; font-family: courier; font-size: x-small;">rsync
+ -r -a -v -e "ssh -l Username" \</span></div><div style="text-align: left;"><span style="background-color: #eeeeee; font-family: courier; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; --exclude 'dbconfig.xml' --exclude 
+'WEB-INF/classes/' --delete \</span></div><div style="text-align: left;"><span style="background-color: #eeeeee; font-family: courier; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; /local/Directory 
+remote.server:/remoteDirectory</span></div><p></p><p>One important thing to keep in mind
+ when excluding a directory is that rsync will always consider the path 
+to be relative to the source directory.</p><p><br /></p><p><br /></p><p>This can be used for example when you want to push your production from a Production JIRA instance to a Staging JIRA instance, but your dbconfig.xml is different (different DB auth parameters for example), and hence want to avoid some files.&nbsp;</p>
+{% endraw %}
