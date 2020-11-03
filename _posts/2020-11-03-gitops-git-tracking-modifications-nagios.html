@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Gitops & git tracking modifications & Nagios"
+date: 2020-11-03 18:48:00 +0000
+permalink: /2020/11/gitops-git-tracking-modifications-nagios.html
+tags: ["nagios"]
+author: "cm"
+---
+{% raw %}
+<p><br /></p><p>Context :&nbsp;</p><p>I needed to have all my nagios files on my computer to be able to run some python scripts trying to figure out what refactoring needed to be done, and identifying gaps in the configuration I inherited.</p><p>I took that opportunity to version all our nagios configuration files, with a git repository configured at the /usr/local/nagios/etc level.</p><p><br /></p><p>That proved itself useful to gain some confidence that we're not going to loose anything.</p><p><br /></p><p>Initial idea was taken from :&nbsp;&nbsp;</p><p><br /></p><p>Script to automatically commit changes done in Nagios and push them to the central repo.&nbsp;<br />NB : still a few things to investigate, but ...</p><p>auto-git-commit-push.sh</p><div style="text-align: left;"><span style="font-family: courier;">#!/bin/bash<br />cd /usr/local/nagios/etc \<br />&amp;&amp; /bin/git pull \<br />&amp;&amp; /bin/git add -A \<br />&amp;&amp; /bin/git commit -m "updated nagios dynamic files $(date) -- automatic commit" \<br />&amp;&amp; /bin/git push origin master \<br />&amp;&amp;&nbsp; /bin/git pull \<br />&amp;&amp; if ! $(grep -lr '&lt;&lt;&lt;&lt;&lt;&lt;&lt;' . ) ; then grep -lr '&lt;&lt;&lt;&lt;&lt;&lt;&lt;' . | xargs git checkout --ours; ./$0; fi</span></div><div><br /></div><div><br /></div><div>identified issues :</div><div>* why so many conflicts while we are only modifying and thus commiting files locally and pushing them !?</div><div>* I thought about putting in place a workflow that would take the files from the git repository and push them to nagios import with some git hooks, but I eventually found the Nagios REST API which is way easier to delivery to the team handling those creations : just 1 script per use-case and they'll do everything at once.</div>
+{% endraw %}
