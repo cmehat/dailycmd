@@ -1,0 +1,11 @@
+---
+layout: post
+title: "ansible FQCN for modules names > 2.10"
+date: 2020-12-01 22:07:00 +0000
+permalink: /2020/12/ansible-fqcn-for-modules-names-210.html
+tags: ["ansible"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;Starting in ansible 2.10, ansible now recommends using the FQCN for each module (Fully Qualified Collection Name)&nbsp;</p><p>This might become mandatory in a future release.</p><p>To identify the redirection from the default / previous/ still working to the FQCN :</p><p><span style="background-color: #eeeeee; font-family: courier;"></span></p><blockquote><span style="background-color: #eeeeee;"><span style="font-family: courier;"># ansible-playbook deploy.yaml -vv<br /></span><span style="font-family: courier;">redirecting (type:module) ansible.builtin.timezone to community.general.timezone</span></span></blockquote><span style="background-color: #cccccc; font-family: courier;"></span><p></p><p><br /></p><p><br /></p><p>namely, this is an example for the helm (example from Montreal Ansible meetup on 30-sept-2020)</p><p></p><div class="separator" style="clear: both; text-align: center;"><a href="/assets/images/6e0a3cbc-image.png" style="margin-left: 1em; margin-right: 1em;"><img alt="" data-original-height="335" data-original-width="1441" height="150" src="/assets/images/6e0a3cbc-image.pngw650-h150/image.png" width="650" /></a></div><br /><br /><p></p>
+{% endraw %}
