@@ -1,0 +1,12 @@
+---
+layout: post
+title: "JetBrain / dev IDE : IntelliJ, PyCharm, etc."
+date: 2021-02-18 23:21:00 +0000
+permalink: /2021/02/jetbrain-dev-ide-intellij-pycharm-etc.html
+tags: ["IntelliJ", "JetBrains", "PyCharm", "IDE"]
+author: "cm"
+---
+{% raw %}
+<p>It is possible to adapt those IDE to automatically allocate some memory at the startup time, and to&nbsp;</p><p><br /></p><p>For example, edit your version of <strong>idea.vmoptions</strong> and update the '<strong>-Xmx</strong>' line so that IntelliJ runs with 4Go allowed memory (my default was 1024...)</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<div><div class="syntaxhighlighter sh-confluence nogutter  java" id="highlighter_575555"><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="code"><div class="container" title="Hint: double-click to select code"><div class="line number1 index0 alt2"><code class="java plain">-Xmx4096m</code></div></div></td></tr></tbody></table><br /></div></div><div class="syntaxhighlighter sh-confluence nogutter  java" id="highlighter_575555">Note that with mac os, it shouldn't be edited by hand directly through the files, but through&nbsp;</div><div class="syntaxhighlighter sh-confluence nogutter  java" id="highlighter_575555"><b>PyCharm &gt; Help &gt; Edit JVM options</b></div><div class="syntaxhighlighter sh-confluence nogutter  java" id="highlighter_575555"><br /></div><div class="syntaxhighlighter sh-confluence nogutter  java" id="highlighter_575555">cf. : https://intellij-support.jetbrains.com/hc/en-us/articles/206544869-Configuring-JVM-options-and-platform-properties</div><div><br /></div></div></div>
+{% endraw %}
