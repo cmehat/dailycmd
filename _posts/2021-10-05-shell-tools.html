@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Shell tools : shellcheck"
+date: 2021-10-05 13:41:00 +0000
+permalink: /2021/10/shell-tools.html
+tags: ["cmdline", "shell", "bash", "tools"]
+author: "cm"
+---
+{% raw %}
+<p></p><ul style="text-align: left;"><p><br /></p><li><b><span style="font-family: courier;">S</span></b><span style="font-size: 16px;"><b><span style="font-family: courier;">hellCheck</span></b>, a static analysis tool for shell scripts</span></li></ul><p></p><p><a href="https://github.com/koalaman/shellcheck">https://github.com/koalaman/shellcheck</a></p><ul style="text-align: left;"><li><a href="https://steinbaugh.com/posts/posix.html">https://steinbaugh.com/posts/posix.html</a>&nbsp;lists some&nbsp;</li><ul><li>=&gt;&nbsp;https://steinbaugh.com/posts/posix.html#conditional-expressions</li><li>=&gt;&nbsp;https://steinbaugh.com/posts/posix.html#parameter-expansion</li></ul></ul><blockquote style="border: none; margin: 0px 0px 0px 40px; padding: 0px; text-align: left;"><p style="text-align: left;"></p><p style="text-align: left;"><br /></p><p></p></blockquote><p></p><ul style="text-align: left;"><li><a href="https://www.grymoire.com/Unix/Sh.html">https://www.grymoire.com/Unix/Sh.html</a></li></ul><p></p><p><br /></p><p></p><ul style="text-align: left;"><li><a href="https://jjasghar.github.io/blog/2019/06/15/shellcheck-and-you-should-too/">https://jjasghar.github.io/blog/2019/06/15/shellcheck-and-you-should-too/</a></li></ul>suggests to add this on your makefiles :<p></p><pre class="highlight"><code><span class="nl">check-scripts</span><span class="o">:</span>
+    <span class="c"># Fail if any of these files have warnings
+</span>    <span class="err">shellcheck</span> <span class="err">myscripts/*.sh</span></code></pre>or this on your CI (here : .travis.yml )<div><pre class="highlight"><code><span class="na">script</span><span class="pi">:</span>
+  <span class="c1"># Fail if any of these files have warnings</span>
+  <span class="pi">-</span> <span class="s">shellcheck myscripts/*.sh</span></code></pre><div><br /></div><div><br /></div><div><br /></div></div>
+{% endraw %}
