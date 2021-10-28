@@ -1,0 +1,11 @@
+---
+layout: post
+title: "kill processes from docker-compose \"container_name\""
+date: 2021-10-28 18:26:00 +0000
+permalink: /2021/10/kill-processes-from-docker-compose.html
+tags: ["container", "ps", "awk", "grep", "docker-compose", "docker"]
+author: "cm"
+---
+{% raw %}
+<p>Context :&nbsp;</p><p>follwing a project-name change -&gt; renaming the <span style="font-family: courier;"><b>directory-name/</b>docker-compose.yml</span>&nbsp;the processes that were started by docker-compose were duplicated.</p><p>From the new project :</p><p>*&nbsp; impossible to see them.</p><p>From <span style="font-family: courier;">docker ps</span>&nbsp;: no process listed</p><p>From OS perspective ps aux : process present.</p><p><br /></p><h3 style="text-align: left;">Test 1 : kill them all !</h3><p>&nbsp;Step 1 : identify them</p><p><span style="font-family: courier;">ps aux | grep $(echo "$(grep container_name docker-compose.yml | grep -v '#' | awk '{printf("%s\\|", $2)}')grep")</span></p><p><br /></p><p>Step 2 : kill -9 them all</p><p><br /></p><p><span style="font-family: courier;">ps aux | grep $(echo "$(grep container_name docker-compose.yml | grep -v '#' | awk '{printf("%s\\|", $2)}')grep") | awk '{print $2}' | xargs sudo kill -9</span></p><p><br /></p><p>-&gt; result : when restarting docker, they're back :-(&nbsp;</p><p><br /></p><h3>Test 2 : stop docker + docker-compose start</h3><div>apparently working, but I lost my container's content...</div><div><br /></div><p><br /></p>
+{% endraw %}
