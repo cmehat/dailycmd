@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Hetzner firewall for outgoing trafic"
+date: 2022-03-24 13:31:00 +0000
+permalink: /2022/03/hetzner-firewall-for-outgoing-trafic.html
+tags: ["hetzner", "firewall", "dns"]
+author: "cm"
+---
+{% raw %}
+<p>As noted here :</p><p>https://docs.hetzner.com/robot/dedicated-server/firewall/#out-going-tcp-connections</p><p>make sure to include a rule in your hetzner Robot firewall / firewall templates if you want to connect to the outerworld. For instance, without the "outgoing" line in my setup, I was not able to perform even a <i>apt-get update.</i></p><p><i><br /></i></p><p><i><b>Hetzner Servers - Robot Firewall / rule for outgoing trafic</b></i></p><p style="text-align: left;"></p><ul style="text-align: left;"><li><b>Name</b> : <i>outgoing tcp&nbsp;</i>(for example)</li><li><b>Source IP</b> : <span style="font-family: courier;">N/A</span></li><li><b>Destination IP</b> : <span style="font-family: courier;">N/A</span></li><li><b>Source port</b> : <span style="font-family: courier;">N/A</span></li><li><b>Destination port</b> : <span style="font-family: courier;">32768-65535</span></li><li><b>Protocol</b> : <span style="font-family: courier;">tcp</span></li><li><b>TCP Flags</b> : <span style="font-family: courier;">ack</span></li></ul><p></p><p><i><br /></i></p><p><i><br /></i></p><p><i></i></p><div class="separator" style="clear: both; text-align: center;"><i><a href="/assets/images/73d0bdaf-AVvXsEgyb0xGTMIQphDXeVIuYwMR90V520vOsRWR.png" style="margin-left: 1em; margin-right: 1em;"><img alt="" data-original-height="299" data-original-width="1552" height="132" src="/assets/images/73d0bdaf-AVvXsEgyb0xGTMIQphDXeVIuYwMR90V520vOsRWR.png=w676-h132" width="676" /></a></i></div><i><br /><br /></i><p></p>
+{% endraw %}
