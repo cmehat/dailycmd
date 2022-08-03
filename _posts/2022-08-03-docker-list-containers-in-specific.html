@@ -1,0 +1,11 @@
+---
+layout: post
+title: "docker : list containers in a specific network"
+date: 2022-08-03 20:17:00 +0000
+permalink: /2022/08/docker-list-containers-in-specific.html
+tags: ["container", "docker", "network"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;</p><p>List containers in a precise&nbsp;</p><p><br /></p><p><span style="font-family: courier;">$ docker network ls<br /></span><span style="font-family: courier;">NETWORK ID&nbsp; &nbsp; &nbsp;NAME&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;DRIVER&nbsp; &nbsp; SCOPE<br /></span><span style="font-family: courier;">f732a9b3c5a1&nbsp; &nbsp;bridge&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bridge&nbsp; &nbsp; local<br /></span><span style="font-family: courier;">7ec614323767&nbsp; &nbsp;host&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;host&nbsp; &nbsp; &nbsp; local<br /></span><span style="font-family: courier;">...</span></p><p><br /></p><p><br /></p><p><span style="font-family: courier;">docker network inspect&nbsp; &nbsp; &nbsp;-f '{{ range $key, $value := .Containers }}{{printf "%s: %s\n" $key .Name}}{{ end }}' &lt;NETWORK NAME&gt;<br />&lt;ID&gt; &lt;Name&gt;</span></p>
+{% endraw %}
