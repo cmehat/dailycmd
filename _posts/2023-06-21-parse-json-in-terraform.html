@@ -1,0 +1,26 @@
+---
+layout: post
+title: "parse json in terraform"
+date: 2023-06-21 19:35:00 +0000
+permalink: /2023/06/parse-json-in-terraform.html
+tags: ["terraform", "JSON"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;<a class="c-link" data-sk="tooltip_parent" data-stringify-link="https://www.reddit.com/r/Terraform/comments/c07dgc/using_external_jsons_as_data_source/" delay="150" href="https://www.reddit.com/r/Terraform/comments/c07dgc/using_external_jsons_as_data_source/" rel="noopener noreferrer" style="box-sizing: inherit; font-family: Slack-Lato, Slack-Fractions, appleLogo, sans-serif; font-size: 15px; font-variant-ligatures: common-ligatures; text-decoration-line: none;" target="_blank">https://www.reddit.com/r/Terraform/comments/c07dgc/using_external_jsons_as_data_source/</a></p><div class="p-rich_text_section" style="background-color: rgba(242, 199, 68, 0.1); box-sizing: inherit; color: #1d1c1d; counter-reset: list-0 0 list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: Slack-Lato, Slack-Fractions, appleLogo, sans-serif; font-size: 15px; font-variant-ligatures: common-ligatures;"><span aria-label="" class="c-mrkdwn__br" data-stringify-type="paragraph-break" style="box-sizing: inherit; display: block; height: 8px;"></span></div><pre class="c-mrkdwn__pre" data-stringify-type="pre" style="--saf-0: rgba(var(--sk_foreground_low,29,28,29),0.13); border-radius: 4px; border: 1px solid var(--saf-0); box-sizing: inherit; color: #1d1c1d; counter-reset: list-0 0 list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace !important; font-size: 12px; font-variant-ligatures: none; line-height: 1.50001; margin-bottom: 4px; margin-top: 4px; overflow-wrap: break-word; overflow-y: hidden; padding: 8px; tab-size: 4; text-wrap: wrap; word-break: normal;">    data "http" "example" {
+  url = "..."
+}
+
+locals {
+  example_response = jsondecode(data.http.example.body)
+}</pre><blockquote class="c-mrkdwn__quote" data-stringify-type="quote" style="background-color: rgba(242, 199, 68, 0.1); box-sizing: inherit; color: #1d1c1d; counter-reset: list-0 0 list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: Slack-Lato, Slack-Fractions, appleLogo, sans-serif; font-size: 15px; font-variant-ligatures: common-ligatures; margin: 4px 0px; padding: 0px 0px 0px 16px; position: relative;" type="cite">From there you can manipulate that data structure as you need. If you want to produce a map of lists then probably your next step would be to use two nested for expressions. I’m just guessing what you want the values in those lists to look like, but here’s a starting point:</blockquote><pre class="c-mrkdwn__pre" data-stringify-type="pre" style="--saf-0: rgba(var(--sk_foreground_low,29,28,29),0.13); border-radius: 4px; border: 1px solid var(--saf-0); box-sizing: inherit; color: #1d1c1d; counter-reset: list-0 0 list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace !important; font-size: 12px; font-variant-ligatures: none; line-height: 1.50001; margin-bottom: 4px; margin-top: 4px; overflow-wrap: break-word; overflow-y: hidden; padding: 8px; tab-size: 4; text-wrap: wrap; word-break: normal;">    locals {
+  example_rules = {
+    for k, m in local.example_response : k =&gt; [
+      for k, v in m : {
+        key   = k
+        value = v
+      }
+    ]
+  }
+}</pre>
+{% endraw %}
