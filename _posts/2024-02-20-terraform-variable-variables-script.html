@@ -1,0 +1,18 @@
+---
+layout: post
+title: "terraform variable <-> variables {script, gitlab-ci}"
+date: 2024-02-20 20:28:00 +0000
+permalink: /2024/02/terraform-variable-variables-script.html
+tags: ["infrastructure", "variable", "iac", "terraform", "gitlab", "bash", "script"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;(Ici, ce que vous voulez avant le lien)&nbsp;<span class="fullpost">(Ici vous racontez votre vie)</span></p><div><span class="fullpost"><br /></span></div><h3><span class="fullpost">terraform -&gt; gitlab/script/etc.</span></h3><div><span class="fullpost"><br /></span></div><div><span class="fullpost">src: https://stackoverflow.com/questions/75531444/how-to-use-terraform-variable-into-gitlab-ci-yml</span></div><div><span class="fullpost"><br /></span></div><div><ul><li><span class="fullpost">Terraform : use an "output"&nbsp;</span></li></ul></div><div><span class="fullpost"><br /></span></div><div><span style="font-family: courier;">locals {</span></div><div><span style="font-family: courier;">toto = format ("${var.ressource_name_pattern}-something", "cloudfront-edge")</span></div><div><span style="font-family: courier;">}</span></div><div><span style="font-family: courier;"><br /></span></div><div><span style="font-family: courier;">output "toto" {</span></div><div><span style="font-family: courier;">&nbsp;value = local.toto</span></div><div><span style="font-family: courier;">}</span></div><div><br /></div><div><ul><li>Script: get output from terraform command</li></ul></div><div><span style="font-family: courier;"><br /></span></div><div><span style="font-family: courier;">foobar = ${terraform output toto}</span></div><div><br /></div><div><br /></div><div><br /></div><h3>gitlab -&gt; Terraform</h3><div><br /></div><div><span class="comment-copy">Read&nbsp;</span>environment variables in terraform variables, add&nbsp;<code>TF_VAR_</code>&nbsp;in front of the variable name,<br /><br />=&gt; env / exported&nbsp; "<code>TF_VAR_toto" =&gt; variable.tf variable toto</code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div><h3><span class="fullpost">terraform -&gt; gitlab/script/etc.</span>&nbsp;VARIABLE (in project settings)</h3><div><code>src&nbsp;https://www.reddit.com/r/Terraform/comments/mwmq4e/comment/gvjo7g3/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button</code></div><div><code><br /></code></div><div><code>&nbsp; &nbsp; &nbsp;For example : create an EKS cluster &amp; then create a variable with the KUBECONFIG data in another project which has the code for the apps &amp; trigger the deployment of those apps into newly created cluster using that variable.</code></div><div><code><br /></code></div><pre><span style="font-family: courier;">    - terragrunt run-all apply --terragrunt-non-interactive -auto-approve tfplan-$CI_COMMIT_SHA
+    - terraform output kubectl_config &gt; kubectl_config
+    - |
+      curl -s -XPUT -H "PRIVATE-TOKEN: $GITLAB_API_RW_PRIVATE_TOKEN" $CI_API_V4_URL/groups/$GROUP_ID/variables/KUBECONFIG \
+      --form "value=$(cat kubectl_config)" \
+      --form "variable_type=file" \
+      --form "protected=false" \
+      --form "masked=false" \&nbsp;</span></pre><div><code><span style="font-family: courier;">&nbsp; &nbsp; &nbsp; --form "environment_scope=*"&nbsp;</span></code></div><div><code><span style="font-family: courier;"><br /></span></code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div><div><code><br /></code></div>
+{% endraw %}
