@@ -1,0 +1,11 @@
+---
+layout: post
+title: "DNS debugging"
+date: 2024-05-22 20:06:00 +0000
+permalink: /2024/05/dns-debugging.html
+tags: ["DNSSEC", "dns"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;Doing some digging about why a specific DNS wasn't propagating properly everywhere, I found out that it was related to a wrong DNSSEC declaration.</p><p><br /></p><p></p><ul style="text-align: left;"><li>Tool to check if the DNS record is properly propagated&nbsp;<a href="https://www.whatsmydns.net">https://www.whatsmydns.net</a></li><li>Debug DNS settings &amp; DNSSEC settings</li><ul><li><a href="https://dnsviz.net">https://dnsviz.net</a></li><li><a href="https://www.zonemaster.net">https://www.zonemaster.net</a>/&nbsp;</li></ul></ul><p><br /></p><p>a bit more details about DNSSEC&nbsp;</p><p><a href="https://blog.ovhcloud.com/an-introduction-to-dnssec/">https://blog.ovhcloud.com/an-introduction-to-dnssec/</a></p><p><br /></p><p>DNS DNSKEY and DS records "<i>The DNSKEY and DS records are used by DNSSEC resolvers to verify the authenticity of DNS records.</i>"</p><p><a href="https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-records/">https://www.cloudflare.com/learning/dns/dns-records/dnskey-ds-records/</a></p><p><br /></p><p><br /></p><p>some debuging steps</p><p><a href="https://serverfault.com/questions/1018543/dns-not-resolving-in-all-locations-after-a-week" target="_blank">https://serverfault.com/questions/1018543/dns-not-resolving-in-all-locations-after-a-week&nbsp;</a></p><p><br /></p>
+{% endraw %}
