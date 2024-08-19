@@ -1,0 +1,112 @@
+---
+layout: post
+title: "GCP+ansible+gitlab-ci : OS-login for ansible with dynamic google compute inventory and gitlab-ci"
+date: 2024-08-19 21:59:00 +0000
+permalink: /2024/08/gcpansiblegitlab-ci-os-login-for.html
+tags: ["RSA", "extends", "gcp", "ci", "CICD", "ssh", "google", "gitlab", "ssh-keygen", "service account", "ansible", "os-login"]
+author: "cm"
+---
+{% raw %}
+<p>"How to configure OS Login in GCP for Ansible" + ansible dynamic inventory for GCP compute + update on accepted cryptographic algo for SSH key + gitlab-ci example</p><p>Context:&nbsp;</p><p>2024 update on https://alex.dzyoba.com/blog/gcp-ansible-service-account/ =&gt; thanks ! this still works, but the ssk-keygen by default doesn't provide keys that are accepted by gcp os-login.</p><p>+ updated precisions that took me too much time to infer, understood after reading : https://cloud.google.com/compute/docs/connect/create-ssh-keys =&gt; the SSH keys need to be in ssh-rsa !</p><p>+ ansible dynamic inventory configuration (as of 2024-aug)</p><p>+ automation example with gitlab-ci (as of 2024-aug)</p><p><br /></p><p>Note: For the sake of completeness, ease of reproduction by the reader and leveraging the CC-BY-SA copyright, I include the sections of the great blog post cited as [1] and add my contributions when and where I needed too.&nbsp;</p><h2 id="service-account"><span style="font-weight: normal;">Service account</span></h2><blockquote>&nbsp;(cf. [1] - no change so far)&nbsp;<i>OS Login allows SSH access for IAM users - there is no need to
+provision Linux users on an instance.</i><p><i>So Ansible should have access to the instances via IAM user. This is
+accomplished via <a href="https://cloud.google.com/iam/docs/understanding-service-accounts">IAM service account</a>.</i></p><p><i>You can create service account via Console (web UI), via Terraform template or
+(as in [this] case) via gcloud:</i></p><p>
+
+
+
+</p><pre><code>$ gcloud iam service-accounts create ansible-sa \
+     --display-name "Service account for Ansible"
+</code></pre></blockquote><h2 id="configure-os-login"><span style="font-weight: normal;">Configure OS Login</span></h2><div>&nbsp;(cf. [1,5,6] - no change so far)</div><blockquote><div style="text-align: left;"><i>&nbsp;</i><i>Now, the trickiest part – configuring OS Login for service account. </i></div></blockquote><p>&nbsp;</p><h3><i>0. Enable OS Login for all VMs in the project</i></h3><blockquote><div style="text-align: left;"><i>Before you
+do anything else make sure to enable it for your project:</i></div><p>
+
+</p><pre><code>$ gcloud compute project-info add-metadata \
+    --metadata enable-oslogin=TRUE</code></pre></blockquote><h3 style="text-align: left;"><i>1.&nbsp;Add roles</i></h3><blockquote><i>Fresh service account don't have any IAM roles, so&nbsp;</i>ansible-sa<i>&nbsp;doesn’t have permission
+to do anything. To allow OS Login we have to add these 4 roles to the Ansible
+service account:</i><br /><ul>
+<li><i>Compute Instance Admin (beta)</i></li>
+<li><i>Compute Instance Admin (v1) =&gt; </i>login as root (for "become: true" with ansible)</li>
+<li><i>Compute OS Admin Login =&gt;&nbsp;</i>&nbsp;login as a regular user</li>
+<li><i>Service Account User</i></li>
+</ul><p><i>Here is how to do it via gcloud:</i></p><p>
+
+
+
+</p><pre><code>for role in \
+    'roles/compute.instanceAdmin' \
+    'roles/compute.instanceAdmin.v1' \
+    'roles/compute.osAdminLogin' \
+    'roles/iam.serviceAccountUser'
+do \
+    gcloud projects add-iam-policy-binding \
+        my-gcp-project-241123 \
+        --member='serviceAccount:ansible-sa@my-gcp-project-241123.iam.gserviceaccount.com' \
+        --role="${role}"
+done
+</code></pre></blockquote><p><br /></p><h3 style="text-align: left;"><i>2. Create key for service account and save it&nbsp;</i></h3><blockquote><i>Service account is useless without key, create one with gcloud,&nbsp;</i>&nbsp;and save it, we will use it for the dynamic inventory connection further down the path.<i><br /></i><i>This will create GCP key, not the SSH key.</i><pre><code>$ gcloud iam service-accounts keys create \
+    .gcp/gcp-key-ansible-sa.json \
+    --iam-account=ansible-sa@my-gcp-project.iam.gserviceaccount.com</code>&nbsp;</pre></blockquote><p><br /></p><h3 style="text-align: left;"><i>3. Create SSH key for service account&nbsp;</i></h3><blockquote><div style="text-align: left;"><i>(cf. [1]&nbsp; modified ! with command from [2])</i></div><p><strike><i>This&nbsp; [</i>was supposed<i>] the easiest part.&nbsp;</i>$ ssh-keygen -f ssh-key-ansible-sa</strike></p></blockquote><p>&nbsp;By default ssh-keygen provided an ssh-ed25519 ssh key, leading to a&nbsp; <span style="font-family: courier;">Permission denied (publickey)</span>&nbsp;when trying to connect with Ansible and OS-login (but no issue when connecting directly from the command-line). Specify `-t rsa` when creating your SSH keys.</p><pre><code>$ </code>ssh-keygen -t rsa -f ssh-key-ansible-sa -b 2048</pre><p><br /></p><h3 style="text-align: left;"><i>4. Add SSH&nbsp;key for OS login to service account</i></h3><blockquote>(cf. [1] - no change)<i>&nbsp;</i><i>Now, to allow service account to access instances via SSH it has to have SSH public key
+added to it. To do this, first, we have to activate service account in gcloud:</i><pre><code>$ gcloud auth activate-service-account \
+    --key-file=.gcp/gcp-key-ansible-sa.json
+</code></pre><p>This command uses GCP key we’ve created on step 2.</p><p>Now we add SSH key to the service account:</p><pre><code>$ gcloud compute os-login ssh-keys add \
+    --key-file=ssh-key-ansible-sa.pub
+</code></pre></blockquote><h3 style="text-align: left;">5. Switch back&nbsp;from service account</h3><p>(cf. [1] - no change)<i>&nbsp;</i>&nbsp;</p><blockquote><pre><code>$ gcloud config set account your@gmail.com
+</code></pre></blockquote><p>&nbsp;</p><div style="text-align: left;"><h2 style="text-align: left;">Connecting to the instance with OS login&nbsp;</h2>(cf. [1] - with change to the command to bypass the ssh-agent)</div><p></p><blockquote><p><i>Now, we have everything configured on the GCP side, we can check that it’s
+working.</i></p><p><i>Note, that you don’t need to add SSH key to compute metadata, authentication
+works via OS login. But this means that you need to know a special user name for
+the service account.</i></p><p><i>Find out the service account id.</i></p></blockquote><p></p><p>
+
+
+</p><pre><code>$ gcloud iam service-accounts describe \
+    ansible-sa@my-gcp-project.iam.gserviceaccount.com \
+    --format='value(uniqueId)'
+106627723496398399336
+</code></pre><p><br /></p><p></p><blockquote><p><i>This id is used to form user name in OS login – it’s <code><b>sa_&lt;unique_id&gt;</b></code>.</i>&nbsp;&nbsp;</p></blockquote><blockquote><p><i>Here is how to use it to check SSH access is working,&nbsp;</i></p></blockquote><p>&nbsp;Specify the RSA private key, and to bypass the ssh-agent, specify to only test the identity provided in the command (<b>IdentitiesOnly=yes</b>), not all the keys you may have loaded in your running ssh-agent.</p><p></p><p>
+
+</p><pre><code>$ <b>ssh -o "IdentitiesOnly=yes" -i ssh-key-ansible-sa</b> sa_106627723496398399336@10.0.0.44
+...</code></pre><pre><i><br /></i></pre><h2 style="text-align: left;"><i>Configuring Ansible</i><br /></h2><pre><code><h3 style="text-align: left;"><span style="font-family: arial;"><i> </i>Ansible GCP static inventory</span></h3></code></pre><h4 style="text-align: left;"><span style="font-weight: normal;">&nbsp;(cf. [1] - no change for static inventory, more on dynamic inventory just after)</span></h4><blockquote><p><i>And for the final part – make Ansible work with it.</i></p><p><i>There is a special variable <code>ansible_user</code> that sets user name for SSH when
+Ansible connects to the host.</i></p><p><i>In my case, I have a group <code>gcp</code> where all GCP instances are added, and so I can
+set <code>ansible_user</code> in group_vars like this:</i></p></blockquote><blockquote><pre><code><i># File inventory/dev/group_vars/gcp
+ansible_user: sa_10662772349639839933</i>6</code></pre></blockquote><pre><code><p></p><blockquote style="-webkit-text-stroke-width: 0px; color: black; font-family: Times; font-size: medium; font-style: normal; font-variant-caps: normal; font-variant-ligatures: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration-color: initial; text-decoration-style: initial; text-decoration-thickness: initial; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"></blockquote><p></p><h2 style="font-family: Times; white-space: normal;"></h2><h4><i><br /></i></h4><h4><i>(thanks a lot to [1]'s author A</i>lex Dzyoba, those previous steps helped me a lot in going this far ! now, let's add dynamic inventory and how I run it from gitlab-ci...) </h4><h3 style="text-align: left;"><span style="font-family: arial;"><br /></span></h3><h3 style="text-align: left;"><span style="font-family: arial;">Ansible GCP dynamic inventory</span></h3><p style="-webkit-text-stroke-width: 0px; color: black; font-family: Times; font-size: medium; font-style: normal; font-variant-caps: normal; font-variant-ligatures: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration-color: initial; text-decoration-style: initial; text-decoration-thickness: initial; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">The compose section of the dynamic GCP inventory ansible plugin (google.cloud.gcp_compute, cf. [3]) expects a jinga2 template, to pass a variable directly, you need to double escape it:</p></code></pre><blockquote style="border: none; margin: 0px 0px 0px 40px; padding: 0px;"><pre><code> ansible_user: "'<i>sa_10662772349639839933</i>6'"</code></pre></blockquote><pre><code><br /></code></pre><pre><code>#example of inventory.gcp.yml</code><br /></pre><pre><code>---
+plugin: google.cloud.gcp_compute
+
+projects:
+ - your-gcp-project
+
+auth_kind: serviceaccount
+# must match `ansible_user` below, json file must be available
+service_account_file: ./.gcp/gcp-key-ansible-sa.json
+
+filters:
+ - status = RUNNING
+
+keyed_groups:
+  - key: labels
+    prefix: label
+  - key: zone
+    prefix: zone
+  - key: project
+    prefix: project
+  - key: labels['compoment']
+    prefix: component
+
+compose:
+ ansible_host:           networkInterfaces[0].accessConfigs[0].natIP
+ ansible_user:           "'<i>sa_10662772349639839933</i>6'"<br />
+</code></pre><pre><code><h2 id="configuring-ansible" style="white-space: normal;"><span style="font-family: Times;">Configuring Ansible (ansible.cfg </span><span style="font-family: courier;">ssh_args</span><span style="font-family: Times;">)</span></h2><div><span style="font-family: georgia;">Make sure to instruct ansible to use the correct <b>private</b> key when connecting to the servers</span></div><div><pre><code>ssh_args = -i ssh-key-ansible-sa </code></pre></div><div><br /></div><div>#file ansible.cfg :</div></code></pre><pre style="text-align: left;"><code>[defaults]
+;debug = true
+roles_path = ./vendor-roles:./roles
+collections_path = ./vendor-collections:./collections
+stdout_callback = yaml
+deprecation_warnings = True
+host_key_checking = False
+forks = 10
+callbacks_enabled = timer, profile_tasks, profile_roles
+;remote_user = <i>sa_10662772349639839933</i>6<br />
+remote_tmp = /tmp
+
+[ssh_connection]
+pipelining = True
+scp_if_ssh = True
+ssh_args = -i ssh-key-ansible-sa
+</code></pre><div style="text-align: left;"><br /></div><h2 style="text-align: left;">Gitlab-ci example</h2><div>Identify an image that has ansible installed (and maintained), I used&nbsp;<span style="background-color: white; color: #dd1144; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; white-space: pre;">registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest </span>but if you find other /lighter one, let me know !&nbsp;</div><div><br /></div><div><br /></div><div><div>Gitlab-ci secret files [4] doc is set from the gitlab project's configuration, in the CI settings&nbsp; and doc can be found here&nbsp;https://docs.gitlab.com/ee/ci/secure_files/index.html&nbsp;</div></div><div><br /></div><div><div><ul style="text-align: left;"><li>Using gitlab-ci feature secret files [4], store the ssh RSA secret key (for ssh)</li><li>Using gitlab-ci feature&nbsp;secret files [4], store the GCP json file for GCP authentication (for dynamic inventory).</li><li>We gather the files in the&nbsp;<span style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; white-space: pre;">prepare_ssh_ansible </span>job</li></ul></div></div><div><div><div><br /></div></div><div><br /></div><div>If you have multiple jobs using Ansible, factorize (here&nbsp; in the&nbsp;<span style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; white-space: pre;">prepare_ssh_ansible</span>&nbsp;job), and extends, here in the&nbsp;<span style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; white-space: pre;">ssh-access, ansible-ping, ansible-inventory</span>)</div><div><br /></div><div>Example playbook, in this case, is located in ~/ansible/playbook/ssh.yml; replace with your own playbook).</div><div><br /></div><div><br /></div><div># file: .gitlab-ci.yml</div><div><div style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; line-height: 18px; white-space: pre;"><div>variables:</div><div>  ANSIBLE_DYN_INVENTORY      : <span style="color: #dd1144;">"inventory.gcp.yml"</span></div><div>  ANSIBLE_CHECK              : <span style="color: #dd1144;">"--check -vvv"</span></div><div>  SECURE_FILES_DOWNLOAD_PATH: <span style="color: #dd1144;">'./secured_files/'</span></div><div></div></div></div><div><br /></div><div><div style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; line-height: 18px; white-space: pre;"><div>prepare_ssh_ansible:</div><div>  <span style="color: #999988; font-style: italic;"># image: librespace/ansible:9.6.0</span></div><div>  image: <span style="color: #dd1144;">registry.gitlab.com/gitlab-org/gitlab-environment-toolkit:latest</span></div><div>  before_script:</div><div>    <span style="color: #999988; font-style: italic;"># install missing packages</span></div><div>    - <span style="color: #dd1144;">apt update --allow-releaseinfo-change -y -qq &amp;&amp; apt install -y ansible curl bash jq</span></div><div><br /></div><div>    <span style="color: #999988; font-style: italic;"># gitlab-ci secured_files (cf [4]) for GCP service account credentials</span></div><div>    - <span style="color: #dd1144;">curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash</span></div><div>    - <span style="color: #dd1144;">mkdir ./ansible/.gcp/</span></div><div><span style="color: #dd1144;">    - cp ${SECURE_FILES_DOWNLOAD_PATH}/gcp-key-ansible-sa.json ./ansible/.gcp/gcp-key-ansible-sa.json</span></div><div>    - <span style="color: #dd1144;">cp ${SECURE_FILES_DOWNLOAD_PATH}/ssh-key-ansible-sa ./ansible/ssh-key-ansible-sa &amp;&amp; chmod 400 ./ansible/ssh-key-ansible-sa</span></div><br /><div>    <span style="color: #999988; font-style: italic;"># cf https://docs.ansible.com/ansible/9/scenario_guides/guide_gce.html#providing-credentials-as-environment-variables</span></div><div>    - <span style="color: #dd1144;">export GCP_AUTH_KIND="serviceaccount"</span></div><div>    - <span style="color: #dd1144;">export GCP_SERVICE_ACCOUNT_FILE="./ansible/.gcp/gcp-key-ansible-sa.json"</span></div><div>    - <span style="color: #dd1144;">export GCP_SCOPES="https://www.googleapis.com/auth/compute"</span></div><br /><div>    - <span style="color: #dd1144;">export ANSIBLE_HOME=./ansible</span></div><div>    - <span style="color: #dd1144;">cd ./ansible/</span></div><div>    - <span style="color: #dd1144;">export ANSIBLE_CONFIG=./ansible.cfg</span></div><div>    </div><div>    - <span style="color: #dd1144;">ansible-galaxy            install -r requirements.yaml --roles-path ./vendor-roles</span></div><div>    - <span style="color: #dd1144;">ansible-galaxy collection install -r requirements.yaml -p ./vendor-collections/</span></div><div>    - <span style="color: #dd1144;">ansible --version</span></div></div></div><div><br /></div></div><div><div style="background-color: white; color: #2e2e2e; font-family: &quot;GitLab Mono&quot;, &quot;JetBrains Mono&quot;, Menlo, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, Consolas, &quot;Ubuntu Mono&quot;, &quot;Courier New&quot;, &quot;andale mono&quot;, &quot;lucida console&quot;, monospace, Menlo, Monaco, &quot;Courier New&quot;, monospace; font-size: 12px; line-height: 18px; white-space: pre;"><div>ansible-inventory:</div><div>  extends:</div><div>    <span style="color: #dd1144;">.prepare_ssh_ansible    </span></div><div>  script:</div><div>    - <span style="color: #dd1144;">ansible-inventory -i ${ANSIBLE_DYN_INVENTORY}  --graph</span></div><div><span style="color: #dd1144;"><br /></span></div><div><div style="line-height: 18px;"><div>ansible-ping:</div><div>  extends:</div><div>    <span style="color: #dd1144;">.prepare_ssh_ansible    </span></div><div>  script:</div><div>    - <span style="color: #dd1144;">ansible all -i ${ANSIBLE_DYN_INVENTORY} -m ping -vvv</span></div><div><span style="color: #dd1144;"><br /></span></div></div></div><div><div style="line-height: 18px;"><div>ssh-access:</div><div>  extends:</div><div>    <span style="color: #dd1144;">.prepare_ssh_ansible    </span></div><div>  script:</div><div>    - <span style="color: #dd1144;">ansible-playbook -i ${ANSIBLE_DYN_INVENTORY} playbooks/ssh.yml</span></div><div></div></div></div><br /></div></div><h2 style="text-align: left;"><br /></h2><h2 style="text-align: left;">References :</h2><p>[1] https://alex.dzyoba.com/blog/gcp-ansible-service-account/</p><p>[2] https://cloud.google.com/compute/docs/connect/create-ssh-keys&nbsp;</p><p>[3] https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html&nbsp;</p><p>[4] https://docs.gitlab.com/ee/ci/secure_files/index.html</p><p>[5]&nbsp;https://cloud.google.com/compute/docs/oslogin</p><p>[6]&nbsp;https://cloud.google.com/compute/docs/oslogin/set-up-oslogin</p><p><br /></p>
+{% endraw %}
