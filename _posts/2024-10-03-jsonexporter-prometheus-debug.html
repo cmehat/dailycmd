@@ -1,0 +1,11 @@
+---
+layout: post
+title: "json_exporter prometheus debug"
+date: 2024-10-03 14:11:00 +0000
+permalink: /2024/10/jsonexporter-prometheus-debug.html
+tags: ["exporter", "json_exporter", "open metrics", "o11y", "JSON", "telemetry", "prometheus", "metrics", "observability"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;JSON url to convert : <span style="font-family: courier;">http://json_url/foobar.json</span></p><p>json_exporter running locally : <span style="font-family: courier;">localhost:7979</span> or <span style="font-family: courier;">json_exporter:7979&nbsp;</span></p><p><br /></p><p><br /></p><p>Status of the json_exporter, does NOT contain the metrics from the targets, only related to the process itself (useful to know if it's up or not for example).</p><p><span style="font-family: courier;">&nbsp;localhost:7979/metrics</span></p><p><br /></p><p>Check the result of a JSON URL to be converted / aka. what prometheus should scrape</p><p><span style="font-family: courier;">curl http://json_url/foobar.json</span> =&gt; JSON (original)</p><p><span style="font-family: courier;">curl localhost:7979/probe?target=https://json_url/foobar.json</span> =&gt; openmetrics converted by json_exporter</p><p><br /></p><p><br /></p><p>Other useful commands :</p><p><br /></p><p>* edit, restart, wait, check json_exporter output</p><p><span style="font-family: courier;">sudo vi /etc/json_exporter/config.yml &amp;&amp; sudo systemctl restart json_exporter &amp;&amp; sleep 5 &amp;&amp; curl http://localhost:7979/probe?target=http://json_url/foobar.json</span></p><p><br /></p><p>* edit, check and restart prometheus :&nbsp;</p><p><span style="font-family: courier;">sudo vi /etc/prometheus/prometheus.yml &amp;&amp; sudo promtool check config /etc/prometheus/prometheus.yml &amp;&amp; sudo systemctl restart prometheus.service</span></p><p><br /></p><p><br /></p>
+{% endraw %}
