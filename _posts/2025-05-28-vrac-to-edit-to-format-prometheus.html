@@ -1,0 +1,211 @@
+---
+layout: post
+title: "(vrac / to edit / to format) Prometheus sandbox - demo / prometheus relabeling tool & ref / grafana demo"
+date: 2025-05-28 22:09:00 +0000
+permalink: /2025/05/vrac-to-edit-to-format-prometheus.html
+tags: ["monitoring", "prometheus", "grafana"]
+author: "cm"
+---
+{% raw %}
+<p><br /></p><p>* The Art of Metric Relabeling in Prometheus:&nbsp;</p><p>https://heiioncall.com/guides/the-art-of-metric-relabeling-in-prometheus</p><p><br /></p><p>* relabeler online testing tool :&nbsp;<br />https://relabeler.promlabs.com/</p><p></p><div class="separator" style="clear: both; text-align: center;"><a href="/assets/images/20645905-AVvXsEhQSfAexPfmZ7GPErOVYU05dkgW4iwCrPSx.png" style="margin-left: 1em; margin-right: 1em;"><img alt="" data-original-height="444" data-original-width="2318" height="61" src="/assets/images/20645905-AVvXsEhQSfAexPfmZ7GPErOVYU05dkgW4iwCrPSx.png" width="320" /></a><div class="separator" style="clear: both; text-align: center;"><a href="/assets/images/20645905-AVvXsEhQSfAexPfmZ7GPErOVYU05dkgW4iwCrPSx.png" style="margin-left: 1em; margin-right: 1em;"></a><a href="/assets/images/dc8346e9-AVvXsEgbdeSaPxm3KX9nxrONhS1byHUOPNlY4qBZ.png" style="margin-left: 1em; margin-right: 1em;"><img alt="" data-original-height="1652" data-original-width="2220" height="238" src="/assets/images/dc8346e9-AVvXsEgbdeSaPxm3KX9nxrONhS1byHUOPNlY4qBZ.png" width="320" /></a></div><br /></div><br />* relabeling cookbook (mostly compatible with prometheus too)&nbsp;https://docs.victoriametrics.com/victoriametrics/relabeling/#how-to-remove-labels-from-targets&nbsp;<p></p><p><br /></p><p>* open / demo instance of grafana :&nbsp; https://play.grafana.org/</p><p><br /></p><p>* Grafana dashboards directory :&nbsp;https://grafana.com/grafana/dashboards/</p><p><br /></p><p>* Open / demo instance of prometheus :</p><p><br /></p><p>https://prometheus.demo.prometheus.io/query</p><div><br /></div><p>&nbsp;https://prometheus.demo.prometheus.io/config</p><p><br /></p>
+
+
+<verbatim>
+  global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  evaluation_interval: 15s
+  external_labels:
+    environment: demo-prometheus-io.c.macro-mile-203600.internal
+runtime:
+  gogc: 75
+alerting:
+  alertmanagers:
+  - follow_redirects: true
+    enable_http2: true
+    scheme: http
+    timeout: 10s
+    api_version: v2
+    static_configs:
+    - targets:
+      - demo.prometheus.io:9093
+rule_files:
+- /etc/prometheus/rules/*.yml
+- /etc/prometheus/rules/*.yaml
+- /etc/prometheus/rules/*.rules
+scrape_config_files:
+- /etc/prometheus/scrape_configs/*
+scrape_configs:
+- job_name: prometheus
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - demo.prometheus.io:9090
+- job_name: random
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  file_sd_configs:
+  - files:
+    - /etc/prometheus/file_sd/random.yml
+    refresh_interval: 5m
+- job_name: caddy
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - localhost:2019
+- job_name: grafana
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - demo.prometheus.io:3000
+- job_name: node
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  file_sd_configs:
+  - files:
+    - /etc/prometheus/file_sd/node.yml
+    refresh_interval: 5m
+- job_name: alertmanager
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  file_sd_configs:
+  - files:
+    - /etc/prometheus/file_sd/alertmanager.yml
+    refresh_interval: 5m
+- job_name: cadvisor
+  honor_timestamps: true
+  track_timestamps_staleness: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /metrics
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  file_sd_configs:
+  - files:
+    - /etc/prometheus/file_sd/cadvisor.yml
+    refresh_interval: 5m
+- job_name: blackbox
+  honor_timestamps: true
+  track_timestamps_staleness: false
+  params:
+    module:
+    - http_2xx
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  scrape_protocols:
+  - OpenMetricsText1.0.0
+  - OpenMetricsText0.0.1
+  - PrometheusText1.0.0
+  - PrometheusText0.0.4
+  metrics_path: /probe
+  scheme: http
+  enable_compression: true
+  follow_redirects: true
+  enable_http2: true
+  relabel_configs:
+  - source_labels: [__address__]
+    separator: ;
+    target_label: __param_target
+    replacement: $1
+    action: replace
+  - source_labels: [__param_target]
+    separator: ;
+    target_label: instance
+    replacement: $1
+    action: replace
+  - separator: ;
+    target_label: __address__
+    replacement: 127.0.0.1:9115
+    action: replace
+  static_configs:
+  - targets:
+    - http://localhost:9100
+</verbatim>
+{% endraw %}
