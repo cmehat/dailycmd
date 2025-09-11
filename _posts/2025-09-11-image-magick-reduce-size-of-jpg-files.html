@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Image magick, reduce size of jpg files by 50%"
+date: 2025-09-11 18:39:00 +0000
+permalink: /2025/09/image-magick-reduce-size-of-jpg-files.html
+tags: ["cmdline", "image", "imagemagick", "converting", "size", "jpeg"]
+author: "cm"
+---
+{% raw %}
+<p>&nbsp;</p><p>for file in *.jpg; do magick "$file" -resize 50% "resized/$file"; done</p>
+{% endraw %}
