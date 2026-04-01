@@ -1,0 +1,182 @@
+---
+layout: post
+title: "Reverse-engineering Ropvacnic S1 vacuum for homeassistant integration"
+date: 2026-04-01 23:13:00 +0000
+permalink: /2026/04/reverse-engineering-ropvacnic-s1-vacuum.html
+tags: ["homeassistant", "vaccum", "reverse-engineering", "automation", "home", "ropvacnic", "ropvacnic_S1", "tuya", "localtuya"]
+author: "cm"
+---
+{% raw %}
+<h2>Integrating the Ropvacnic S1 into Home Assistant via LocalTuya</h2>
+ 
+<p>The Ropvacnic S1 is a Tuya-based robot vacuum. Getting it to work locally in Home Assistant requires some digging — the DP numbers aren't documented anywhere, and LocalTuya has a bug in its locate function. This guide documents everything I found.</p>
+ 
+<p><strong>Why local control?</strong> Faster response, no cloud dependency, works if Tuya servers go down. The device still sends data to Tuya's cloud, but Home Assistant commands go directly over your LAN.</p>
+ 
+<p><strong>Setup:</strong> Home Assistant OS 2026.3.4 · LocalTuya 5.2.3 · Protocol 3.4 · Region: Western America</p>
+ 
+<hr>
+ 
+<h3>Step 1 — Tuya IoT Platform Setup</h3>
+ 
+<p>Create an account at <strong>iot.tuya.com</strong> (not tuya.com — click "Developer Platform" at the bottom). Create a Cloud Project with these settings:</p>
+ 
+<ul>
+  <li>Industry: Smart Home</li>
+  <li>Development Method: Smart Home</li>
+  <li>Data Center: <strong>Western America</strong> (for Canada/USA accounts)</li>
+</ul>
+ 
+<p><strong>Important:</strong> The Data Center must match your Tuya Smart app region. A mismatch causes a "Data center inconsistency" error when scanning the QR code.</p>
+ 
+<p>Under <strong>Devices → Link Tuya App Account</strong>, scan the QR code with your Tuya Smart app. Then note:</p>
+<ul>
+  <li><strong>Access ID</strong> — from the Overview tab</li>
+  <li><strong>Access Secret</strong> — from the Overview tab</li>
+  <li><strong>UID</strong> — from the linked account (starts with <code>az...</code>)</li>
+</ul>
+ 
+<hr>
+ 
+<h3>Step 2 — Discover DPs with tinytuya</h3>
+ 
+<p>A DP (Data Point) is a numbered channel that controls one specific function of the device. Install tinytuya on your computer to identify them all:</p>
+ 
+<pre>
+pip3 install tinytuya
+python3 -m tinytuya wizard
+# Enter your Access ID, Secret, UID and region (us)
+ 
+python3 -m tinytuya snapshot
+# Poll: Y → shows all live DP values
+</pre>
+ 
+<h4>Complete DP Map — Ropvacnic S1</h4>
+ 
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th>DP</th>
+      <th>Code</th>
+      <th>Type</th>
+      <th>Values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>switch</td><td>Boolean</td><td>true / false</td></tr>
+    <tr><td>2</td><td>switch_go</td><td>Boolean</td><td>true / false</td></tr>
+    <tr><td>3</td><td>mode</td><td>Enum</td><td>standby, random, wall_follow, spiral, chargego</td></tr>
+    <tr><td>4</td><td>direction_control</td><td>Enum</td><td>forward, backward, turn_left, turn_right, stop</td></tr>
+    <tr><td>5</td><td>status</td><td>Enum</td><td>standby, smart_clean, goto_charge, charging, charge_done, paused</td></tr>
+    <tr><td>6</td><td>residual_electricity</td><td>Integer</td><td>0–100 (%)</td></tr>
+    <tr><td>7</td><td>clean_time</td><td>Integer</td><td>minutes</td></tr>
+    <tr><td>9</td><td>clean_area</td><td>Integer</td><td>m²</td></tr>
+    <tr><td>13</td><td>seek (locate)</td><td>Boolean</td><td>true / false</td></tr>
+    <tr><td>14</td><td>suction</td><td>Enum</td><td>gentle, normal, strong</td></tr>
+    <tr><td>17</td><td>edge_brush</td><td>Integer</td><td>0–100 (%)</td></tr>
+    <tr><td>18</td><td>filter</td><td>Integer</td><td>0–100 (%)</td></tr>
+    <tr><td>20</td><td>water_control</td><td>Enum</td><td>closed, low, middle, high</td></tr>
+  </tbody>
+</table>
+ 
+<p><strong>Note:</strong> DP 13 (seek/locate) is not visible in the standard tinytuya output. It was found by brute-force testing DPs 10–16 using <code>d.set_value(dp, True)</code> and listening for the vacuum's beep.</p>
+ 
+<hr>
+ 
+<h3>Step 3 — LocalTuya Entity Configuration</h3>
+ 
+<p>Install LocalTuya via HACS, restart HA, then go to <strong>Settings → Devices &amp; Services → Add Integration → LocalTuya</strong>.</p>
+ 
+<p>Set Manual DPS to: <code>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25</code></p>
+ 
+<p>Configure the entity with these values:</p>
+ 
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr><th>Field</th><th>Value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>ID (status DP)</td><td>5</td></tr>
+    <tr><td>Power DP (powergo_dp)</td><td>1</td></tr>
+    <tr><td>Mode DP</td><td>3</td></tr>
+    <tr><td>Battery DP</td><td>6</td></tr>
+    <tr><td>Fan Speed DP</td><td>14</td></tr>
+    <tr><td>Clean Time DP</td><td>7</td></tr>
+    <tr><td>Clean Area DP</td><td>9</td></tr>
+    <tr><td>Locate DP</td><td>13</td></tr>
+    <tr><td>Fault DP</td><td>(leave empty)</td></tr>
+    <tr><td>Idle Status</td><td>standby,sleep</td></tr>
+    <tr><td>Docked Status</td><td>charging,chargecompleted,charge_done</td></tr>
+    <tr><td>Returning Status</td><td>goto_charge</td></tr>
+    <tr><td>Modes list</td><td>standby,random,wall_follow,spiral,chargego</td></tr>
+    <tr><td>Return home mode</td><td>chargego</td></tr>
+    <tr><td>Fan speeds list</td><td>gentle,normal,strong</td></tr>
+    <tr><td>Pause state</td><td>paused</td></tr>
+    <tr><td>Stop status</td><td>standby</td></tr>
+  </tbody>
+</table>
+ 
+<hr>
+ 
+<h3>Step 4 — Fix vacuum.py (LocalTuya bug)</h3>
+ 
+<p>LocalTuya 5.2.3 has a bug in <code>async_locate</code> — it sends an empty string <code>""</code> instead of <code>True</code>, so the locate button does nothing. Fix it via the Terminal add-on:</p>
+ 
+<pre>
+sed -i 's/set_dp("", self._config\[CONF_LOCATE_DP\])/set_dp(True, self._config[CONF_LOCATE_DP])/g' \
+  /config/custom_components/localtuya/vacuum.py
+ 
+# Verify
+grep -A3 "async_locate" /config/custom_components/localtuya/vacuum.py
+</pre>
+ 
+<hr>
+ 
+<h3>Step 5 — Fix config via Terminal (if GUI doesn't save)</h3>
+ 
+<p>The LocalTuya GUI sometimes doesn't persist certain changes (notably <code>mode_dp</code> and <code>id</code>). Edit the config file directly:</p>
+ 
+<pre>
+# Backup first!
+cp /config/.storage/core.config_entries \
+   /config/.storage/core.config_entries.backup
+ 
+# Status DP = 5 (reads DP 5 for state)
+sed -i 's/"id":1,"idle_status_value":"standby,sleep"/"id":5,"idle_status_value":"standby,sleep"/g' \
+  /config/.storage/core.config_entries
+ 
+# powergo_dp must be 1 (start/pause)
+sed -i 's/"powergo_dp":5/"powergo_dp":1/g' \
+  /config/.storage/core.config_entries
+ 
+# mode_dp = 3 (stop + return to base)
+sed -i 's/"mode_dp":0/"mode_dp":3/g' \
+  /config/.storage/core.config_entries
+ 
+# locate_dp = 13
+sed -i 's/"locate_dp":0/"locate_dp":13/g' \
+  /config/.storage/core.config_entries
+ 
+# Remove fault_dp entirely (causes false errors)
+sed -i 's/,"fault_dp":[0-9]*//g' \
+  /config/.storage/core.config_entries
+</pre>
+ 
+<p>After edits, reload LocalTuya: <strong>Settings → Devices &amp; Services → LocalTuya → 3 dots → Reload</strong> — no full restart needed.</p>
+ 
+<hr>
+ 
+<h3>Final Result</h3>
+ 
+<p>After completing all steps, the Ropvacnic S1 is fully controllable from Home Assistant with local-only communication:</p>
+ 
+<ul>
+  <li>State correctly shows <strong>Docked</strong>, <strong>Cleaning</strong>, <strong>Returning</strong>, and <strong>Paused</strong></li>
+  <li>Start, Pause, Stop, and Return to Base all work</li>
+  <li>Locate (beep) works after the vacuum.py fix</li>
+  <li>Battery percentage displayed in real time</li>
+  <li>Fan speed (gentle / normal / strong) selectable from HA</li>
+  <li>Clean time and area tracked per session</li>
+</ul>
+
+{% endraw %}
