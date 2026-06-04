@@ -173,6 +173,48 @@ schedules:
       ttl: "720h"        # 30 days
 ```
 
+That single hourly schedule with a 30-day TTL gives you 720 hourly snapshots in the bucket at steady state. If you want **GFS-style tiered retention** — fewer, longer-lived snapshots at coarser cadences — keep reading. If a flat 30-day window is fine, skip to "Install".
+
+### Optional: GFS-tiered retention via multiple schedules
+
+The simplest way to get hourly+daily+weekly+monthly retention without writing a custom controller is to define **four schedules**, each with its own cron + TTL. Velero doesn't natively promote one Backup across tiers, so each tier produces its own Backup CR. Kopia content-addresses the data, so the bucket cost stays roughly 1× the actual content even when multiple schedules fire at the same minute.
+
+**Stagger the crons so no two schedules ever fire concurrently** — otherwise tier-boundary moments (Sunday 1st-of-month at 00:00) trigger 4 parallel backups, hammer your node-agent, and (later, if you add pre-backup quiesce hooks) become 4 sequential stop/start cycles on the workload. A 15-minute offset between tiers is enough:
+
+```yaml
+schedules:
+  my-app-hourly:
+    schedule: "0 * * * *"            # every hour at :00
+    template:
+      includedNamespaces: [my-app]
+      defaultVolumesToFsBackup: true
+      ttl: 24h
+  my-app-daily:
+    schedule: "15 2 * * *"           # 02:15 UTC — 15 min after the hourly
+    template:
+      includedNamespaces: [my-app]
+      defaultVolumesToFsBackup: true
+      ttl: 168h                       # 7 days
+  my-app-weekly:
+    schedule: "30 3 * * 0"           # Sun 03:30 UTC
+    template:
+      includedNamespaces: [my-app]
+      defaultVolumesToFsBackup: true
+      ttl: 720h                       # 30 days
+  my-app-monthly:
+    schedule: "45 4 1 * *"           # 1st 04:45 UTC
+    template:
+      includedNamespaces: [my-app]
+      defaultVolumesToFsBackup: true
+      ttl: 8760h                      # 365 days
+```
+
+Steady-state retention: ~24 hourly + 7 daily + 4 weekly + 12 monthly ≈ 47 Backup CRs per target.
+
+The **schedule-name suffix convention** (`-hourly` / `-daily` / `-weekly` / `-monthly`) matters when you wire up alerting (see the "Alerting" section near the end) — a single rule file can target each tier by regex on the schedule name, so you get different staleness thresholds for free.
+
+What about **true GFS promotion** (the same Backup tagged as both "today's hourly" and "today's daily")? Velero doesn't natively support that. You can build a custom controller that extends `spec.ttl` on the earliest Backup of each calendar period — we designed one and have working code for it — but adding a self-coded shell script to the backup path is a maintainability trade-off you should make consciously. The four-schedule approach above is the native pattern; the custom-promoter alternative is a separate post-worth discussion.
+
 Install:
 
 ```bash
@@ -493,6 +535,105 @@ kubectl -n my-app-recovery-shadow exec "$SHADOW_POD" -- tar -cf - -C / data \
 ```
 
 `kubectl cp` uses `tar` under the hood and requires `tar` in the container; if your image is distroless and lacks `tar`, use the explicit `exec ... cat | exec -i ... cat > target` variant.
+
+## Alerting: catch the 46-day silent failure mode in 1 hour instead
+
+The Workload-Identity silent-failure mode at the start of this post is genuinely dangerous: Velero pods Running, Schedules Enabled, `kubectl get all` looks healthy, every Backup is `FailedValidation`. You can sit in that state for **weeks**. The fix is monitoring on metrics Velero already exposes for free.
+
+Velero's controller pod serves `/metrics` on port `8085` with these alert-grade series (no PushGateway needed, no Alloy CI integration, just scrape):
+
+| Metric | What it tells you |
+|---|---|
+| `velero_backup_last_successful_timestamp{schedule=...}` | the heartbeat — last successful backup time per schedule |
+| `velero_backup_validation_failure_total{schedule=...}` | **the silent-failure detector** — increments any time a Backup gets `FailedValidation`, which is what happens when the BSL is `Unavailable` |
+| `velero_backup_failure_total{schedule=...}` | hard failures (BSL was OK at validation time, but the actual backup work errored) |
+| `velero_backup_partial_failure_total{schedule=...}` | partial failures |
+| `velero_backup_attempt_total{schedule=...}` | did the schedule actually fire? |
+
+To wire this up:
+
+1. **Enable the ServiceMonitor** in your Velero Helm values:
+   ```yaml
+   metrics:
+     serviceMonitor:
+       enabled: true
+       autodetect: false   # render unconditionally, not only when CRD is visible at template time
+       additionalLabels:
+         release: prometheus-stack   # matches kube-prometheus-stack's serviceMonitorSelector
+   ```
+2. **Add Prometheus alerting rules**. Five generic alerts cover the whole surface — one for failures, four for staleness (tiered by schedule-name suffix so each cadence gets the right threshold):
+
+```yaml
+groups:
+  - name: velero
+    rules:
+      - alert: VeleroBackupFailing
+        expr: |
+          (increase(velero_backup_validation_failure_total{schedule!=""}[1h]) > 0)
+          or
+          (increase(velero_backup_failure_total{schedule!=""}[1h]) > 0)
+        labels: { severity: warning, team: infra }
+        annotations:
+          summary: "Velero schedule {{ $labels.schedule }} is producing failed Backups"
+          description: "Validation failures usually mean BackupStorageLocation is Unavailable; hard failures usually mean node-agent / Kopia trouble."
+
+      - alert: VeleroHourlyBackupStale
+        expr: |
+          time() - max by (schedule) (
+            velero_backup_last_successful_timestamp{schedule!~".*-(daily|weekly|monthly)$",schedule!=""} > 0
+          ) > 9000
+        labels: { severity: warning, team: infra }
+        annotations:
+          summary: "Velero hourly schedule {{ $labels.schedule }} has not succeeded in 2.5h+"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago."
+
+      - alert: VeleroDailyBackupStale
+        expr: |
+          time() - max by (schedule) (velero_backup_last_successful_timestamp{schedule=~".*-daily$"} > 0) > 90000
+        labels: { severity: warning, team: infra }
+        annotations:
+          summary: "Velero daily schedule {{ $labels.schedule }} has not succeeded in 25h+"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago."
+
+      - alert: VeleroWeeklyBackupStale
+        expr: |
+          time() - max by (schedule) (velero_backup_last_successful_timestamp{schedule=~".*-weekly$"} > 0) > 691200
+        labels: { severity: warning, team: infra }
+        annotations:
+          summary: "Velero weekly schedule {{ $labels.schedule }} has not succeeded in 8d+"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago."
+
+      - alert: VeleroMonthlyBackupStale
+        expr: |
+          time() - max by (schedule) (velero_backup_last_successful_timestamp{schedule=~".*-monthly$"} > 0) > 2764800
+        labels: { severity: warning, team: infra }
+        annotations:
+          summary: "Velero monthly schedule {{ $labels.schedule }} has not succeeded in 32d+"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago."
+```
+
+The schedule-name suffix convention (`-hourly` / `-daily` / `-weekly` / `-monthly`) from the GFS section earlier is what lets a single rule file give each tier the right staleness threshold:
+
+| Schedule suffix (or none) | Threshold | Maps to |
+|---|---|---|
+| (no suffix, e.g. `velero-my-app`) | 2.5h | hourly bucket via negated regex |
+| `-hourly` | 2.5h | hourly |
+| `-daily` | 25h | daily |
+| `-weekly` | 8d | weekly |
+| `-monthly` | 32d | monthly |
+
+**Validate before merging:**
+
+```bash
+# promtool via docker (no local Prometheus needed):
+docker run --rm -v "$PWD/rules:/rules" --entrypoint promtool \
+  prom/prometheus check rules /rules/velero-rules.yaml
+# Expected: "SUCCESS: 5 rules found"
+```
+
+**Synthetic test post-deploy:** pause one of your Schedules (`kubectl patch schedule.velero.io my-app-hourly --type=merge -p '{"spec":{"paused":true}}'`) and wait for the staleness threshold to elapse. The corresponding alert should fire. Un-pause to clear. This proves both that the metric flows end-to-end (Velero → Prometheus → Thanos → Ruler → Alertmanager → wherever your team-label routes) and that the rule expression matches.
+
+With this in place, the 46-day silent-failure scenario at the top of this post becomes a **1-hour** detection — `VeleroBackupFailing` fires the first time the BSL fails to validate.
 
 ## What stays the same regardless of GitOps tooling
 
