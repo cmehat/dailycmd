@@ -413,7 +413,13 @@ groups:
   - name: renovate-scheduled-pipeline
     rules:
       - alert: RenovateScheduledPipelineStale
-        expr: time() - renovate_scheduled_pipeline_last_success_timestamp_seconds > 9000
+        # The `last_over_time(...[24h])` wrap is load-bearing — see the
+        # postscript below for why a vanilla `time() - metric > 9000`
+        # silently never fires under one-shot push.
+        expr: |
+          time() - max(last_over_time(
+            renovate_scheduled_pipeline_last_success_timestamp_seconds[24h]
+          )) > 9000
         labels: { severity: warning, team: infra }
         annotations:
           summary: "Renovate scheduled pipeline has not succeeded in >2.5h"
@@ -425,6 +431,77 @@ groups:
         annotations:
           summary: "Renovate heartbeat metric absent for 24h"
 ```
+
+## Postscript: the alert that looked correct but never fired
+
+A day after shipping the above, while sanity-checking a different incident,
+I noticed something uncomfortable about the `RenovateScheduledPipelineStale`
+rule. The expression looks textbook:
+
+```promql
+time() - renovate_scheduled_pipeline_last_success_timestamp_seconds > 9000
+```
+
+"Current time minus the last-success timestamp; if greater than 2.5 hours,
+alert." Hard to misread.
+
+It had been live for weeks. It had never fired.
+
+Querying the production rule directly, well within the threshold window:
+
+```
+$ # ~53 minutes after a fresh heartbeat
+$ promql 'time() - max(renovate_scheduled_pipeline_last_success_timestamp_seconds{source="..."})'
+result_count = 0    ← no data; the rule evaluator sees nothing
+```
+
+The interaction is this: Prometheus (and Thanos, by default) uses a **5-minute
+staleness lookback** when evaluating expressions. A series whose newest sample
+is older than that lookback is treated as *absent* — not "stale with old value",
+literally not there. `max(absent_series)` returns no data; the rule evaluator
+treats no-data as `inactive`; the alert never advances to firing.
+
+For a typical metric this is invisible — node-exporter scrapes every 15 seconds,
+the 5-minute lookback always finds a recent sample. But the heartbeat here is
+*one-shot*: Alloy runs for ~6 seconds at the end of each hourly pipeline, ships
+~6 samples, and exits. From the rule evaluator's perspective, the series is
+"absent" for **55 of every 60 minutes** between runs.
+
+So the literal-looking expression has a sparse-emission interaction nobody warns
+you about:
+
+- When a heartbeat just landed: `time() - timestamp ≈ 0`. Not > 9000. Doesn't
+  fire.
+- When the metric is stale (90%+ of the time): expression returns no data. The
+  evaluator can't compare no-data to 9000. Doesn't fire.
+
+The alert is structurally incapable of firing under any sustained-failure
+scenario. The "Missing" rule still works because `absent()` is exactly the
+function designed to return a value when the series is gone — and `for: 24h`
+correctly waits out the hourly successful pushes.
+
+The fix is one wrap:
+
+```promql
+time() - max(last_over_time(
+  renovate_scheduled_pipeline_last_success_timestamp_seconds[24h]
+)) > 9000
+```
+
+`last_over_time(...[24h])` evaluates against samples within the last 24 hours,
+robust to a 60-minute (or 23-hour) gap between pushes. If genuinely no heartbeat
+in 24 hours, the expression returns empty — at which point the paired `Missing`
+rule's `absent() for: 24h` is firing already. Coverage is split between the two
+by design.
+
+> Sparse heartbeats and the default staleness lookback are mutually
+> incompatible. Wrap the latest-value lookup in `last_over_time(...[window])`
+> where `window` is several multiples of the expected emission cadence.
+
+(I caught this only because something *else* drew me to the rule. If you take
+one thing from this section: dry-run your alert expressions against the actual
+metric shape in production before you trust them. Looking right is not the same
+as evaluating right.)
 
 ## Takeaways
 
@@ -444,6 +521,11 @@ groups:
 - **Test the plumbing in the real image, locally.** The architecture is the easy
   part. The incidental tooling and version drift is what eats your afternoon —
   and it's only visible when you run the actual thing.
+- **Wrap sparse-heartbeat lookups in `last_over_time(...[window])`.** Default
+  staleness lookback (5 min) is sized for typical scrape intervals (15–60 s); a
+  metric pushed once per hour is a fundamentally different shape, and a vanilla
+  `max(...)` over it returns no data 90%+ of the time. Run your alert
+  expressions against the real metric, between pushes, before you ship them.
 
 The jobs running while nobody watches are, almost by definition, the ones whose
 silence you'll miss. Make silence the thing that pages you.
