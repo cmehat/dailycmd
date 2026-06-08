@@ -244,7 +244,7 @@ kubectl -n velero get bsl default -o jsonpath='{.status.message}{"\n"}'
 Common messages:
 - `cannot fetch token: metadata: GCE metadata "instance/service-accounts/default/token..." not defined` → the WI binding is missing or wrong. Re-check Step 4.
 - `NotFound: Unknown service account` → the GSA doesn't exist (your `--member` in Step 4 referenced a typo'd name). Re-check Step 1.
-- `Bucket nl-...-velero-backup-... not found: 404` → the bucket doesn't exist or the GSA lacks read access. Re-check Steps 2 and 3.
+- `Bucket my-...-velero-backup-... not found: 404` → the bucket doesn't exist or the GSA lacks read access. Re-check Steps 2 and 3.
 - `Forbidden` → the GSA exists but the bucket IAM doesn't grant it write. Re-check Step 3.
 
 When `PHASE: Available`, your install is correct and Backups will land successfully.
