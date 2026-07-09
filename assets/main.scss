@@ -63,3 +63,13 @@ details.widget > summary.widget-title { list-style: revert; } /* keep a marker *
   margin-top: 1.75rem;
   scroll-margin-top: 1rem;
 }
+
+/* ===== Tag cloud ===== */
+.tag-cloud { line-height: 2.4; }
+.tag-cloud a {
+  display: inline-block;
+  margin: 0.1em 0.55em 0.1em 0;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.tag-cloud a:hover { text-decoration: underline; }

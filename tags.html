@@ -3,6 +3,8 @@ layout: page
 title: Labels
 permalink: /tags/
 ---
+{% include widget_tag_cloud.html title="Tag cloud" min_count=2 %}
+
 <p class="post-meta">{{ site.tags | size }} labels across {{ site.posts.size }} posts.</p>
 
 {% include widget_tags_freq.html title="By frequency" %}

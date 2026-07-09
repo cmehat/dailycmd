@@ -24,8 +24,8 @@ I'll use generic names: `my-service` (the OCaml HTTP server), `my-service:latest
 The service has a `/metrics` Prometheus endpoint. After the first outbound failure, its counters looked like this:
 
 ```
-alertbot_http_requests_total{method="POST",path="/inbound/slash",code="200"} 14
-alertbot_http_requests_total{method="POST",path="/inbound/interactivity",code="500"} 1
+my_service_http_requests_total{method="POST",path="/inbound/slash",code="200"} 14
+my_service_http_requests_total{method="POST",path="/inbound/interactivity",code="500"} 1
 ```
 
 Server-side, every successful slash-command POST handled itself — read, decode, build JSON response, write — without ever touching the network. The 500 was the first request that needed to make an outbound HTTPS call (post a webhook back to the platform's `response_url`). The bot logged the URL it was about to call:

@@ -130,6 +130,7 @@ You want to see `serviceAccount:<project>.svc.id.goog[velero/velero-server]` in 
 
 Bare-bones values file:
 
+{% raw %}
 ```yaml
 # values-velero.yaml
 initContainers:
@@ -172,6 +173,7 @@ schedules:
       defaultVolumesToFsBackup: true
       ttl: "720h"        # 30 days
 ```
+{% endraw %}
 
 That single hourly schedule with a 30-day TTL gives you 720 hourly snapshots in the bucket at steady state. If you want **GFS-style tiered retention** — fewer, longer-lived snapshots at coarser cadences — keep reading. If a flat 30-day window is fine, skip to "Install".
 
@@ -180,7 +182,7 @@ That single hourly schedule with a 30-day TTL gives you 720 hourly snapshots in 
 The simplest way to get hourly+daily+weekly+monthly retention without writing a custom controller is to define **four schedules**, each with its own cron + TTL. Velero doesn't natively promote one Backup across tiers, so each tier produces its own Backup CR. Kopia content-addresses the data, so the bucket cost stays roughly 1× the actual content even when multiple schedules fire at the same minute.
 
 **Stagger the crons so no two schedules ever fire concurrently** — otherwise tier-boundary moments (Sunday 1st-of-month at 00:00) trigger 4 parallel backups, hammer your node-agent, and (later, if you add pre-backup quiesce hooks) become 4 sequential stop/start cycles on the workload. A 15-minute offset between tiers is enough:
-
+{% raw %} 
 ```yaml
 schedules:
   my-app-hourly:
@@ -208,6 +210,7 @@ schedules:
       defaultVolumesToFsBackup: true
       ttl: 8760h                      # 365 days
 ```
+{% endraw %} 
 
 Steady-state retention: ~24 hourly + 7 daily + 4 weekly + 12 monthly ≈ 47 Backup CRs per target.
 

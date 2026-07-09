@@ -1,0 +1,19 @@
+{%- comment -%}
+  Nuage de tags : la taille de police suit le nombre de posts. Liquid pur.
+  Params : title ("" pour masquer) ; min_count (ignore les tags moins fréquents, défaut 2)
+{%- endcomment -%}
+{%- assign _title = include.title | default: "Tag cloud" -%}
+{%- assign _min = include.min_count | default: 2 -%}
+<div class="widget widget-tag-cloud">
+  {%- if _title != "" -%}<h3 class="widget-title">{{ _title }}</h3>{%- endif -%}
+  <div class="tag-cloud">
+    {%- assign _tags = site.tags | sort -%}
+    {%- for tag in _tags -%}
+      {%- assign _c = tag[1] | size -%}
+      {%- if _c >= _min -%}
+        {%- assign _fs = _c | times: 9 | plus: 80 | at_most: 240 -%}
+        <a href="{{ '/tags/' | relative_url }}#{{ tag[0] | slugify }}" style="font-size: {{ _fs }}%" title="{{ _c }} posts">{{ tag[0] }}</a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
