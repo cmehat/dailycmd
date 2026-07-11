@@ -36,7 +36,7 @@ The canonical alert in this world is trivially simple:
 
 In an agent-based architecture, the topology inverts. An agent sits next to (or inside) each node or cluster, scrapes its local targets, and ships samples over `remote_write` to a central store — Mimir, Thanos Receive, a managed service. Rules are evaluated centrally, against whatever data *arrived*.
 
-**The central store never tries to reach your targets.** It only knows what it receives. So the question your alerting can answer changes from *"did the target respond when I probed it?"* to *"has data about this target shown up recently?"* Those sound similar. They are not.
+**The central store never tries to reach your targets.** It only knows what it receives. So the question your alerting can answer changes from *"did the target respond when I probed it?"* to *"has data about this target shown up recently?"* — two questions that sound similar but have very different failure modes.
 
 Consider the failure modes:
 
@@ -70,7 +70,7 @@ The migration is therefore not "port the alert rules and change the datasource."
 ```
 {% endraw %}
 
-Two things bite here in practice. First, `absent_over_time()` can only take a fixed selector — it can't enumerate instances it has never seen, so you lose the per-instance granularity `up` gave you. You either maintain one absence rule per critical job (my choice), or you generate them from your inventory (we generate ours with Jsonnet, which keeps the rule set in lockstep with the deployment config). Second, absence alerts fire during *intentional* removals too — decommission a node and forget to remove the rule, and you page yourself at 3 a.m. for a machine that no longer exists. The inventory and the rules must come from the same source of truth. GitOps helps enormously here: the same ArgoCD application that removes the scrape config removes the absence rule.
+Two practical constraints. First, `absent_over_time()` can only take a fixed selector — it can't enumerate instances it has never seen, so you lose the per-instance granularity `up` gave you. You either maintain one absence rule per critical job (my choice), or you generate them from your inventory (we generate ours with Jsonnet, which keeps the rule set in lockstep with the deployment config). Second, absence alerts fire during *intentional* removals too — decommission a node and forget to remove the rule, and you page yourself at 3 a.m. for a machine that no longer exists. The inventory and the rules must come from the same source of truth. GitOps helps enormously here: the same ArgoCD application that removes the scrape config removes the absence rule.
 
 ### 2. The pipeline itself becomes a monitored system
 
