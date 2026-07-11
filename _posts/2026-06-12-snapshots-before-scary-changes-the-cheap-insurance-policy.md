@@ -10,7 +10,7 @@ draft: true
 
 A short ops post about a habit I keep relearning: when you're about to apply an infrastructure change and you're not 100% sure what it will do, **take a disk snapshot first**. The cost is rounding error. The recovery procedure should be a written-down checklist, not improvised under stress. And there are at least three sharp edges between "I took a snapshot, what could go wrong" and "I successfully restored from it."
 
-Generic context throughout: a fleet of cloud VMs running a long-lived stateful application. Each VM has a boot disk and a separate attached disk that holds the application's state directory at `/opt/app`. The application is provisioned via Terraform using a third-party module. None of the specifics matter for the lessons.
+Generic context throughout: a fleet of cloud VMs running a long-lived stateful application. Each VM has a boot disk and a separate attached disk that holds the application's state directory at `/opt/app`. The application is provisioned via Terraform using a third-party module.
 
 ## TL;DR
 
