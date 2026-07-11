@@ -7,13 +7,13 @@ tags: [argocd, applicationset, plugin-generator, kubernetes, gitops, jq, jsonpat
 mermaid: true
 ---
 
-ArgoCD's `ApplicationSet` ships with generators for the common cases — a static `list`, files in `git`, registered `clusters`, pull requests, SCM org scans. But sooner or later you want to template Applications off a source none of those cover: a REST API, an internal service catalogue, a vendor's status feed, some JSON that already exists and is already kept current by someone else. That's what the **plugin generator** is for, and it's the least-documented of the bunch.
+ArgoCD's `ApplicationSet` ships with generators for the common cases — a static `list`, files in `git`, registered `clusters`, pull requests, SCM org scans. The **plugin generator** covers everything else: any REST API, internal service catalogue, or external JSON feed that already exists and is already kept current by someone else. It's the least-documented generator of the bunch.
 
 This post is a from-scratch, no-Helm walkthrough of standing one up: the protocol, the raw manifests, how to write the filter, and the handful of things that will bite you in production. I'll use a small open-source plugin — [`argocd-applicationset-json-plugin`](https://github.com/cmehat/argocd-applicationset-json-plugin) — that does one generic job: fetch JSON from a URL, filter it with `jq` or JSONPath, and hand the result back to ArgoCD as parameters. Nothing here is specific to it, though; the protocol is the protocol.
 
 ## What a plugin generator actually is
 
-The key thing to internalise: **a plugin generator does not run your code inside the controller.** It makes an authenticated HTTP call to a service *you* deploy, and turns the JSON that comes back into generator parameters. The `argocd-applicationset-controller` is the client; your plugin is a tiny HTTP server.
+**A plugin generator does not run your code inside the controller.** It makes an authenticated HTTP call to a service *you* deploy, and turns the JSON that comes back into generator parameters. The `argocd-applicationset-controller` is the client; your plugin is a tiny HTTP server.
 
 The contract is a single route:
 
@@ -34,7 +34,7 @@ and the response is a list of parameter objects:
 ] } }
 ```
 
-Each object becomes one set of template variables. That's the whole interface.
+Each object becomes one set of template variables.
 
 <div class="mermaid">
 flowchart LR
@@ -218,8 +218,8 @@ The plugin's only route is `POST /api/v1/getparams.execute`, and it's token-auth
 
 **3. Two small ones.** Pin an image tag your registry actually has (an unbuilt tag gives `ImagePullBackOff` with a misleading `not found`), and make sure the ConfigMap's `baseUrl` carries the **service port** — no port means port 80, and the Service listens on 4355.
 
-## When to reach for this
+## When to use it
 
-A plugin generator is the right tool when the source of truth is *external* JSON you don't want to copy into git, and you want Applications to track it live. It's a running service you have to operate, so it's overkill for a static list. But for "template one Application per row of this API," it turns an MR-per-change chore into a five-minute reconcile loop.
+Use a plugin generator when the source of truth is *external* JSON you don't want to copy into git and you want Applications to track it live. It's a running service you have to operate, so it's overkill for a static list. For "template one Application per row of this API," it turns an MR-per-change chore into a five-minute reconcile loop.
 
 The plugin used here is open source: [argocd-applicationset-json-plugin](https://github.com/cmehat/argocd-applicationset-json-plugin). In the [next post]({% post_url 2026-07-11-auto-onboarding-tezos-testnets-with-teztnets-json %}) I put it to work against a real, public feed — the Tezos test-network registry.
