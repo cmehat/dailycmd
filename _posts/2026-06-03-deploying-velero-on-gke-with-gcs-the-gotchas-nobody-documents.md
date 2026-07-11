@@ -9,9 +9,9 @@ author: "cm"
 {% raw %}
 
 
-A practical walk-through of installing Velero on a GKE cluster, backing up to a GCS bucket via Workload Identity, and validating the install end-to-end with three increasingly-rigorous restore tests — including the one you actually run during a real incident. We'll spend most of the time on the parts that the upstream Velero docs hand-wave at: the Workload Identity binding, the silent-failure mode when the binding is wrong, and the subtle race between Velero's restore and GitOps controllers.
+When Workload Identity is misconfigured, Velero installs fine, the Schedule fires, the Backup CR is created — and then silently transitions to `FailedValidation` because the GCS auth token can't be fetched. We were in that state for 46 days before noticing. This walkthrough surfaces those failures early, covers the three IAM identities that must align, and includes three restore tests in increasing order of rigour — including the GitOps suspension trick you'll need for a real in-place restore.
 
-I'll use generic names throughout: `my-cluster`, `my-app`, `my-bucket`. The same shape works whether `my-app` is a config-file-on-PVC tool, a database, a queue worker — anything with a PVC you want backed up.
+Generic names throughout: `my-cluster`, `my-app`, `my-bucket`. The same shape works whether `my-app` is a config-file-on-PVC tool, a database, a queue worker — anything with a PVC you want backed up.
 
 ## What we're building
 
@@ -91,7 +91,7 @@ gcloud storage buckets describe gs://my-bucket \
   --format='value(name,location,storageClass)'
 ```
 
-Yes, you do need this verification step. We've seen "the values file references a bucket that was never created" as a production bug.
+Velero validates the bucket at runtime, not at install time — a missing bucket produces `FailedValidation` Backups with no other warning.
 
 ## Step 3 — Grant the GSA permission to write to the bucket
 
@@ -660,5 +660,5 @@ Three things you should always do in this order during any data-loss incident:
 - `kubectl get backup -A` returns "No resources found" on some clusters because `backup` is a short name that resolves to a different CRD (Rancher's `backups.resources.cattle.io`, for instance). Use the fully-qualified `backups.velero.io`.
 - The Helm chart's default `serviceAccount.server.name` is `velero-server`. If you change it, your Workload Identity binding (Step 4) needs to reference the new name. We've seen people stuck for hours on a mismatched name where the chart default changed in a minor version.
 
-Velero is a great tool. Most of the install friction comes from the Workload Identity setup being spread across three or four GCP commands that have to align exactly. Get those right, verify with the BSL phase, and run a shadow-restore test monthly. That's all most teams need.
+Most of the install friction is the Workload Identity setup: three or four GCP commands that must align exactly. Get those right, verify with the BSL phase, and run a shadow-restore test monthly.
 {% endraw %}
