@@ -12,7 +12,7 @@ mermaid: true
 
 A perfectly correct alerting expression silently produced nothing for seven weeks, because the recording rule it depended on wasn't visible to the component that needed to read it. Not in Prometheus. In Thanos.
 
-Generic names throughout: `my-fleet`, `app-foo`, `app-bar`, `cluster="external-fleet"`. The architecture is "a fleet of external VMs running Grafana Alloy → remote-write to Thanos receive inside a Kubernetes cluster, with a separate `thanos-rule` deployment evaluating recording and alerting rules."
+The architecture: a fleet of external VMs running Grafana Alloy → remote-write to Thanos receive inside a Kubernetes cluster, with a separate `thanos-rule` deployment evaluating recording and alerting rules. Fleet and app names (`my-fleet`, `app-foo`, `app-bar`) are anonymized.
 
 ## TL;DR
 
@@ -25,7 +25,7 @@ A `record → unless → alert` pattern that catches "the scraper went silent" w
 
 The fix is one line in the Helm chart values. The lesson is older than the bug: Prometheus's mental model — "recording rules become queryable immediately because Prometheus queries its own TSDB" — does not survive the split into Thanos components.
 
-**Status:** the fix has rolled out, and we verified end-to-end with a synthetic Alloy stop — `InstanceAbsent` transitions `inactive → pending → firing → Slack` in about eleven minutes from a `systemctl stop alloy` on a test host. Details in the [verification section](#verification--what-actually-happened-after-the-fix-rolled-out) below. The test also surfaced a separate design issue — the rule's 30-minute auto-resolve — which gets its own section.
+The fix is rolled out and verified end-to-end with a synthetic Alloy stop: `InstanceAbsent` transitions `inactive → pending → firing → Slack` in about eleven minutes from a `systemctl stop alloy` on a test host. The test also surfaced a separate design issue — the rule's 30-minute auto-resolve — covered in its own section.
 
 ## The setup
 
@@ -340,7 +340,7 @@ Then we restarted Alloy. Within ~3 minutes `up` was fresh again, `InstanceAbsent
 
 Then we ran the test a second time on the same host, this time leaving Alloy stopped, to exercise the planned-decommission path: at T+30 m the `max_over_time(up[30m])` window in `fleet:target:seen_30m` no longer contains any samples for the host, the recording rule stops emitting that label set, `unless ...` collapses, and `InstanceAbsent` silently resolves. No human action required.
 
-That second path is the design feature — and also, as it turns out, the design problem worth flagging next.
+That second path is the design feature. It's also a design problem.
 
 ## The 30-minute auto-resolve trap
 
