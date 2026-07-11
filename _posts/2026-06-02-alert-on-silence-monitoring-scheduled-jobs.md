@@ -13,9 +13,6 @@ certificates, rotates logs, or syncs data between systems. They run on a timer,
 succeed without fanfare, and disappear from everyone's attention — until one day
 they stop, and nobody notices for hours or days.
 
-This is a story about that failure mode, and a simple, durable pattern for
-fixing it.
-
 ## The incident
 
 A scheduled pipeline that ran every hour failed five times in a row. The cause
@@ -208,7 +205,7 @@ receiver — caught all three before they reached production.
 
 ## A concrete implementation
 
-Enough principles — here's the real thing, end to end. The scheduled job in
+The scheduled job in
 question is [Renovate](https://github.com/renovatebot/renovate) (a dependency
 update bot) running hourly in CI. The metric is shipped with
 [Grafana Alloy](https://github.com/grafana/alloy) via `prometheus.remote_write`
@@ -503,29 +500,9 @@ one thing from this section: dry-run your alert expressions against the actual
 metric shape in production before you trust them. Looking right is not the same
 as evaluating right.)
 
-## Takeaways
-
-- **Monitor existence, not just output.** Ask of every scheduled job: "How would
-  I know if this silently stopped running?" If the answer is "I wouldn't," you
-  have a gap.
-- **Alert on absence, not on failure.** A heartbeat that must arrive — and an
-  alert when it doesn't — catches the failure modes a failure handler
-  structurally cannot, including the job never starting.
-- **Put the watcher outside the watched.** Anything that depends on the
-  unhealthy system to report its own ill health will go quiet exactly when you
-  need it loudest.
-- **Define both "stale" and "missing."** Otherwise a monitoring path that was
-  never wired up correctly looks identical to a healthy one.
-- **Reuse your existing alerting fabric** when you have one; one routing path is
-  easier to trust than five.
-- **Test the plumbing in the real image, locally.** The architecture is the easy
-  part. The incidental tooling and version drift is what eats your afternoon —
-  and it's only visible when you run the actual thing.
-- **Wrap sparse-heartbeat lookups in `last_over_time(...[window])`.** Default
-  staleness lookback (5 min) is sized for typical scrape intervals (15–60 s); a
-  metric pushed once per hour is a fundamentally different shape, and a vanilla
-  `max(...)` over it returns no data 90%+ of the time. Run your alert
-  expressions against the real metric, between pushes, before you ship them.
-
-The jobs running while nobody watches are, almost by definition, the ones whose
-silence you'll miss. Make silence the thing that pages you.
+One thing worth calling out explicitly: wrap sparse-heartbeat lookups in
+`last_over_time(...[window])`. The default staleness lookback (5 min) is sized
+for typical scrape intervals (15–60 s); a metric pushed once per hour is a
+fundamentally different shape, and a vanilla `max(...)` over it returns no data
+90%+ of the time. Run your alert expressions against the real metric, between
+pushes, before you ship them. The details are in the postscript above.
