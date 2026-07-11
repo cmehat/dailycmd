@@ -15,7 +15,7 @@ I shipped a small OCaml HTTP service to a Kubernetes cluster. Inbound traffic wo
 [EROR] response (cid=N, code=500)
 ```
 
-The path from that error to a one-line fix involved being publicly wrong about the cause first. This is the post-mortem of both the bug and the diagnosis.
+The path from that error to a one-line fix involved being publicly wrong about the cause first.
 
 I'll use generic names: `my-service` (the OCaml HTTP server), `my-service:latest` (its image), `https://hooks.example.com/...` (an outbound URL it tries to POST to). Stack: OCaml 5.2 + `cohttp-lwt-unix` 6.2 + `conduit-lwt-unix` 8.0 + a multi-stage Dockerfile that copies the built binary onto `debian:bookworm-slim`.
 
