@@ -8,7 +8,7 @@ tags: [prometheus, grafana-alloy, remote-write, alerting, kube-prometheus-stack,
 
 I've spent the last few months migrating a standalone monitoring stack — Prometheus, Alertmanager, Loki and Grafana running on cloud VMs, provisioned with Terraform and configured with Ansible — into an in-cluster, GitOps-managed kube-prometheus-stack. Along the way, one architectural question kept resurfacing in design discussions: should we keep the classic Prometheus **pull** model, or move to an **agent push** model, where lightweight collectors (Grafana Alloy, the OpenTelemetry Collector, Prometheus in agent mode) scrape locally and `remote_write` everything to a central store?
 
-The industry momentum is clearly toward push. Grafana Cloud, Mimir, Thanos Receive, Amazon Managed Prometheus — they all ingest via `remote_write`. But most write-ups frame this as a deployment convenience ("no more firewall holes for scraping!") and skip the part that actually matters: **the pull model isn't just a transport choice, it's a health-checking model.** When you switch to push, some of your monitoring assumptions silently invert, and your alerting rules need to change with them.
+Grafana Cloud, Mimir, Thanos Receive, Amazon Managed Prometheus — they all ingest via `remote_write`. The transport difference is real, but it comes with a less-obvious consequence: **the pull model isn't just a transport choice, it's a health-checking model.** When you switch to push, some of your monitoring assumptions silently invert, and your alerting rules need to change with them.
 
 ## What the pull model gives you for free
 
@@ -36,7 +36,7 @@ The canonical alert in this world is trivially simple:
 
 In an agent-based architecture, the topology inverts. An agent sits next to (or inside) each node or cluster, scrapes its local targets, and ships samples over `remote_write` to a central store — Mimir, Thanos Receive, a managed service. Rules are evaluated centrally, against whatever data *arrived*.
 
-Here is the subtle part: **the central store never tries to reach your targets.** It only knows what it receives. So the question your alerting can answer changes from *"did the target respond when I probed it?"* to *"has data about this target shown up recently?"* Those sound similar. They are not.
+**The central store never tries to reach your targets.** It only knows what it receives. So the question your alerting can answer changes from *"did the target respond when I probed it?"* to *"has data about this target shown up recently?"* Those sound similar. They are not.
 
 Consider the failure modes:
 
@@ -93,14 +93,14 @@ The heartbeat must terminate *outside* the failure domain of the stack it monito
 
 ## What you get in exchange
 
-I've been listing costs, so to be fair, the push model earns its keep:
+What you get in exchange:
 
 - **Topology fit.** No inbound connectivity to edge networks, NATed VMs, or short-lived workloads. The agent only needs one outbound HTTPS path. This is the original motivation and it's real — our old stack needed carefully curated firewall rules and a VPN mesh for the central server to reach every target.
 - **One query surface.** All regions and clusters land in one store with consistent `external_labels`. Cross-fleet queries and global dashboards stop being a federation science project.
 - **HA without gaps.** Run two agents per site with identical configs and distinct replica labels; the store (Mimir, or Grafana Cloud's Adaptive dedup) deduplicates. Compare that to HA pull-Prometheus pairs, where deduplication is the *query layer's* problem forever.
 - **Centralized rule management.** Rules live in the ruler, deployed via GitOps, versioned with everything else — no more Ansible-templated `rules.d` drift across regional servers.
 
-## The migration checklist I wish I'd had
+## Migration checklist
 
 1. **Inventory every `up`-based alert** and write its `absent_over_time()` companion. Generate them from the same source of truth as the scrape configs.
 2. **Add pipeline alerts** on `remote_write` lag, failed/dropped samples, shard saturation and agent WAL disk *before* cutover, not after the first silent outage.
