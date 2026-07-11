@@ -133,7 +133,7 @@ With `prune: true`, the loop is fully self-maintaining on a five-minute requeue:
 
 The hand-maintained network file is out of the critical path entirely.
 
-## The trade-off worth naming
+## The trade-off
 
 Reading the registry live means you follow upstream's image tag *exactly and immediately* — which is the point, but also means you've handed your rollout timing to `docker_build`. If you need to **pin** each network to a reviewed image, gate upgrades behind a policy, or keep an auditable git diff of "what changed and when," you want a committed file you regenerate on a schedule instead — see the [companion post]({% post_url 2026-07-11-syncing-a-committed-config-file-from-an-upstream-api-with-scheduled-ci %}).
 
