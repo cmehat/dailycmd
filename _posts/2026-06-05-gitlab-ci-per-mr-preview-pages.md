@@ -21,14 +21,13 @@ The example is lifted from a real Terraform + Ansible infrastructure pipeline I
 maintain, where each MR renders an HTML "infrastructure report" so reviewers can
 *see* what a change produces instead of reading raw plan output.
 
-## The catch nobody mentions
+## Why not parallel deployments
 
 The obvious way to do per-MR previews is GitLab Pages **parallel deployments**
 (`pages.path_prefix`), which host each branch under its own URL prefix. It's
 clean — and on many setups it's either gated behind a paid tier or a recent
 GitLab version. If you're on the Free plan, you typically get **one** Pages
-deployment: your default branch. Try to publish a second one per MR and you're
-out of luck.
+deployment: your default branch.
 
 So we use a different lever that exists on every plan:
 
