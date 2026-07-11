@@ -13,7 +13,7 @@ mermaid: true
 
 An alert deployed for months, perfectly valid, evaluated on schedule — and structurally incapable of firing, because **nothing in the entire fleet ever produced the metric it watched**.
 
-Generic names throughout: `my-fleet` for the VM fleet, `app-foo` for the workload, no real hostnames or URLs.
+(`my-fleet` and `app-foo` stand in for the real fleet and workload names.)
 
 ## TL;DR
 
@@ -31,7 +31,7 @@ A `RebootRequired` alert shipped in both the on-host Prometheus rules and the ce
 
 `node_reboot_required` is **not** a built-in node_exporter metric. It only exists if you feed it to node_exporter through the **textfile collector** — a `.prom` file on disk that some external script keeps up to date. The textfile collector directory was configured. The script that writes the file, and the schedule that runs it, were never deployed. So the metric was always absent, `node_reboot_required > 0` matched nothing, and the alert sat `inactive` forever — including across a fleet-wide unattended-upgrades kernel bump that genuinely needed reboots.
 
-The fix looks like three moving parts: a script, a place to drop its output, and something to run it on a timer. But there were two false floors under it. The first: the "obvious" scheduler (cron) wasn't installed. The second, and the real lesson: once all three parts *were* deployed, the metric came up `0` everywhere — and stayed `0` on a host that genuinely needed a reboot. The script we shipped couldn't actually see anything on these machines. The fix that finally worked was to stop trying to *derive* "is a reboot needed" and just read the answer the OS already writes down: `/run/reboot-required`.
+The fix looks like three moving parts: a script, a place to drop its output, and something to run it on a timer. Two more problems surfaced during rollout. First, the "obvious" scheduler (cron) wasn't installed on these minimal images. Second — the real lesson — once all three parts *were* deployed, the metric came up `0` everywhere, and stayed `0` on a host that genuinely needed a reboot: the script depended on a binary the images didn't have. The fix that worked was to stop trying to *derive* "is a reboot needed" and read the answer the OS already writes down: `/run/reboot-required`.
 
 ## Background: node_exporter's textfile collector
 
@@ -103,7 +103,7 @@ fi
 echo "node_reboot_required{current_kernel=\"${CURRENT_KERNEL}\"} 0"
 ```
 
-It always emits a value — `1` when a newer kernel is installed than the one running, `0` otherwise — which is the right instinct (present-and-false beats absent). Two things about it are worth holding onto, because both come back to bite: it shells out to **`file`** to identify the kernel image, and it only ever looks at the **kernel**. Park those. We deployed it as-is and moved on to the plumbing.
+It always emits a value — `1` when a newer kernel is installed than the one running, `0` otherwise — which is the right instinct (present-and-false beats absent). Note two properties for later: it shells out to **`file`** to identify the kernel image, and it only ever looks at the **kernel**. We deployed it as-is and moved on to the plumbing.
 
 ## The Ansible play
 
@@ -118,7 +118,7 @@ Deploying it is two tasks: drop the script, then schedule it. The first task is 
   become: true
 ```
 
-Two small landmines worth calling out, because both bit during rollout:
+Two details that caused failures during rollout:
 
 **Relative paths resolve from `playbook_dir`, not the repo root.** The playbook lives in `playbooks/`, and the vendored collections are installed one level up in `playbooks/../vendor-collections`. The first attempt used `../../vendor-collections`, which resolves to the *repository root* — a directory that doesn't exist on the CI runner — and every host failed with:
 
@@ -210,9 +210,9 @@ The timer version also lets you fix a second, quieter bug for free: the cron one
 
 Rule of thumb: **on a systemd host, reach for a timer before cron.** Cron earns its place when you need its ecosystem (per-user crontabs, `MAILTO`, operators who think in crontab syntax) or when the platform genuinely isn't systemd. For "run this little script every few minutes on a fleet of cloud VMs", a timer is fewer dependencies and one less daemon to assume exists.
 
-## The second false floor: the metric was produced, and still lied
+## The metric was produced — and still wrong
 
-Script deployed, scheduled, scraped. The panel showed up, every host reading a calm `0`. Job done — except it wasn't, and the way I found out is the part worth keeping.
+Script deployed, scheduled, scraped. The panel showed up, every host reading a calm `0`.
 
 Querying the metric across the fleet, every series came back `0`. Fine on its own. But I happened to check a test host that I *knew* had been waiting on a reboot for weeks, and it too said `0`. Then I noticed what was missing from the labels. The script, when it emits, tags the series with `current_kernel`. In the exposition format an empty label and an absent label look the same, and **Prometheus drops empty labels on ingestion** — so a series carrying `current_kernel=""` arrives with no `current_kernel` label at all. Every series in the fleet was missing it:
 
@@ -234,7 +234,7 @@ $ ls -l /run/reboot-required
 -rw-r--r-- 1 root root 32 Jun  3 ...     # a reboot HAS been required since Jun 3
 ```
 
-There it is, and it's the **same root cause as the cron failure**: `file(1)` isn't on these minimal images either. `$(file /boot/vmlinuz*)` expands to nothing, the loop never runs, `FIND` stays empty, and the script falls through to a permanent `0`. The collector was deployed, scheduled, scraped, dashboarded — and reporting a confident, specific lie. A host that had needed rebooting for *eighteen days* was being reported as fine.
+It's the **same root cause as the cron failure**: `file(1)` isn't on these minimal images either. `$(file /boot/vmlinuz*)` expands to nothing, the loop never runs, `FIND` stays empty, and the script falls through to a permanent `0`. The collector was deployed, scheduled, scraped, dashboarded — and reporting an incorrect value. A host that had needed rebooting for *eighteen days* was reported as fine.
 
 I could have just installed `file` (and did, as a one-line stopgap). But step back: the script is doing real work — globbing `/boot`, shelling out to `file`, parsing its English-prose output for the word "version" — to reconstruct a fact the operating system **already computes and writes to a file**. Ubuntu's `unattended-upgrades`/`needrestart` drop `/run/reboot-required` the moment any package — kernel *or* libc, systemd, dbus, … — needs a restart to take effect. The kernel-comparison script can't see those non-kernel cases at all, and it reinvents, badly, something already sitting on disk.
 
@@ -309,12 +309,10 @@ If the last command prints the series, the textfile collector is wired correctly
 
 ## Lessons
 
-1. **An enabled collector is not a produced metric.** The textfile directory being configured told us nothing; nobody was writing to it. "We have the alert and the collector is on" is not the same as "the metric exists".
-2. **A produced metric is not a correct metric.** Worse than absent: a series confidently reporting `0` from a detector that can't actually detect anything. A host needed rebooting for eighteen days while the dashboard stayed green. "The metric exists" is not the same as "the metric measures the thing".
-3. **Absent is a dangerous value — and so is an empty label.** A `> 0` alert on an absent series looks healthy. And since Prometheus drops empty labels, a label your script left blank vanishes on ingestion — which is exactly the breadcrumb that exposed the broken parse here (`current_kernel` absent on every series). Make collectors emit an explicit `0`, and alert separately on *staleness* so a dead collector is loud.
-4. **Read the OS's answer instead of re-deriving it.** The fragile script globbed `/boot`, shelled out to `file`, and parsed prose to reconstruct a fact Ubuntu already writes to `/run/reboot-required` — and got it wrong, and missed every non-kernel case. When the platform already computes the thing, consume that; don't reimplement it worse.
-5. **Don't assume a binary is installed.** Both failures here — `crontab` and `file` — were the same shape: a tool the script/module assumed was present, absent on minimal images. On systemd hosts prefer a timer over cron; for anything else, make the package an explicit prerequisite (and remember `--check` won't install it for you).
-6. **Write textfile metrics atomically.** `tmp`-then-`mv`, not `>`, so a scrape never catches a half-written file.
+1. **An enabled collector is not a produced metric, and a produced metric is not a correct metric.** The textfile directory being configured told us nothing — nobody was writing to it. Then the written metric reported `0` from a detector that couldn't detect anything. Verify at each layer: what produces this, and has it ever produced a `1`?
+2. **Read the OS's answer instead of re-deriving it.** The script globbed `/boot`, shelled out to `file`, and parsed prose to reconstruct a fact Ubuntu already writes to `/run/reboot-required` — and missed every non-kernel case. When the platform already computes the thing, consume that.
+3. **Don't assume a binary is installed.** Both failures here — `crontab` and `file` — were the same shape: a tool assumed present, absent on minimal images. On systemd hosts prefer a timer over cron; otherwise make the package an explicit prerequisite (and remember `--check` won't install it for you).
+4. **Write textfile metrics atomically.** `tmp`-then-`mv`, not `>`, so a scrape never catches a half-written file. And make collectors emit an explicit `0` with a separate staleness alert, so a dead collector is loud — an absent series looks healthy to a `> 0` rule, and Prometheus drops empty labels on ingestion (which is the breadcrumb that exposed the broken parse here).
 
-The whole thing is maybe forty lines of YAML and a ten-line shell script. "Deployed, evaluating, and green" can still mean *structurally incapable of telling you the truth* — on two separate levels here: an alert that can never fire because nothing produces its metric, and a metric that always reads `0` because the thing producing it is blind. Both hide in the same silence. Ask at each layer: "what actually produces this, and have I seen it produce a `1`?"
+The whole thing is maybe forty lines of YAML and a ten-line shell script. "Deployed, evaluating, and green" can still mean incapable of reporting the actual state — here on two separate levels: an alert whose metric nothing produced, and then a metric whose detector couldn't detect. Both presented as the same silence.
 {% endraw %}
