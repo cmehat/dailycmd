@@ -10,7 +10,7 @@ mermaid: true
 ---
 
 
-A second story in the "your alert never fired" genre — this time about a perfectly correct alerting expression that silently produced nothing for seven weeks, because the recording rule it depended on wasn't visible to the component that needed to read it. Not in Prometheus. In Thanos.
+A perfectly correct alerting expression silently produced nothing for seven weeks, because the recording rule it depended on wasn't visible to the component that needed to read it. Not in Prometheus. In Thanos.
 
 Generic names throughout: `my-fleet`, `app-foo`, `app-bar`, `cluster="external-fleet"`. The architecture is "a fleet of external VMs running Grafana Alloy → remote-write to Thanos receive inside a Kubernetes cluster, with a separate `thanos-rule` deployment evaluating recording and alerting rules."
 
@@ -435,16 +435,10 @@ In Thanos:
 
 Three subsystems that look interchangeable from the outside, with a chained dependency that is enforced by Helm chart configuration values rather than by anything you'd notice while writing the rule. The chart's *defaults* don't wire the ruler in as a store endpoint, presumably because not every deployment runs a ruler at all — but that means every deployment that *does* run a ruler with recording rules is at risk.
 
-Five practical takeaways:
+Two things to act on immediately:
 
-- If you have `thanos-rule` deployed, add `thanos-rule-headless` (or whatever your chart names it) to `thanos-query`'s store endpoints. Today. Before you need it.
-- Treat any new `record → unless → alert` pattern with the same suspicion as an alert that has never fired. Trigger the condition once in staging — actually stop a target, actually wait — and confirm the alert reaches the destination. If it doesn't, you haven't built monitoring, you've built a pretty `/api/v1/rules` listing.
-- Where possible, write absence/heartbeat alerts against a metric **produced directly by the source** (a CI job pushing a `*_last_success_timestamp_seconds`, an exporter that emits an "I'm alive" gauge) rather than against a recording rule derived from `max_over_time(up[N])`. The first path crosses fewer Thanos components and is much easier to reason about under failure.
-- When you use a `max_over_time(up[N])`-style trick to make an absence alert auto-clean a decommissioned host, **think hard about what `N` means for a real outage**. `N = 30m` is short enough to be invisible to a busy on-call; `N = 24h` keeps the alert load-bearing while still letting a planned retirement self-resolve. And not every environment deserves the same `N` — production is cheap to over-alert on, scratch space is cheap to forget about.
-- `keep_firing_for` is for flap-suppression, not for capping the firing duration of an absence alert. The cap belongs in the recording rule's lookback window. Naming the attribute clearly will not stop you from misreading it the first time.
+- If you have `thanos-rule` deployed, add `thanos-rule-headless` to `thanos-query`'s store endpoints. Today.
+- Prefer absence/heartbeat alerts against a metric **produced directly by the source** (a CI job pushing a timestamp, an exporter that emits an "I'm alive" gauge) rather than a recording rule derived from `max_over_time(up[N])`. The direct path crosses fewer Thanos components and is easier to audit under failure.
 
 The legacy stack we're decommissioning kept running quietly through this episode and saved us from finding the gap during a real outage. Parallel monitoring during a migration is annoying, slow, and the *right* answer, every time.
 
----
-
-*If you've run into the same gotcha and want to compare notes — or if your `additionalEndpoints` list also looks suspicious — drop me a line.*
