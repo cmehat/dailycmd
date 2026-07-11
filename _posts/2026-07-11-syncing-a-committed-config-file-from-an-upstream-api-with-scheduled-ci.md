@@ -6,9 +6,9 @@ categories: [gitops, ci]
 tags: [gitlab-ci, gitops, jq, automation, scheduled-pipelines, ci-components]
 ---
 
-There's a recurring shape in GitOps: some **upstream API is the source of truth** for a list your infrastructure depends on — the set of live networks, regions, tenants, feature flags — and you need that list inside your repo so the rest of your tooling (rendering, pinning, review, dependency bots) can act on it.
+Some **upstream API is the source of truth** for a list your infrastructure depends on — live networks, regions, tenants, feature flags — and you need that list inside your repo so your tooling (rendering, pinning, review, dependency bots) can act on it.
 
-You have two honest options. Read the upstream live at deploy time, or **materialize it into git**: fetch it on a schedule, write it to a committed file, and let a bot commit the diff. This post is about the second one — when it's the right call, and a clean, reusable way to build it in GitLab CI. I'll use the public Tezos test-network registry, [`teztnets.com/teztnets.json`](https://teztnets.com/teztnets.json), as the concrete example, but nothing here is specific to it.
+Two options: read the upstream live at deploy time, or **materialize it into git** — fetch it on a schedule, write it to a committed file, let a bot commit the diff. This post is about the second one: when it's the right call, and a reusable way to build it in GitLab CI. The concrete example is the public Tezos test-network registry at [`teztnets.com/teztnets.json`](https://teztnets.com/teztnets.json), but nothing here is specific to it.
 
 ## Why commit it instead of reading it live
 
@@ -127,7 +127,7 @@ mv "$tmp" "$target_path"; trap - EXIT
 
 Reading it top to bottom: build a name→row lookup of what's already committed; take upstream's canonical entries (`aliasOf == null`); for each, **reuse the committed row if it exists** (keeping your pins untouched), otherwise **synthesize a new row** on the fleet's default tag/channel/policy. Rows not in upstream simply aren't emitted — they drop out, and that deletion shows up as a reviewable diff on the next run.
 
-That "reuse if present, default if new" merge is the heart of it. It's why a dependency bot can bump `octezTag` on one row and the next regeneration won't stomp it — the row already exists, so it's preserved verbatim.
+That "reuse if present, default if new" merge is why a dependency bot can bump `octezTag` on one row and the next regeneration won't stomp it — the row already exists, so it's preserved verbatim.
 
 ## The two footguns
 
@@ -147,4 +147,4 @@ Materialize-into-git and read-live are two ends of a spectrum:
 | Freshness | As fresh as the schedule | Instant |
 | Moving parts | A scheduled job to own | None |
 
-If the list is disposable and you *want* to track upstream instantly, read it live. If rows carry state you care about — pins you review, policies you enforce, a history you audit — regenerate on a schedule and let the diff speak. The pattern above makes the second one about forty lines of YAML and jq, reusable across every such file in the repo.
+If the list is disposable and you *want* to track upstream instantly, read it live. If rows carry state you care about — pins you review, policies you enforce, a history you audit — regenerate on a schedule and let the diff speak. The pattern above is about forty lines of YAML and jq, reusable across every such file in the repo.
