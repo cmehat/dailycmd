@@ -14,9 +14,8 @@ a reviewer can click.
 
 This is a how-to for wiring that up on GitLab: **every merge request gets its
 own preview page, with a "View app" button right on the MR.** No review server
-to babysit, no extra infrastructure — and, the part most tutorials skip, **it
-works on the Free plan**, because it doesn't rely on publishing multiple
-GitLab Pages sites at once.
+to babysit, no extra infrastructure — and **it works on the Free plan**, because
+it doesn't rely on publishing multiple GitLab Pages sites at once.
 
 The example is lifted from a real Terraform + Ansible infrastructure pipeline I
 maintain, where each MR renders an HTML "infrastructure report" so reviewers can
@@ -273,7 +272,3 @@ Pages root, so reviewers can compare the two side by side.
 | Lifetime | `auto_stop_in` + `on_stop` + `action: stop` | Auto-retires the environment; manual stop button too |
 | Scope | `rules: $CI_MERGE_REQUEST_IID` | Preview on MRs, real publish on the default branch |
 
-A handful of lines, no paid tier, no extra infrastructure — and every reviewer
-gets a real, rendered page to click instead of a diff to imagine. For anything
-your pipeline can emit as HTML — docs, a static site, a generated report, a
-dashboard snapshot — it's about the cheapest review-quality upgrade you can add.
