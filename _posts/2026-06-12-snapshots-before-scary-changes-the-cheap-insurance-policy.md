@@ -281,4 +281,4 @@ After the pin, the plan went to `0 add, 0 change, 0 delete`. Pure state migratio
 - **`ignore_changes` is one-way.** When you add it, write down how to manually push the ignored attribute. You will need to, eventually.
 - **`reset` is a hard power-cycle.** Don't use it on stateful workloads. `stop` + `start`, or `systemctl reboot` from inside.
 
-None of these are clever. They're all the kind of operational habit that you only learn by losing data to the absence of them. Writing it down so the next person — including future-me — can borrow the lesson without re-buying it.
+None of these are clever. They're all the kind of operational habit you only learn by losing data to the absence of them.
