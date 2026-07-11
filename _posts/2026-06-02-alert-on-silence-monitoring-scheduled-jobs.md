@@ -153,12 +153,11 @@ fabric.** The best monitoring is monitoring that's defined, routed, and silenced
 the same way as everything else you already operate. Novel side-channels are
 extra surface to maintain and extra places for an alert to get lost.
 
-## The part nobody warns you about: it's the plumbing that bites
+## The plumbing
 
 Designing the pattern took an afternoon. Making it actually deliver a metric
 end-to-end took considerably longer — and the obstacles were entirely
-incidental, not architectural. Three of them are worth generalizing, because you
-will meet their cousins:
+incidental, not architectural. Three of them generalize:
 
 **1. Minimal images don't have the tools you assume.** The agent image used to
 push the metric shipped without `curl`, `wget`, `nc`, or a scripting
@@ -505,4 +504,4 @@ One thing worth calling out explicitly: wrap sparse-heartbeat lookups in
 for typical scrape intervals (15–60 s); a metric pushed once per hour is a
 fundamentally different shape, and a vanilla `max(...)` over it returns no data
 90%+ of the time. Run your alert expressions against the real metric, between
-pushes, before you ship them. The details are in the postscript above.
+pushes, before you ship them.
