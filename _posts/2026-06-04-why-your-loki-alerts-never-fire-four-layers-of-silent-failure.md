@@ -11,7 +11,7 @@ author: "cm"
 
 A single alert didn't fire for two and a half months. Four independent bugs, each masking the next, each failing silently. The metrics endpoint told the whole story; the logs told none of it.
 
-Generic names throughout: `my-loki`, `my-alert`, `my-cluster`, `my-channel`. Architecture: self-hosted Loki receiving logs from a handful of Kubernetes clusters, rules in a ConfigMap synced by a sidecar, alertmanager from a sub-chart of the same Helm umbrella.
+The setup: self-hosted Loki receiving logs from a handful of Kubernetes clusters, rules in a ConfigMap synced by a sidecar, alertmanager from a sub-chart of the same Helm umbrella. Names (`my-loki`, `my-alert`, `my-channel`) are anonymized.
 
 ## TL;DR
 
@@ -102,7 +102,7 @@ kubectl exec … -- python3 -c \
 
 The fix: Loki's local rule store doesn't scan a flat directory; it scans `<directory>/<tenant_id>/<rule_file>`. With `auth_enabled: false`, the ruler's implicit tenant is `anonymous`. Files placed directly under the configured directory, with no tenant subdirectory, are silently ignored. The chart's `sidecar.rules.folder` needed to be `/etc/loki/rules/anonymous`, not `/etc/loki/rules`.
 
-(There's an extra dose of charm: Loki uses `fake` as the tenant on the query path and `anonymous` on the ruler path. The two are not interchangeable. The "weird" path is the one that works.)
+(Note: Loki uses `fake` as the tenant on the query path and `anonymous` on the ruler path. The two are not interchangeable.)
 
 Move the file under the tenant subdir and check again.
 
@@ -153,7 +153,7 @@ curl -fsS --get \
 
 Three matches in the last week. None on the day I was looking at the known-bad pod.
 
-A bit of `head -1 < the crash-looping pod's logs` and the truth emerges: the application emits two different phrasings of the same logical error, only one of which contains the substring the alert filters on. The first phrasing comes from one code path (`fatal: store corruption`), the second from another (`Store_corruption` — capitalised, underscored — bubbled up as part of an exception type name).
+A look at the crash-looping pod's actual log lines shows why: the application emits two different phrasings of the same logical error, only one of which contains the substring the alert filters on. The first phrasing comes from one code path (`fatal: store corruption`), the second from another (`Store_corruption` — capitalised, underscored — bubbled up as part of an exception type name).
 
 `|=` is a case-sensitive substring match. Of course it didn't catch the second phrasing. Switch to a regex alternation:
 
@@ -180,7 +180,7 @@ curl --data-urlencode 'query=<expr> > 0' --data-urlencode "time=<that timestamp>
 
 Slack: still zero. The wip channel receives plenty of other alerts; it's not the channel.
 
-The smoking gun is in the ruler's metrics. There's a family of `loki_prometheus_notifications_*` counters that count attempts the ruler makes to dispatch to alertmanager:
+The answer is in the ruler's metrics. There's a family of `loki_prometheus_notifications_*` counters that count attempts the ruler makes to dispatch to alertmanager:
 
 ```sh
 kubectl exec … -c sidecar -- python3 -c \
@@ -198,7 +198,7 @@ loki_prometheus_notifications_latency_seconds{quantile="0.5"}                   
 loki_prometheus_notifications_latency_seconds_count                                   2590
 ```
 
-The numbers are damning. Every single attempted dispatch — 2,590 of them — errored out, was dropped, and produced a `NaN` latency quantile because no request ever succeeded long enough to record a duration. And `alertmanagers_discovered=1` only means the URL parsed, not that it pointed at anything real.
+Every attempted dispatch — 2,590 of them — errored out, was dropped, and produced a `NaN` latency quantile because no request ever succeeded long enough to record a duration. And `alertmanagers_discovered=1` only means the URL parsed, not that it pointed at anything real.
 
 Why? DNS:
 
@@ -245,5 +245,5 @@ None of the four layers emits a warning at the level the operator would see by a
 
 **Monitor the notifier metrics.** A Grafana panel of `loki_prometheus_notifications_errors_total` per alertmanager target is five lines of PromQL. Without it, 2,590 failed dispatches look like 2,590 successful attempts until you check `errors_total` and `dropped_total` side by side.
 
-The whole chain — ConfigMap, sidecar, ruler, notifier, alertmanager, Slack — looks like a single declarative pipeline. It isn't. Each link is a different process making independent decisions, and the seams between them are the silences where bugs hide. Write the diagnostic chain down somewhere durable; you'll need it again.
+The whole chain — ConfigMap, sidecar, ruler, notifier, alertmanager, Slack — looks like a single declarative pipeline. It isn't: each link is a separate process making independent decisions, and each fails without surfacing an error at the level an operator watches. Write the diagnostic chain down somewhere durable; you'll need it again.
 {% endraw %}
