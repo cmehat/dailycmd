@@ -9,9 +9,9 @@ author: "cm"
 {% raw %}
 
 
-A short story about a single alert that didn't fire for two and a half months, the four independent bugs hiding in the delivery chain, and what the metrics endpoint will tell you that the logs won't.
+A single alert didn't fire for two and a half months. Four independent bugs, each masking the next, each failing silently. The metrics endpoint told the whole story; the logs told none of it.
 
-Generic names throughout: `my-loki`, `my-alert`, `my-cluster`, `my-channel`. The architecture is "self-hosted Loki receiving logs from a handful of Kubernetes clusters, rules in a ConfigMap synced by a sidecar, alertmanager from a sub-chart of the same Helm umbrella".
+Generic names throughout: `my-loki`, `my-alert`, `my-cluster`, `my-channel`. Architecture: self-hosted Loki receiving logs from a handful of Kubernetes clusters, rules in a ConfigMap synced by a sidecar, alertmanager from a sub-chart of the same Helm umbrella.
 
 ## TL;DR
 
@@ -41,7 +41,7 @@ ConfigMap (rules)                            alertmanager service
 +-----------------------------------+
 ```
 
-Standard "ConfigMap → emptyDir → ruler" pattern. The chart values point the ruler at the alertmanager's in-cluster DNS name. Everything looks declarative and pleasant.
+Standard "ConfigMap → emptyDir → ruler" pattern. The chart values point the ruler at the alertmanager's in-cluster DNS name.
 
 ## The rule
 
@@ -239,11 +239,11 @@ Each layer fails silently in its own particular way, and each masks the next:
 
 None of the four layers emits a warning at the level the operator would see by accident. Every one needs a specific assertion when the rule is first wired up. The metrics endpoint, not the logs, is the source of truth at the dispatch layer.
 
-## What I'd do differently next time
+## What to do differently
 
-- **Bench-test the new rule before merging it.** Drop a `vector(1) > 0` test rule in for ten minutes after every ruler-related change and watch it land on Slack. A passing test there proves all four layers at once. Remove it before merging the real rule.
-- **Treat the metrics endpoint as a first-class observability surface for the notifier.** A Grafana panel of `loki_prometheus_notifications_errors_total` per alertmanager target is roughly five lines of PromQL and pays for itself the first time anything changes upstream.
-- **Resist the urge to attribute "no alerts" to "the rule is good and the system is healthy".** Especially when you have independent evidence (here: thousands of matching log lines in Loki itself) that the underlying condition is happening.
+**Bench-test new rules before merging.** Drop a `vector(1) > 0` test rule in for ten minutes after every ruler-related change and watch it land on Slack. A passing test there proves all four layers at once. Remove it before merging the real rule.
+
+**Monitor the notifier metrics.** A Grafana panel of `loki_prometheus_notifications_errors_total` per alertmanager target is five lines of PromQL. Without it, 2,590 failed dispatches look like 2,590 successful attempts until you check `errors_total` and `dropped_total` side by side.
 
 The whole chain — ConfigMap, sidecar, ruler, notifier, alertmanager, Slack — looks like a single declarative pipeline. It isn't. Each link is a different process making independent decisions, and the seams between them are the silences where bugs hide. Write the diagnostic chain down somewhere durable; you'll need it again.
 {% endraw %}
