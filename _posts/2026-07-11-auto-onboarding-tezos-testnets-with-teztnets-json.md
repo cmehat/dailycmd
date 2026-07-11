@@ -135,6 +135,6 @@ The hand-maintained network file is out of the critical path entirely.
 
 ## The trade-off worth naming
 
-Reading the registry live means you follow upstream's image tag *exactly and immediately* — which is the point, but also means you've handed your rollout timing to `docker_build`. If you need to **pin** each network to a reviewed image, gate upgrades behind a policy, or keep an auditable git diff of "what changed and when," a live plugin isn't what you want — you want a committed file you regenerate on a schedule instead. That's a different pattern with different trade-offs.
+Reading the registry live means you follow upstream's image tag *exactly and immediately* — which is the point, but also means you've handed your rollout timing to `docker_build`. If you need to **pin** each network to a reviewed image, gate upgrades behind a policy, or keep an auditable git diff of "what changed and when," you want a committed file you regenerate on a schedule instead — see the [companion post]({% post_url 2026-07-11-syncing-a-committed-config-file-from-an-upstream-api-with-scheduled-ci %}).
 
-For a disposable, follow-upstream test fleet, though, live is exactly right: the whole appeal is that nobody has to touch it when the network list changes.
+For a disposable, follow-upstream test fleet, live is exactly right: nobody has to touch it when the network list changes.
