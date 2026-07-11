@@ -76,7 +76,7 @@ include:
         - networks-test.json      # add a path -> it's now on the schedule
 ```
 
-Three details in that job earn their keep:
+Three details in that job matter:
 
 - **`rules` pins it to `schedule`.** It never runs on push or MR — only from a GitLab *scheduled pipeline* (say, nightly). Everything else is `when: never`.
 - **`[ci skip]` on the commit** stops the bot's own push from triggering another pipeline — no loops.
@@ -131,7 +131,7 @@ That "reuse if present, default if new" merge is why a dependency bot can bump `
 
 ## The two footguns
 
-1. **Truncation.** The file is read and written in the same step. `jq … > "$target"` truncates it to empty *before* `jq` opens it via `--slurpfile`, so you lose your existing schema and every new row gets `null` defaults. Build in a temp file, `mv` into place. (Ask me how I know.)
+1. **Truncation.** The file is read and written in the same step. `jq … > "$target"` truncates it to empty *before* `jq` opens it via `--slurpfile`, so you lose your existing schema and every new row gets `null` defaults. Build in a temp file, `mv` into place.
 2. **New-row defaults must come from somewhere.** If the file is empty, there's no first row to inherit from, and a new network lands with `null` tag/channel/policy. Guard for it: refuse to run (or seed one canonical row by hand) rather than emit half-populated entries.
 
 ## When to use which
