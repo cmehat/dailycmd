@@ -11,7 +11,7 @@ mermaid: true
 {% raw %}
 
 
-A third entry in the "your alert never fired" genre. The previous two were about a correct expression that couldn't see its own data and about alerts that died in routing. This one is simpler and, in hindsight, more embarrassing: an alert that had been deployed for months, perfectly valid, evaluated on schedule — and could *never* fire, because **nothing in the entire fleet ever produced the metric it watched**.
+An alert deployed for months, perfectly valid, evaluated on schedule — and structurally incapable of firing, because **nothing in the entire fleet ever produced the metric it watched**.
 
 Generic names throughout: `my-fleet` for the VM fleet, `app-foo` for the workload, no real hostnames or URLs.
 
@@ -316,5 +316,5 @@ If the last command prints the series, the textfile collector is wired correctly
 5. **Don't assume a binary is installed.** Both failures here — `crontab` and `file` — were the same shape: a tool the script/module assumed was present, absent on minimal images. On systemd hosts prefer a timer over cron; for anything else, make the package an explicit prerequisite (and remember `--check` won't install it for you).
 6. **Write textfile metrics atomically.** `tmp`-then-`mv`, not `>`, so a scrape never catches a half-written file.
 
-The whole thing is maybe forty lines of YAML and a ten-line shell script. The lesson isn't in the code — it's that "deployed, evaluating, and green" can still mean *structurally incapable of telling you the truth*, on two separate levels: an alert that can never fire because nothing produces its metric, and a metric that always reads `0` because the thing producing it is blind. Both hide in exactly the same silence. The only way out is to ask, at each layer, "what actually produces this, and have I seen it produce a `1`?"
+The whole thing is maybe forty lines of YAML and a ten-line shell script. "Deployed, evaluating, and green" can still mean *structurally incapable of telling you the truth* — on two separate levels here: an alert that can never fire because nothing produces its metric, and a metric that always reads `0` because the thing producing it is blind. Both hide in the same silence. Ask at each layer: "what actually produces this, and have I seen it produce a `1`?"
 {% endraw %}
