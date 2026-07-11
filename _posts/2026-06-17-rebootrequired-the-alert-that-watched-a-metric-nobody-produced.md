@@ -8,6 +8,7 @@ author: "cm"
 draft: true
 mermaid: true
 ---
+{% raw %}
 
 
 A third entry in the "your alert never fired" genre. The previous two were about a correct expression that couldn't see its own data and about alerts that died in routing. This one is simpler and, in hindsight, more embarrassing: an alert that had been deployed for months, perfectly valid, evaluated on schedule — and could *never* fire, because **nothing in the entire fleet ever produced the metric it watched**.
@@ -287,7 +288,7 @@ A note on the `> 0` shape. Because the script now always emits `0` when no reboo
 
 On the node dashboard it's a one-row addition — a stat panel per instance that reads green at `0` and red at `1`:
 
-- **Query:** `node_reboot_required` (instant), legend `{% raw %}{{instance}}{% endraw %}`. Pair it with `node_reboot_required_packages` if you want the count of packages that triggered the pending reboot.
+- **Query:** `node_reboot_required` (instant), legend `{{instance}}`. Pair it with `node_reboot_required_packages` if you want the count of packages that triggered the pending reboot.
 - **Type:** stat / state-timeline. Threshold `0 → green`, `1 → red`.
 - **Why a panel and not just an alert:** during a staged kernel rollout you want to *see* the fleet drain from red back to green as hosts reboot, not just get a page and a silence. The state-timeline variant is particularly good here — it shows the reboot-required window as a colored band per host, so "we had 17 hosts pending reboot for six days" is one glance instead of a PromQL archaeology session.
 
@@ -316,3 +317,4 @@ If the last command prints the series, the textfile collector is wired correctly
 6. **Write textfile metrics atomically.** `tmp`-then-`mv`, not `>`, so a scrape never catches a half-written file.
 
 The whole thing is maybe forty lines of YAML and a ten-line shell script. The lesson isn't in the code — it's that "deployed, evaluating, and green" can still mean *structurally incapable of telling you the truth*, on two separate levels: an alert that can never fire because nothing produces its metric, and a metric that always reads `0` because the thing producing it is blind. Both hide in exactly the same silence. The only way out is to ask, at each layer, "what actually produces this, and have I seen it produce a `1`?"
+{% endraw %}

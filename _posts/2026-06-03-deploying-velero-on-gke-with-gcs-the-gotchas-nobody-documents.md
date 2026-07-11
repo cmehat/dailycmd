@@ -6,6 +6,7 @@ permalink: /2026/06/deploying-velero-on-gke-with-gcs-the-gotchas-nobody-document
 tags: ["velero", "backup", "kubernetes", "gke", "gcp", "gcs", "kopia", "workload-identity", "argocd", "gitops", "sre", "disaster-recovery"]
 author: "cm"
 ---
+{% raw %}
 
 
 A practical walk-through of installing Velero on a GKE cluster, backing up to a GCS bucket via Workload Identity, and validating the install end-to-end with three increasingly-rigorous restore tests — including the one you actually run during a real incident. We'll spend most of the time on the parts that the upstream Velero docs hand-wave at: the Workload Identity binding, the silent-failure mode when the binding is wrong, and the subtle race between Velero's restore and GitOps controllers.
@@ -130,7 +131,6 @@ You want to see `serviceAccount:<project>.svc.id.goog[velero/velero-server]` in 
 
 Bare-bones values file:
 
-{% raw %}
 ```yaml
 # values-velero.yaml
 initContainers:
@@ -173,7 +173,6 @@ schedules:
       defaultVolumesToFsBackup: true
       ttl: "720h"        # 30 days
 ```
-{% endraw %}
 
 That single hourly schedule with a 30-day TTL gives you 720 hourly snapshots in the bucket at steady state. If you want **GFS-style tiered retention** — fewer, longer-lived snapshots at coarser cadences — keep reading. If a flat 30-day window is fine, skip to "Install".
 
@@ -182,7 +181,6 @@ That single hourly schedule with a 30-day TTL gives you 720 hourly snapshots in 
 The simplest way to get hourly+daily+weekly+monthly retention without writing a custom controller is to define **four schedules**, each with its own cron + TTL. Velero doesn't natively promote one Backup across tiers, so each tier produces its own Backup CR. Kopia content-addresses the data, so the bucket cost stays roughly 1× the actual content even when multiple schedules fire at the same minute.
 
 **Stagger the crons so no two schedules ever fire concurrently** — otherwise tier-boundary moments (Sunday 1st-of-month at 00:00) trigger 4 parallel backups, hammer your node-agent, and (later, if you add pre-backup quiesce hooks) become 4 sequential stop/start cycles on the workload. A 15-minute offset between tiers is enough:
-{% raw %} 
 ```yaml
 schedules:
   my-app-hourly:
@@ -210,7 +208,6 @@ schedules:
       defaultVolumesToFsBackup: true
       ttl: 8760h                      # 365 days
 ```
-{% endraw %} 
 
 Steady-state retention: ~24 hourly + 7 daily + 4 weekly + 12 monthly ≈ 47 Backup CRs per target.
 
@@ -664,3 +661,4 @@ Three things you should always do in this order during any data-loss incident:
 - The Helm chart's default `serviceAccount.server.name` is `velero-server`. If you change it, your Workload Identity binding (Step 4) needs to reference the new name. We've seen people stuck for hours on a mismatched name where the chart default changed in a minor version.
 
 Velero is a great tool. Most of the install friction comes from the Workload Identity setup being spread across three or four GCP commands that have to align exactly. Get those right, verify with the BSL phase, and run a shadow-restore test monthly. That's all most teams need.
+{% endraw %}

@@ -43,3 +43,5 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor/
+
+excerpt_separator: "<!--more-->"

@@ -6,6 +6,7 @@ permalink: /2026/06/why-your-loki-alerts-never-fire-four-layers-of-silent-failur
 tags: ["loki", "alerting", "observability", "kubernetes", "sre", "debugging", "helm", "alertmanager", "prometheus", "gitops"]
 author: "cm"
 ---
+{% raw %}
 
 
 A short story about a single alert that didn't fire for two and a half months, the four independent bugs hiding in the delivery chain, and what the metrics endpoint will tell you that the logs won't.
@@ -245,3 +246,4 @@ None of the four layers emits a warning at the level the operator would see by a
 - **Resist the urge to attribute "no alerts" to "the rule is good and the system is healthy".** Especially when you have independent evidence (here: thousands of matching log lines in Loki itself) that the underlying condition is happening.
 
 The whole chain — ConfigMap, sidecar, ruler, notifier, alertmanager, Slack — looks like a single declarative pipeline. It isn't. Each link is a different process making independent decisions, and the seams between them are the silences where bugs hide. Write the diagnostic chain down somewhere durable; you'll need it again.
+{% endraw %}
