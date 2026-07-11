@@ -9,7 +9,7 @@ mermaid: true
 
 ArgoCD's `ApplicationSet` ships with generators for the common cases — a static `list`, files in `git`, registered `clusters`, pull requests, SCM org scans. The **plugin generator** covers everything else: any REST API, internal service catalogue, or external JSON feed that already exists and is already kept current by someone else. It's the least-documented generator of the bunch.
 
-This post is a from-scratch, no-Helm walkthrough of standing one up: the protocol, the raw manifests, how to write the filter, and the handful of things that will bite you in production. I'll use a small open-source plugin — [`argocd-applicationset-json-plugin`](https://github.com/cmehat/argocd-applicationset-json-plugin) — that does one generic job: fetch JSON from a URL, filter it with `jq` or JSONPath, and hand the result back to ArgoCD as parameters. Nothing here is specific to it, though; the protocol is the protocol.
+This post is a from-scratch, no-Helm walkthrough of standing one up: the protocol, the raw manifests, how to write the filter, and a few production pitfalls. I'll use a small open-source plugin — [`argocd-applicationset-json-plugin`](https://github.com/cmehat/argocd-applicationset-json-plugin) — that does one generic job: fetch JSON from a URL, filter it with `jq` or JSONPath, and hand the result back to ArgoCD as parameters. The protocol described here applies to any plugin, though.
 
 ## What a plugin generator actually is
 
@@ -200,7 +200,7 @@ The JSONPath variant covers the simple cases without a `jq` binary — `JSON_PAT
 
 Whichever you use, **test the filter against the real payload before you deploy it** — pipe the live URL through `jq` locally. Most plugin-generator "it produces nothing" incidents are actually a filter that returns `[]` or the wrong shape.
 
-## Deployment notes (the things that bite)
+## Deployment notes
 
 Three lessons from running this for real:
 
