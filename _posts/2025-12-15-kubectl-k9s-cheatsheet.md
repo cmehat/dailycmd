@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "kubectl & k9s cheatsheet"
-date: 2026-07-11 16:30:00 +0000
+date: 2025-12-15 16:30:00 +0000
 categories: [kubernetes, tools]
 tags: [kubernetes, kubectl, k9s, cli, cheatsheet]
 ---

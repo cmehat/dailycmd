@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "tmux cheatsheet — surviving dropped SSH connections"
-date: 2026-07-11 16:00:00 +0000
+date: 2026-01-20 16:00:00 +0000
 categories: [shell, tools]
 tags: [tmux, ssh, terminal, cli, cheatsheet]
 ---
