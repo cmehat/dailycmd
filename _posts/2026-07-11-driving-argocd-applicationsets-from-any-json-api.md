@@ -6,6 +6,7 @@ categories: [kubernetes, gitops]
 tags: [argocd, applicationset, plugin-generator, kubernetes, gitops, jq, jsonpath, sre]
 mermaid: true
 ---
+{% raw %}
 
 ArgoCD's `ApplicationSet` ships with generators for the common cases — a static `list`, files in `git`, registered `clusters`, pull requests, SCM org scans. The **plugin generator** covers everything else: any REST API, internal service catalogue, or external JSON feed that already exists and is already kept current by someone else. It's the least-documented generator of the bunch.
 
@@ -223,3 +224,4 @@ The plugin's only route is `POST /api/v1/getparams.execute`, and it's token-auth
 Use a plugin generator when the source of truth is *external* JSON you don't want to copy into git and you want Applications to track it live. It's a running service you have to operate, so it's overkill for a static list. For "template one Application per row of this API," it turns an MR-per-change chore into a five-minute reconcile loop.
 
 The plugin used here is open source: [argocd-applicationset-json-plugin](https://github.com/cmehat/argocd-applicationset-json-plugin). In the [next post]({% post_url 2026-07-11-auto-onboarding-tezos-testnets-with-teztnets-json %}) I put it to work against a real, public feed — the Tezos test-network registry.
+{% endraw %}

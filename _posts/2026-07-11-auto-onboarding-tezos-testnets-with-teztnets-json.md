@@ -5,6 +5,7 @@ date: 2026-07-11 12:00:00 +0000
 categories: [kubernetes, gitops]
 tags: [argocd, applicationset, tezos, octez, teztnets, jq, gitops, kubernetes]
 ---
+{% raw %}
 
 I run a small fleet of [`octez-node`](https://tezos.gitlab.io/) instances — one Tezos node per active test network — on Kubernetes, deployed by ArgoCD. For a long time the list of "which networks exist" lived in a JSON file I maintained by hand in the GitOps repo: a network spins up upstream, I open an MR to add it, wait for review, merge; it gets decommissioned, I open another MR to remove it.
 
@@ -138,3 +139,4 @@ The hand-maintained network file is out of the critical path entirely.
 Reading the registry live means you follow upstream's image tag *exactly and immediately* — which is the point, but also means you've handed your rollout timing to `docker_build`. If you need to **pin** each network to a reviewed image, gate upgrades behind a policy, or keep an auditable git diff of "what changed and when," you want a committed file you regenerate on a schedule instead — see the [companion post]({% post_url 2026-07-11-syncing-a-committed-config-file-from-an-upstream-api-with-scheduled-ci %}).
 
 For a disposable, follow-upstream test fleet, live is exactly right: nobody has to touch it when the network list changes.
+{% endraw %}

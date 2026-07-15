@@ -5,6 +5,7 @@ date: 2026-07-14 16:00:00 +0000
 categories: [observability, kubernetes]
 tags: [alertmanager, prometheus, slack, kubernetes, helm, kube-prometheus-stack, go-template]
 ---
+{% raw %}
 
 Out of the box, Alertmanager's Slack notifications are close to useless: a wall
 of grey text, no color, no obvious "what/where/how-bad", and no way to act
@@ -253,3 +254,4 @@ matches where the chart mounts `templateFiles`/`templates`.
 Keep the alert *rules* holding the human content (`summary`, `description`,
 `runbook_url`, `dashboard`) and this template holding the *presentation*. That
 separation is what lets one template make every alert in the fleet look right.
+{% endraw %}
