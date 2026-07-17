@@ -9,6 +9,8 @@ tags: [tmux, ssh, terminal, cli, cheatsheet]
 The commands I actually use. The main use case: a long-running command on a
 remote host that must survive the SSH connection dying.
 
+> 📄 Grab it offline: [printable PDF](/assets/files/tmux-cheatsheet.pdf) · [raw Markdown](/assets/files/tmux-cheatsheet.md)
+
 `Ctrl-b` is the **prefix**. Notation `C-b d` = press `Ctrl-b`, release, then press `d`.
 
 ## Survive a dropped SSH connection
