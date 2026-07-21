@@ -14,8 +14,21 @@ an on-call actually wants to receive — colored by severity, titled with a
 one-line subject, the key labels surfaced, and buttons that jump straight to the
 runbook, the query, the dashboard, and a pre-filled silence.
 
-Here's the template I use, commented, followed by how to actually get it into a
-Kubernetes Alertmanager with the prometheus-community charts.
+The template descends from a known lineage: [Monzo's
+gist](https://gist.github.com/milesbxf/e2744fc90e9c41b47aa47925f8ff6512), refined
+by [Adin Hodovic's excellent
+walkthrough](https://hodovi.cc/blog/creating-awesome-alertmanager-templates-for-slack/)
+of the monitoring-mixin annotation conventions (`summary`/`description`,
+`severity`, `runbook_url`) — read it for the *why* of those annotations. This
+post diverges on four points: the silence link URL-encodes label values
+(`urlquery` — the original breaks on values containing spaces), the title
+carries a severity icon and the environment for pre-attentive triage, each
+alert's body carries its start time and a sorted label dump under a key-labels
+header block, and — the main addition — the second
+half covers actually *shipping* the template on Kubernetes across the three
+prometheus-community charts, which the original leaves as a one-line glob.
+
+Here's the template, commented, followed by the Kubernetes part.
 
 ## The template
 
@@ -107,7 +120,7 @@ require leaving Slack), and a **summary/description split** so the title stays
 scannable while the detail is still one glance away.
 
 The receiver then references these templates and adds action buttons pointing at
-per-alert annotations (`runbook_url`, `dashboard`) and Prometheus'
+per-alert annotations (`runbook_url`, `dashboard_url`) and Prometheus'
 `GeneratorURL`:
 
 ```yaml
@@ -121,13 +134,13 @@ slackConfigs:
     actions:
       - { type: button, text: 'Runbook :green_book:',  url: '{{ (index .Alerts 0).Annotations.runbook_url }}' }
       - { type: button, text: 'Query :mag:',           url: '{{ (index .Alerts 0).GeneratorURL }}' }
-      - { type: button, text: 'Dashboard :bar_chart:', url: '{{ (index .Alerts 0).Annotations.dashboard }}' }
+      - { type: button, text: 'Dashboard :bar_chart:', url: '{{ (index .Alerts 0).Annotations.dashboard_url }}' }
       - { type: button, text: 'Silence :no_bell:',     url: '{{ template "__alert_silence_link" . }}' }
 ```
 
 For that to work, your alert rules need to *set* those annotations — e.g.
 `annotations: { summary: "...", description: "...", runbook_url: "...",
-dashboard: "..." }`. The template only renders what the rules provide.
+dashboard_url: "..." }`. The template only renders what the rules provide.
 
 ## Getting it onto Kubernetes
 
@@ -167,10 +180,10 @@ alertmanager:
         slack_configs:
           - channel: '#your-alerts-channel'
             send_resolved: true
-            color:     '{{ template "__slack_color" . }}'
-            title:     '{{ template "__slack_title" . }}'
-            title_link:'{{ template "__alert_silence_link" . }}'
-            text:      '{{ template "__slack_text" . }}'
+            color:      '{{ template "__slack_color" . }}'
+            title:      '{{ template "__slack_title" . }}'
+            title_link: '{{ template "__alert_silence_link" . }}'
+            text:       '{{ template "__slack_text" . }}'
 ```
 
 **b) `AlertmanagerConfig` CRD.** If you drive routing with the operator's CRD
@@ -184,7 +197,8 @@ the token at the HTTP layer:
 # values.yaml
 alertmanager:
   templateFiles:
-    slack.tmpl: | {{/* the template */}}
+    slack.tmpl: |
+      {{/* the template */}}
   alertmanagerSpec:
     alertmanagerConfigSelector:
       matchLabels: { alertmanagerConfig: main }
@@ -223,7 +237,8 @@ alertmanagerFiles:
       - name: slack
         slack_configs: [{ channel: '#your-alerts-channel', text: '{{ template "__slack_text" . }}', title: '{{ template "__slack_title" . }}' }]
   # extra template file, mounted alongside the config:
-  slack.tmpl: | {{/* the template */}}
+  slack.tmpl: |
+    {{/* the template */}}
 ```
 
 ### alertmanager chart (standalone)
@@ -239,7 +254,8 @@ config:
     - name: slack
       slack_configs: [{ channel: '#your-alerts-channel', title: '{{ template "__slack_title" . }}', text: '{{ template "__slack_text" . }}' }]
 templates:
-  slack.tmpl: | {{/* the template */}}
+  slack.tmpl: |
+    {{/* the template */}}
 ```
 
 ## The one gotcha
@@ -252,6 +268,7 @@ config found the receiver but not the template file — check the glob path
 matches where the chart mounts `templateFiles`/`templates`.
 
 Keep the alert *rules* holding the human content (`summary`, `description`,
-`runbook_url`, `dashboard`) and this template holding the *presentation*. That
-separation is what lets one template make every alert in the fleet look right.
+`runbook_url`, `dashboard_url`) and this template holding the *presentation*.
+That separation is what lets one template make every alert in the fleet look
+right.
 {% endraw %}
