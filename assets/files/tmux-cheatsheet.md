@@ -1,20 +1,8 @@
----
-layout: post
-title: "tmux cheatsheet — surviving dropped SSH connections"
-date: 2026-01-20 16:00:00 +0000
-categories: [shell, tools]
-tags: [tmux, ssh, terminal, cli, cheatsheet]
----
-
-The commands I actually use. The main use case: a long-running command on a
-remote host that must survive the SSH connection dying.
-
-> 📄 Grab it offline: [printable PDF](/assets/files/tmux-cheatsheet.pdf) · [raw Markdown](/assets/files/tmux-cheatsheet.md)
+# tmux cheatsheet
 
 `Ctrl-b` is the **prefix**. Notation `C-b d` = press `Ctrl-b`, release, then press `d`.
 
-## Survive a dropped SSH connection
-
+## Survive a dropped SSH connection (the main use case)
 ```bash
 tmux new -s work          # start a named session
 # ... launch your long-running command inside ...
@@ -26,7 +14,6 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 ```
 
 ## Sessions
-
 | Action | Command / keys |
 |--------|----------------|
 | New named session | `tmux new -s NAME` |
@@ -40,7 +27,6 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 | Switch session (inside) | `C-b s` then arrows |
 
 ## Windows (like tabs)
-
 | Action | Keys |
 |--------|------|
 | New window | `C-b c` |
@@ -51,7 +37,6 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 | List / pick window | `C-b w` |
 
 ## Panes (splits)
-
 | Action | Keys |
 |--------|------|
 | Split vertical (left/right) | `C-b %` |
@@ -63,7 +48,6 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 | Convert pane to window | `C-b !` |
 
 ## Scrolling & copy mode
-
 | Action | Keys |
 |--------|------|
 | Enter scroll/copy mode | `C-b [` |
@@ -72,7 +56,6 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 | Quit copy mode | `q` |
 
 ## Handy
-
 | Action | Keys |
 |--------|------|
 | Command prompt | `C-b :` |
@@ -80,13 +63,11 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 | Reload config | `C-b :` then `source-file ~/.tmux.conf` |
 
 ## Watch a long job after reattaching
-
 ```bash
-tail -f my-long-job-*.log     # Ctrl-c to stop tailing (job keeps running)
+tail -f my-long-job-*.log           # Ctrl-c to stop tailing (job keeps running)
 ```
 
 ## Minimal `~/.tmux.conf` niceties (optional)
-
 ```tmux
 set -g history-limit 100000      # bigger scrollback
 set -g mouse on                  # mouse scroll/select panes
