@@ -64,7 +64,7 @@ tmux attach -d -t work    # force-attach, detaching any stale client
 
 ## Watch a long job after reattaching
 ```bash
-tail -f export-mainnet-*.log     # Ctrl-c to stop tailing (job keeps running)
+tail -f my-long-job-*.log           # Ctrl-c to stop tailing (job keeps running)
 ```
 
 ## Minimal `~/.tmux.conf` niceties (optional)
