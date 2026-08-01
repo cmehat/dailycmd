@@ -4,6 +4,8 @@ title: "Monitoring Tezos consensus from a single node: architecture, cost, and r
 date: 2026-07-31 12:00:00 +0000
 categories: [infrastructure, observability]
 tags: [tezos, consensus, distributed-systems, prometheus, thanos, loki, grafana, kubernetes, argocd, sre]
+redirect_from:
+  - /2026/07/monitoring-tezos-consensus-health-without-the-protocol-upgrade-treadmill.html
 ---
 
 Consensus is a distributed-systems problem, and monitoring it well means respecting that.

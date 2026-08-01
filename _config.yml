@@ -28,6 +28,7 @@ plugins:
   - jekyll-feed         # /feed.xml (RSS)
   - jekyll-seo-tag      # <meta> + Open Graph
   - jekyll-sitemap      # /sitemap.xml
+  - jekyll-redirect-from # 301 stubs for retired/renamed post URLs
 
 # --- Navigation --------------------------------------------------------------
 header_pages:
