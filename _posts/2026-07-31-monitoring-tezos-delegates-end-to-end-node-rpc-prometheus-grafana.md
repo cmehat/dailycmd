@@ -127,6 +127,7 @@ json-exporter runs as a sidecar in the node pod, not as a separate Deployment. T
   image: prometheuscommunity/json-exporter:v0.7.0
   args:
     - --config.file=/etc/json-exporter/config.yml
+    - --web.listen-address=:9934   # default is :7979 — must match containerPort below
   ports:
     - name: rpc-mtr-delegt      # ≤15 chars, referenced by the ServiceMonitor
       containerPort: 9934
