@@ -205,5 +205,3 @@ Open source and self-contained; issues and contributions welcome:
 - Data Availability Layer (DAL) — <https://docs.tezos.com/architecture/data-availability-layer>
 - teztnets — <https://teztnets.com/>
 - grafonnet — <https://github.com/grafana/grafonnet>
-</content>
-</invoke>

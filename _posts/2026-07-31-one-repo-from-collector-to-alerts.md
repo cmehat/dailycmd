@@ -142,5 +142,3 @@ Open source and self-contained; issues and contributions welcome:
 - Loki Helm chart — <https://artifacthub.io/packages/helm/grafana/loki>
 - grafonnet — <https://github.com/grafana/grafonnet>
 - Octez documentation — <https://octez.tezos.com/docs/>
-</content>
-</invoke>
